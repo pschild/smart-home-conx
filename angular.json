@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "projects": {
+    "mqtt-client": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/mqtt-client",
+      "sourceRoot": "apps/mqtt-client/src",
+      "prefix": "smart-home-poc",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/mqtt-client",
+            "index": "apps/mqtt-client/src/index.html",
+            "main": "apps/mqtt-client/src/main.ts",
+            "polyfills": "apps/mqtt-client/src/polyfills.ts",
+            "tsConfig": "apps/mqtt-client/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "apps/mqtt-client/src/favicon.ico",
+              "apps/mqtt-client/src/assets"
+            ],
+            "styles": ["apps/mqtt-client/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/mqtt-client/src/environments/environment.ts",
+                  "with": "apps/mqtt-client/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "mqtt-client:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "mqtt-client:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "mqtt-client:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/mqtt-client/tsconfig.app.json",
+              "apps/mqtt-client/tsconfig.spec.json",
+              "apps/mqtt-client/tsconfig.editor.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/mqtt-client/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/mqtt-client/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "mqtt-client-e2e": {
+      "root": "apps/mqtt-client-e2e",
+      "sourceRoot": "apps/mqtt-client-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/mqtt-client-e2e/cypress.json",
+            "tsConfig": "apps/mqtt-client-e2e/tsconfig.e2e.json",
+            "devServerTarget": "mqtt-client:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "mqtt-client:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": ["apps/mqtt-client-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/mqtt-client-e2e/**/*"]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/node": {
+      "application": {
+        "linter": "tslint"
+      },
+      "library": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/nest": {
+      "application": {
+        "linter": "tslint"
+      },
+      "library": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/express": {
+      "application": {
+        "linter": "tslint"
+      },
+      "library": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/angular:application": {
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "unitTestRunner": "jest"
+    }
+  },
+  "defaultProject": "mqtt-client"
+}
