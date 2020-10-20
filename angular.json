@@ -62,7 +62,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "mqtt-client:build"
+            "browserTarget": "mqtt-client:build",
+            "proxyConfig": "apps/mqtt-client/proxy.conf.json"
           },
           "configurations": {
             "production": {
@@ -96,29 +97,135 @@
         }
       }
     },
-    "mqtt-client-e2e": {
-      "root": "apps/mqtt-client-e2e",
-      "sourceRoot": "apps/mqtt-client-e2e/src",
+    "mqtt-broker": {
+      "root": "apps/mqtt-broker",
+      "sourceRoot": "apps/mqtt-broker/src",
       "projectType": "application",
+      "prefix": "mqtt-broker",
+      "schematics": {},
       "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
+        "build": {
+          "builder": "@nrwl/node:build",
           "options": {
-            "cypressConfig": "apps/mqtt-client-e2e/cypress.json",
-            "tsConfig": "apps/mqtt-client-e2e/tsconfig.e2e.json",
-            "devServerTarget": "mqtt-client:serve"
+            "outputPath": "dist/apps/mqtt-broker",
+            "main": "apps/mqtt-broker/src/main.ts",
+            "tsConfig": "apps/mqtt-broker/tsconfig.app.json",
+            "assets": ["apps/mqtt-broker/src/assets"]
           },
           "configurations": {
             "production": {
-              "devServerTarget": "mqtt-client:serve:production"
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/mqtt-broker/src/environments/environment.ts",
+                  "with": "apps/mqtt-broker/src/environments/environment.prod.ts"
+                }
+              ]
             }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "mqtt-broker:build"
           }
         },
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": ["apps/mqtt-client-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/mqtt-client-e2e/**/*"]
+            "tsConfig": [
+              "apps/mqtt-broker/tsconfig.app.json",
+              "apps/mqtt-broker/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/mqtt-broker/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/mqtt-broker/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "esp-pir-manager": {
+      "root": "apps/esp-pir-manager",
+      "sourceRoot": "apps/esp-pir-manager/src",
+      "projectType": "application",
+      "prefix": "esp-pir-manager",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/esp-pir-manager",
+            "main": "apps/esp-pir-manager/src/main.ts",
+            "tsConfig": "apps/esp-pir-manager/tsconfig.app.json",
+            "assets": ["apps/esp-pir-manager/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/esp-pir-manager/src/environments/environment.ts",
+                  "with": "apps/esp-pir-manager/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "esp-pir-manager:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/esp-pir-manager/tsconfig.app.json",
+              "apps/esp-pir-manager/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/esp-pir-manager/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/esp-pir-manager/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "utils": {
+      "root": "libs/utils",
+      "sourceRoot": "libs/utils/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/utils/tsconfig.lib.json",
+              "libs/utils/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/utils/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/utils/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

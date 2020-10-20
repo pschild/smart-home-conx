@@ -26,9 +26,14 @@
     "mqtt-client": {
       "tags": []
     },
-    "mqtt-client-e2e": {
-      "tags": [],
-      "implicitDependencies": ["mqtt-client"]
+    "mqtt-broker": {
+      "tags": []
+    },
+    "esp-pir-manager": {
+      "tags": []
+    },
+    "utils": {
+      "tags": []
     }
   }
 }
