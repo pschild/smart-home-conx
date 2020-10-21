@@ -14,7 +14,10 @@ import { MqttModule } from 'ngx-mqtt';
       hostname: 'localhost',
       port: 1884,
       path: '',
-      protocol: 'ws'
+      protocol: 'ws',
+      clientId: 'mqtt-client',
+      // username: '',
+      // password: ''
     })
   ],
   providers: [],

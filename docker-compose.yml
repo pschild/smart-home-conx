@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  mqtt-broker:
+    image: mqtt-broker
+    build:
+      context: .
+      dockerfile: apps/mqtt-broker/Dockerfile
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+      - "1884:1884"
+    restart: always
+
+  esp-pir-manager:
+    image: esp-pir-manager
+    build:
+      context: .
+      dockerfile: apps/esp-pir-manager/Dockerfile
+    container_name: esp-pir-manager
+    ports:
+      - "9052:9052"
+    restart: always
+
+  mqtt-client:
+    image: mqtt-client
+    build:
+      context: .
+      dockerfile: apps/mqtt-client/Dockerfile
+    container_name: mqtt-client
+    ports:
+      - "9082:80"
+    restart: always
+
+# volumes:
+#   esp-binfiles:
+#     name: esp-binfiles
+#   amazon-env:
+#     name: amazon-env

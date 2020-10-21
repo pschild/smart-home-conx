@@ -9,7 +9,7 @@ import { log, ofTopicEquals } from '@smart-home-poc/utils';
 const app: Application = express();
 const port = 9052;
 
-const mqttClient = mqtt.connect('http://localhost:1883', { clientId: 'esp-pir-manager' });
+const mqttClient = mqtt.connect('http://mqtt-broker:1883', { clientId: 'esp-pir-manager' });
 // const mqttClient = mqtt.connect('http://broker.emqx.io', { clientId: 'esp-pir-manager' }); // testing
 mqttClient.subscribe('ESP_7888034/movement');
 
