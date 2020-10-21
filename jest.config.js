@@ -4,5 +4,8 @@ module.exports = {
     '<rootDir>/apps/mqtt-broker',
     '<rootDir>/apps/esp-pir-manager',
     '<rootDir>/libs/utils',
+    '<rootDir>/apps/esp-update-server',
+    '<rootDir>/apps/adesso-commuter-server',
+    '<rootDir>/apps/alexa-connector',
   ],
 };

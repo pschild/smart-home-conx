@@ -229,6 +229,171 @@
           }
         }
       }
+    },
+    "esp-update-server": {
+      "root": "apps/esp-update-server",
+      "sourceRoot": "apps/esp-update-server/src",
+      "projectType": "application",
+      "prefix": "esp-update-server",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/esp-update-server",
+            "main": "apps/esp-update-server/src/main.ts",
+            "tsConfig": "apps/esp-update-server/tsconfig.app.json",
+            "assets": ["apps/esp-update-server/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/esp-update-server/src/environments/environment.ts",
+                  "with": "apps/esp-update-server/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "esp-update-server:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/esp-update-server/tsconfig.app.json",
+              "apps/esp-update-server/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/esp-update-server/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/esp-update-server/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "adesso-commuter-server": {
+      "root": "apps/adesso-commuter-server",
+      "sourceRoot": "apps/adesso-commuter-server/src",
+      "projectType": "application",
+      "prefix": "adesso-commuter-server",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/adesso-commuter-server",
+            "main": "apps/adesso-commuter-server/src/main.ts",
+            "tsConfig": "apps/adesso-commuter-server/tsconfig.app.json",
+            "assets": ["apps/adesso-commuter-server/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/adesso-commuter-server/src/environments/environment.ts",
+                  "with": "apps/adesso-commuter-server/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "adesso-commuter-server:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/adesso-commuter-server/tsconfig.app.json",
+              "apps/adesso-commuter-server/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/adesso-commuter-server/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/adesso-commuter-server/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "alexa-connector": {
+      "root": "apps/alexa-connector",
+      "sourceRoot": "apps/alexa-connector/src",
+      "projectType": "application",
+      "prefix": "alexa-connector",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/alexa-connector",
+            "main": "apps/alexa-connector/src/main.ts",
+            "tsConfig": "apps/alexa-connector/tsconfig.app.json",
+            "assets": ["apps/alexa-connector/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/alexa-connector/src/environments/environment.ts",
+                  "with": "apps/alexa-connector/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "alexa-connector:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/alexa-connector/tsconfig.app.json",
+              "apps/alexa-connector/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/alexa-connector/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/alexa-connector/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

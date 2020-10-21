@@ -21,6 +21,42 @@ services:
       - "9052:9052"
     restart: always
 
+  esp-update-server:
+    image: esp-update-server
+    build:
+      context: .
+      dockerfile: apps/esp-update-server/Dockerfile
+    container_name: esp-update-server
+    volumes:
+      - esp-binfiles:/app/binfiles
+    ports:
+      - "9042:9042"
+    restart: always
+
+  # adesso-commuter-server:
+  #   image: adesso-commuter-server
+  #   build:
+  #     context: .
+  #     dockerfile: apps/adesso-commuter-server/Dockerfile
+  #   container_name: adesso-commuter-server
+  #   volumes:
+  #     - /mnt/adesso-commuter-server/screenshots:/app/screenshots
+  #   ports:
+  #     - "9062:9062"
+  #   restart: always
+
+  alexa-connector:
+    image: alexa-connector
+    build:
+      context: .
+      dockerfile: apps/alexa-connector/Dockerfile
+    container_name: alexa-connector
+    volumes:
+      - amazon-env:/app/assets/alexa-remote-control/env
+    ports:
+      - "9072:9072"
+    restart: always
+
   mqtt-client:
     image: mqtt-client
     build:
@@ -31,8 +67,8 @@ services:
       - "9082:80"
     restart: always
 
-# volumes:
-#   esp-binfiles:
-#     name: esp-binfiles
-#   amazon-env:
-#     name: amazon-env
+volumes:
+  esp-binfiles:
+    name: esp-binfiles
+  amazon-env:
+    name: amazon-env
