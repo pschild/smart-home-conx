@@ -33,17 +33,17 @@ services:
       - "9042:9042"
     restart: always
 
-  # adesso-commuter-server:
-  #   image: adesso-commuter-server
-  #   build:
-  #     context: .
-  #     dockerfile: apps/adesso-commuter-server/Dockerfile
-  #   container_name: adesso-commuter-server
-  #   volumes:
-  #     - /mnt/adesso-commuter-server/screenshots:/app/screenshots
-  #   ports:
-  #     - "9062:9062"
-  #   restart: always
+  adesso-commuter-server:
+    image: adesso-commuter-server
+    build:
+      context: .
+      dockerfile: apps/adesso-commuter-server/Dockerfile
+    container_name: adesso-commuter-server
+    volumes:
+      - /mnt/adesso-commuter-server/screenshots:/app/assets/screenshots
+    ports:
+      - "9062:9062"
+    restart: always
 
   alexa-connector:
     image: alexa-connector
