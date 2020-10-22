@@ -5,7 +5,7 @@ import { EventMqttService } from './event-mqtt.service';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'smart-home-poc-root',
+  selector: 'smart-home-conx-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

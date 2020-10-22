@@ -2,7 +2,7 @@ import * as puppeteer from 'puppeteer';
 import { LatLng } from './travel-time.service';
 import * as path from 'path';
 import * as isPi from 'detect-rpi';
-import { isDocker, log } from '@smart-home-poc/utils';
+import { isDocker, log } from '@smart-home-conx/utils';
 import { format } from 'date-fns';
 
 export class GoogleMapsCrawler {

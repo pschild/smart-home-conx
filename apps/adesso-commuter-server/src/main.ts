@@ -6,7 +6,7 @@ import { TravelTimeService } from './app/travel-time.service';
 import * as serveIndex from 'serve-index';
 import * as mqtt from 'async-mqtt';
 import { format, add } from 'date-fns';
-import { log } from '@smart-home-poc/utils';
+import { log } from '@smart-home-conx/utils';
 
 const app: Application = express();
 const port = 9062;

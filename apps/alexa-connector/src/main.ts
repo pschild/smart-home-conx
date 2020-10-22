@@ -4,7 +4,7 @@ const { exec } = require('child_process');
 import * as mqtt from 'async-mqtt';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { log, ofTopicEquals } from '@smart-home-poc/utils';
+import { log, ofTopicEquals } from '@smart-home-conx/utils';
 
 const app: Application = express();
 const port = 9072;

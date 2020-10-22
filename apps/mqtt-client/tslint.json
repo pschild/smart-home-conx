@@ -1,8 +1,8 @@
 {
   "extends": "../../tslint.json",
   "rules": {
-    "directive-selector": [true, "attribute", "smartHomePoc", "camelCase"],
-    "component-selector": [true, "element", "smart-home-poc", "kebab-case"]
+    "directive-selector": [true, "attribute", "smartHomeConx", "camelCase"],
+    "component-selector": [true, "element", "smart-home-conx", "kebab-case"]
   },
   "linterOptions": {
     "exclude": ["!**/*"]

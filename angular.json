@@ -10,7 +10,7 @@
       },
       "root": "apps/mqtt-client",
       "sourceRoot": "apps/mqtt-client/src",
-      "prefix": "smart-home-poc",
+      "prefix": "smart-home-conx",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",

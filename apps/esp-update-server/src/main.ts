@@ -2,7 +2,7 @@ import * as express from 'express';
 import { Application, Request, Response } from 'express';
 import * as path from 'path';
 import { findBinaryForUpdate } from './app/binary.provider';
-import { log } from '@smart-home-poc/utils';
+import { log } from '@smart-home-conx/utils';
 
 const app: Application = express();
 const port = 9042;

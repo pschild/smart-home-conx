@@ -4,7 +4,7 @@ import * as mqtt from 'async-mqtt';
 import { getHours } from 'date-fns';
 import { forkJoin, fromEvent } from 'rxjs';
 import { filter, map, mergeMap, tap, throttleTime } from 'rxjs/operators';
-import { log, ofTopicEquals } from '@smart-home-poc/utils';
+import { log, ofTopicEquals } from '@smart-home-conx/utils';
 
 const app: Application = express();
 const port = 9052;
