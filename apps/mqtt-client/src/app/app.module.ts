@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MqttModule } from 'ngx-mqtt';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -11,7 +12,7 @@ import { MqttModule } from 'ngx-mqtt';
     BrowserModule,
     HttpClientModule,
     MqttModule.forRoot({
-      hostname: 'localhost',
+      hostname: environment.env.PUBLIC_ENDPOINT.replace('http://', ''),
       port: 1884,
       path: '',
       protocol: 'ws',
