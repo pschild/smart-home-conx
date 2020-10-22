@@ -11,7 +11,7 @@ RUN npm run build:alexa-connector -- --prod
 FROM node:14-alpine
 ######################################################################
 WORKDIR /app
-RUN apk update && apk add tzdata
+RUN apk update && apk add curl jq oath-toolkit-oathtool tzdata
 COPY --from=builder /app/dist/apps/alexa-connector /app
 ADD package.json /app/package.json
 RUN npm install --prod --ignore-scripts
