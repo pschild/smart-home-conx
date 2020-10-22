@@ -4,15 +4,25 @@ const { exec } = require('child_process');
 import * as mqtt from 'async-mqtt';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { log, ofTopicEquals } from '@smart-home-conx/utils';
+import { log, ofTopicEquals, isAuthorized } from '@smart-home-conx/utils';
+import * as dotenv from 'dotenv';
 
-const app: Application = express();
-const port = 9072;
+dotenv.config();
 
 const mqttClient = mqtt.connect('http://mqtt-broker:1883', { clientId: 'alexa-connector' });
 // const mqttClient = mqtt.connect('http://broker.emqx.io', { clientId: 'alexa-connector' }); // testing
 mqttClient.subscribe('alexa/in/automation');
 mqttClient.subscribe('alexa/in/speak');
+
+const app: Application = express();
+const port = 9072;
+
+app.use((req, res, next) => {
+  if (!isAuthorized(req)) {
+    return res.status(401).send(`Not authorized`);
+  }
+  return next();
+});
 
 function execCommand(device: string, command: { action: 'speak' | 'automation', param: string }): Observable<string> {
   return new Observable<string>(subscriber => {

@@ -6,12 +6,22 @@ import { TravelTimeService } from './app/travel-time.service';
 import * as serveIndex from 'serve-index';
 import * as mqtt from 'async-mqtt';
 import { format, add } from 'date-fns';
-import { log } from '@smart-home-conx/utils';
+import { log, isAuthorized } from '@smart-home-conx/utils';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const mqttClient = mqtt.connect('http://mqtt-broker:1883', { clientId: 'adesso-commuter-server' });
 
 const app: Application = express();
 const port = 9062;
 
-const mqttClient = mqtt.connect('http://mqtt-broker:1883', { clientId: 'adesso-commuter-server' });
+app.use((req, res, next) => {
+  if (!isAuthorized(req)) {
+    return res.status(401).send(`Not authorized`);
+  }
+  return next();
+});
 
 const screenshotsFolderPath = path.join(__dirname, 'assets', 'screenshots');
 app.use('/screenshots', express.static(screenshotsFolderPath), serveIndex(screenshotsFolderPath));

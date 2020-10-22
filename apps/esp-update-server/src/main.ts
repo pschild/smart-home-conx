@@ -2,10 +2,20 @@ import * as express from 'express';
 import { Application, Request, Response } from 'express';
 import * as path from 'path';
 import { findBinaryForUpdate } from './app/binary.provider';
-import { log } from '@smart-home-conx/utils';
+import { log, isAuthorized } from '@smart-home-conx/utils';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const app: Application = express();
 const port = 9042;
+
+app.use((req, res, next) => {
+  if (!isAuthorized(req)) {
+    return res.status(401).send(`Not authorized`);
+  }
+  return next();
+});
 
 app.use(express.static(path.join(__dirname, 'binfiles')));
 
