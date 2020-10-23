@@ -13,6 +13,7 @@ FROM node:14-alpine
 WORKDIR /app
 RUN apk update && apk add curl jq oath-toolkit-oathtool tzdata
 COPY --from=builder /app/dist/apps/alexa-connector /app
+RUN chmod +x /app/assets/alexa-remote-control/alexa_remote_control.sh
 ADD package.json /app/package.json
 RUN npm install --prod --ignore-scripts
 ENV TZ=Europe/Berlin
