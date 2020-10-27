@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MqttModule } from 'ngx-mqtt';
 import { environment } from '../environments/environment';
 
@@ -11,6 +12,7 @@ import { environment } from '../environments/environment';
   imports: [
     BrowserModule,
     HttpClientModule,
+    ReactiveFormsModule,
     MqttModule.forRoot({
       hostname: environment.env.PUBLIC_ENDPOINT.replace('http://', ''),
       port: 3333,

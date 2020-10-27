@@ -3,6 +3,7 @@ import { HttpService } from './http.service';
 import { IMqttMessage } from 'ngx-mqtt';
 import { EventMqttService } from './event-mqtt.service';
 import { Subscription } from 'rxjs';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'smart-home-conx-root',
@@ -13,6 +14,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private subscription: Subscription;
 
+  speachText = new FormControl('');
+
   constructor(
     private httpService: HttpService,
     private eventMqttService: EventMqttService
@@ -22,7 +25,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // this.httpService.get();
 
-    this.subscription = this.eventMqttService.observe('$SYS/#')
+    this.subscription = this.eventMqttService.observe('devices/+/version')
       .subscribe((data: IMqttMessage) => {
         console.log(data.payload.toString());
       });
@@ -30,6 +33,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   sendMessage(): void {
     this.eventMqttService.publish('ESP_7888034/movement', 'foo').subscribe();
+  }
+
+  speak(): void {
+    this.httpService.get(this.speachText.value);
   }
 
   ngOnDestroy(): void {
