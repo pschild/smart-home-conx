@@ -1,24 +1,45 @@
 import * as express from 'express';
+import { Application } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import * as dotenv from 'dotenv';
+import { log, isAuthorized } from '@smart-home-conx/utils';
 
 dotenv.config();
 
-const API_GATEWAY_PORT = 3333;
 const MQTT_BROKER_TARGET = `${process.env.PUBLIC_ENDPOINT}:1884`;
 
 const routes = [
   {
-    "route": "/adesso",
+    "route": "/commuter",
     "address": "http://adesso-commuter-server:9062"
   },
   {
     "route": "/alexa",
     "address": "http://alexa-connector:9072"
+  },
+  {
+    "route": "/ota",
+    "address": "http://esp-update-server:9042"
   }
 ];
 
-const app = express();
+const app: Application = express();
+const port = 3333;
+
+app.use((req, res, next) => {
+  if (!isAuthorized(req)) {
+    log(`Unauthorized request detected!
+      hostname=${req.hostname}
+      ip=${req.ip}
+      originalUrl=${req.originalUrl}
+      user-agent=${req.headers['user-agent']}
+      auth=${req.headers['authorization']}
+    `);
+    return res.status(401).send(`Not authorized`);
+  }
+  return next();
+});
+
 for (const route of routes) {
   app.use(route.route,
     createProxyMiddleware({
@@ -43,5 +64,6 @@ const wsProxy = createProxyMiddleware({
 });
 app.use(wsProxy);
 
-const server = app.listen(API_GATEWAY_PORT);
-server.on('upgrade', wsProxy.upgrade);
+app
+  .listen(port, () => log(`running at http://localhost:${port}`))
+  .on('upgrade', wsProxy.upgrade);
