@@ -11,6 +11,16 @@ services:
       - "1884:1884"
     restart: always
 
+  api-gateway:
+    image: api-gateway
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "3333:3333"
+    restart: always
+
   esp-pir-manager:
     image: esp-pir-manager
     build:

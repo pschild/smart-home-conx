@@ -7,5 +7,6 @@ module.exports = {
     '<rootDir>/apps/esp-update-server',
     '<rootDir>/apps/adesso-commuter-server',
     '<rootDir>/apps/alexa-connector',
+    '<rootDir>/apps/api-gateway',
   ],
 };

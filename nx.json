@@ -43,6 +43,9 @@
     },
     "alexa-connector": {
       "tags": []
+    },
+    "api-gateway": {
+      "tags": []
     }
   }
 }

@@ -12,12 +12,12 @@ This project was generated using [Nx](https://nx.dev).
 
 ## Helpful commands
 
-Run `ng g @nrwl/angular:app my-app` to generate an angular application.
-Run `ng g @nrwl/angular:lib my-lib` to generate an angular library.
+Run `nx g @nrwl/angular:app my-app` to generate an angular application.
+Run `nx g @nrwl/angular:lib my-lib` to generate an angular library.
 
-Run `ng g @nrwl/node:app my-app` to generate a node application.
-Run `ng g @nrwl/node:lib my-lib` to generate a node library.
+Run `nx g @nrwl/node:app my-app` to generate a node application.
+Run `nx g @nrwl/node:lib my-lib` to generate a node library.
 
-Run `ng g @nrwl/express:app my-app` to generate an express application.
+Run `nx g @nrwl/express:app my-app` to generate an express application.
 
-Run `ng g @nrwl/nest:app my-app` to generate a nest application.
+Run `nx g @nrwl/nest:app my-app` to generate a nest application.

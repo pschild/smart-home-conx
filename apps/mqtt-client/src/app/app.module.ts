@@ -13,7 +13,7 @@ import { environment } from '../environments/environment';
     HttpClientModule,
     MqttModule.forRoot({
       hostname: environment.env.PUBLIC_ENDPOINT.replace('http://', ''),
-      port: 1884,
+      port: 3333,
       path: '',
       protocol: 'ws',
       clientId: 'mqtt-client',
