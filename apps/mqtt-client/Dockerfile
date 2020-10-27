@@ -3,7 +3,7 @@ FROM node:14-alpine as builder
 ######################################################################
 WORKDIR /app
 COPY package.json yarn.lock decorate-angular-cli.js ./
-RUN npm install
+RUN export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true && npm install
 COPY . .
 RUN npm run build:mqtt-client -- --prod
 
