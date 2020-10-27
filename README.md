@@ -4,13 +4,13 @@ This project was generated using [Nx](https://nx.dev).
 
 [Nx Documentation](https://nx.dev/angular)
 
-## Setup
+## Development
 
 1. Copy .env.template to .env and provide necessary credentials and secrets.
 2. Run `docker-compose up -d` to build and start all services. Run `docker-compose up -d --build <APP>` to run and rebuild a specific service.
 3. During development, you can start a single service by running `npm run start:<SERVICE>` or build it by running `npm run build:<SERVICE>`.
 
-## Helpful commands
+### Helpful commands
 
 Run `nx g @nrwl/angular:app my-app` to generate an angular application.
 Run `nx g @nrwl/angular:lib my-lib` to generate an angular library.
@@ -21,3 +21,17 @@ Run `nx g @nrwl/node:lib my-lib` to generate a node library.
 Run `nx g @nrwl/express:app my-app` to generate an express application.
 
 Run `nx g @nrwl/nest:app my-app` to generate a nest application.
+
+## Production
+
+### Install from scratch (Untested yet!)
+
+Use the script `install.sh` to setup everything from scratch (after a fresh installation of Raspbian).  
+Call the script and follow the instructions. The script will
+  - ensure that you change your password after fresh installation,
+  - update your system packages,
+  - install docker, docker-compose (+ dependencies), git (+ config),
+  - create the necessary folder structure,
+  - clone necessary repository,
+  - prepare env file
+  - and finally run the services.
