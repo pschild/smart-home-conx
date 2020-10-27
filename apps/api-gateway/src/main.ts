@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as cors from 'cors';
 import { Application } from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import * as dotenv from 'dotenv';
@@ -24,6 +25,7 @@ const routes = [
 ];
 
 const app: Application = express();
+app.use(cors());
 const port = 3333;
 
 app.use((req, res, next) => {
