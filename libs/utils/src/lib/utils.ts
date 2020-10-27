@@ -14,14 +14,13 @@ export function log(logMessage: string): void {
 
 export function isAuthorized(request: Request): boolean {
   console.log('checking authorization...');
-  return true;
-  // const authToken = request.header('Authorization');
-  // if (!authToken) {
-  //   return false;
-  // }
-  // const authTokenWithoutPrefix = authToken.replace(/^Basic /, '');
-  // const authTokenFromServerEnvironment = Buffer.from(`${process.env.SERVICE_USER}:${process.env.SERVICE_PASSWORD}`).toString('base64');
-  // return authTokenWithoutPrefix === authTokenFromServerEnvironment;
+  const authToken = request.header('Authorization');
+  if (!authToken) {
+    return false;
+  }
+  const authTokenWithoutPrefix = authToken.replace(/^Basic /, '');
+  const authTokenFromServerEnvironment = Buffer.from(`${process.env.SERVICE_USER}:${process.env.SERVICE_PASSWORD}`).toString('base64');
+  return authTokenWithoutPrefix === authTokenFromServerEnvironment;
 }
 
 export function isDocker(): boolean {

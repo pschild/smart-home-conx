@@ -16,12 +16,12 @@ const mqttClient = mqtt.connect('http://mqtt-broker:1883', { clientId: 'adesso-c
 const app: Application = express();
 const port = 9062;
 
-app.use((req, res, next) => {
-  if (!isAuthorized(req)) {
-    return res.status(401).send(`Not authorized`);
-  }
-  return next();
-});
+// app.use((req, res, next) => {
+//   if (!isAuthorized(req)) {
+//     return res.status(401).send(`Not authorized`);
+//   }
+//   return next();
+// });
 
 const screenshotsFolderPath = path.join(__dirname, 'assets', 'screenshots');
 app.use('/screenshots', express.static(screenshotsFolderPath), serveIndex(screenshotsFolderPath));

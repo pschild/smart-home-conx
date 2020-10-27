@@ -17,12 +17,12 @@ mqttClient.subscribe('alexa/in/speak');
 const app: Application = express();
 const port = 9072;
 
-app.use((req, res, next) => {
-  if (!isAuthorized(req)) {
-    return res.status(401).send(`Not authorized`);
-  }
-  return next();
-});
+// app.use((req, res, next) => {
+//   if (!isAuthorized(req)) {
+//     return res.status(401).send(`Not authorized`);
+//   }
+//   return next();
+// });
 
 function execCommand(device: string, command: { action: 'speak' | 'automation', param: string }): Observable<string> {
   return new Observable<string>(subscriber => {
