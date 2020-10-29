@@ -18,8 +18,10 @@ export class HttpService {
       })
     };
 
-    const formattedSpeachText = encodeURI(speachText);
-    this.httpClient.get(`${environment.env.PUBLIC_ENDPOINT}:3333/alexa/speak/${formattedSpeachText}`, httpOptions).subscribe(console.log);
+    // const formattedSpeachText = encodeURI(speachText);
+    // this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/alexa/speak/${formattedSpeachText}`, httpOptions).subscribe(console.log);
+    console.log(`Endpoint=${window.location.protocol}//${window.location.hostname}:3333`);
+    this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/alexa/show-alexa-devices`, httpOptions).subscribe(console.log);
   }
 
 }

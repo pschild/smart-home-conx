@@ -7,7 +7,7 @@ import { log, isAuthorized } from '@smart-home-conx/utils';
 
 dotenv.config();
 
-const MQTT_BROKER_TARGET = `${process.env.PUBLIC_ENDPOINT}:1884`;
+const MQTT_BROKER_TARGET = `http://mqtt-broker:1884`;
 
 const routes = [
   {

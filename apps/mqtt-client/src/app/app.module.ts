@@ -5,7 +5,6 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MqttModule } from 'ngx-mqtt';
-import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -14,7 +13,7 @@ import { environment } from '../environments/environment';
     HttpClientModule,
     ReactiveFormsModule,
     MqttModule.forRoot({
-      hostname: environment.env.PUBLIC_ENDPOINT.replace('http://', ''),
+      hostname: window.location.hostname,
       port: 3333,
       path: '',
       protocol: 'ws',
