@@ -10,10 +10,9 @@ try {
   process.exit(0);
 }
 
-const PUBLIC_ENDPOINT = envContent.match(/PUBLIC_ENDPOINT=(.+)/)[1];
 const SERVICE_USER = envContent.match(/SERVICE_USER=(.+)/)[1];
 const SERVICE_PASSWORD = envContent.match(/SERVICE_PASSWORD=(.+)/)[1];
-const envTargetContent = { PUBLIC_ENDPOINT, SERVICE_USER, SERVICE_PASSWORD };
+const envTargetContent = { SERVICE_USER, SERVICE_PASSWORD };
 
 const envTargetPath = resolve(__dirname, 'src', 'environments', 'env.json');
 try {

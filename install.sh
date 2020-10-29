@@ -35,14 +35,12 @@ if [[ !($(which docker) && $(docker --version)) ]];
     cd smart-home-conx
     echo "Preparing env file..."
     echo "Please provide values for your secret env properties:"
-    read -p "PUBLIC_ENDPOINT (e.g. http://my-services-endpoint.com): " publicEndpointPrompt
     read -p "SERVICE_USER (e.g. me): " serviceUserPrompt
     read -p "SERVICE_PASSWORD (e.g. s3cr3t): " servicePasswordPrompt
     read -p "AMAZON_EMAIL (e.g. amazon_account@email.address): " amazonEmailPrompt
     read -p "AMAZON_PASSWORD (e.g. Very_Secret_Amazon_Account_Password): " amazonPasswordPrompt
     read -p "AMAZON_MFA_SECRET (e.g. 1234 5678 9ABC DEFG HIJK LMNO PQRS TUVW XYZ0 1234 5678 9ABC DEFG): " amazonMfaPrompt
     touch .env
-    echo "PUBLIC_ENDPOINT=${publicEndpointPrompt}" >> .env
     echo "SERVICE_USER=${serviceUserPrompt}" >> .env
     echo "SERVICE_PASSWORD=${servicePasswordPrompt}" >> .env
     echo "AMAZON_EMAIL=${amazonEmailPrompt}" >> .env
