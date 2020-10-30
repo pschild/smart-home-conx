@@ -1,25 +1,20 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../environments/environment';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpService {
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
 
-  get(speachText: string): void {
-    // TODO: interceptor
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic ' + btoa(`${environment.env.SERVICE_USER}:${environment.env.SERVICE_PASSWORD}`)
-      })
-    };
+  speak(speachText: string): Observable<any> {
+    return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/alexa/speak/${encodeURI(speachText)}`);
+  }
 
-    const formattedSpeachText = encodeURI(speachText);
-    this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/alexa/speak/${formattedSpeachText}`, httpOptions).subscribe(console.log);
+  commutingHistory(): Observable<any> {
+    return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/commuter/history`);
   }
 
 }

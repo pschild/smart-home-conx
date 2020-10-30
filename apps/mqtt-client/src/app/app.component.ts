@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpService } from './http.service';
 import { IMqttMessage } from 'ngx-mqtt';
 import { EventMqttService } from './event-mqtt.service';
-import { Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -10,9 +9,7 @@ import { FormControl } from '@angular/forms';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
-
-  private subscription: Subscription;
+export class AppComponent implements OnInit {
 
   speachText = new FormControl('');
 
@@ -23,12 +20,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.httpService.get();
+    this.eventMqttService.observe('devices/+/version')
+      .subscribe((data: IMqttMessage) => console.log('esp ping', data.payload.toString()));
 
-    this.subscription = this.eventMqttService.observe('devices/+/version')
-      .subscribe((data: IMqttMessage) => {
-        console.log(data.payload.toString());
-      });
+    this.eventMqttService.observe('adesso-commuter-server/commuting/#')
+      .subscribe((data: IMqttMessage) => console.log('commuting', data.payload.toString()));
   }
 
   sendMessage(): void {
@@ -36,13 +32,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   speak(): void {
-    this.httpService.get(this.speachText.value);
+    this.httpService.speak(this.speachText.value).subscribe(console.log);
   }
 
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  getCommutingHistory(): void {
+    this.httpService.commutingHistory().subscribe(console.log);
   }
 
 }

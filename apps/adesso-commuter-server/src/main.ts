@@ -16,6 +16,8 @@ const mqttClient = mqtt.connect('http://mqtt-broker:1883', { clientId: 'adesso-c
 const app: Application = express();
 const port = 9062;
 
+let HISTORY = [];
+
 // app.use((req, res, next) => {
 //   if (!isAuthorized(req)) {
 //     return res.status(401).send(`Not authorized`);
@@ -27,8 +29,7 @@ const screenshotsFolderPath = path.join(__dirname, 'assets', 'screenshots');
 app.use('/screenshots', express.static(screenshotsFolderPath), serveIndex(screenshotsFolderPath));
 
 app.get('/history', (req, res) => {
-  const content = fs.readFileSync(path.join(__dirname, 'history.log'));
-  res.status(200).send(content);
+  res.status(200).send(HISTORY);
 });
 
 app.get('/screenshot', (req, res) => {
@@ -63,8 +64,12 @@ app.get('/from/:latLngFrom/to/:latLngTo', async (req: Request, res: Response) =>
   }
 
   const minutesLeft = Math.min(...durations);
+
+  HISTORY.push({ minutesLeft, eta: add(new Date(), { minutes: minutesLeft }), datetime: new Date() });
+
   await mqttClient.publish('adesso-commuter-server/commuting/duration/minutes-left', minutesLeft.toString());
   await mqttClient.publish('adesso-commuter-server/commuting/duration/eta', format(add(new Date(), { minutes: minutesLeft }), 'HH:mm'));
+
   res.status(200).json({
     durations,
     average: durations.reduce((prev, curr) => prev + curr) / durations.length,
@@ -77,11 +82,23 @@ app.get('/commuting-state/:state', async (req: Request, res: Response) => {
   const newState = req.params.state;
   await mqttClient.publish('adesso-commuter-server/commuting/status', newState);
 
-  if (newState === 'START') {
-    await mqttClient.publish('adesso-commuter-server/commuting/status/start', format(new Date(), 'HH:mm'));
-  } else if (newState === 'END') {
-    await mqttClient.publish('adesso-commuter-server/commuting/status/end', format(new Date(), 'HH:mm'));
+  switch (newState) {
+    case 'START':
+      HISTORY.push({ state: newState, datetime: new Date() });
+      await mqttClient.publish('adesso-commuter-server/commuting/status/start', format(new Date(), 'HH:mm'));
+      break;
+    case 'END':
+      HISTORY = []; // reset
+      await mqttClient.publish('adesso-commuter-server/commuting/status/end', format(new Date(), 'HH:mm'));
+      break;
+    case 'CANCELLED':
+      HISTORY = []; // reset
+      await mqttClient.publish('adesso-commuter-server/commuting/status/cancelled', format(new Date(), 'HH:mm'));
+      break;
+    default:
+      throw new Error(`Unknown commuting state ${newState}`);
   }
+
   res.status(200).json({ newState });
 });
 
