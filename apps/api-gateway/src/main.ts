@@ -1,9 +1,12 @@
 import * as express from 'express';
 import * as cors from 'cors';
 import { Application } from 'express';
+import { json, urlencoded } from 'body-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import * as expressJwt from 'express-jwt';
 import * as dotenv from 'dotenv';
-import { log, isAuthorized } from '@smart-home-conx/utils';
+import { log } from '@smart-home-conx/utils';
+import { UnauthorizedError, authErrorHandler, authenticate } from '@smart-home-conx/auth';
 
 dotenv.config();
 
@@ -25,11 +28,19 @@ const routes = [
 ];
 
 const app: Application = express();
+app.use(urlencoded({ extended: false }));
+app.use(json());
 app.use(cors());
+app.use(expressJwt({ secret: process.env.SERVICE_SECRET, algorithms: ['HS256'] }).unless({ path: ['/authenticate'] }));
+
 const port = 3333;
 
-app.use((req, res, next) => {
-  if (!isAuthorized(req)) {
+app.post('/authenticate', (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const token = authenticate(username, password);
+    return res.json({ token });
+  } catch(err) {
     log(`Unauthorized request detected!
       hostname=${req.hostname}
       ip=${req.ip}
@@ -37,9 +48,8 @@ app.use((req, res, next) => {
       user-agent=${req.headers['user-agent']}
       auth=${req.headers['authorization']}
     `);
-    return res.status(401).send(`Not authorized`);
+    throw new UnauthorizedError(err.message);
   }
-  return next();
 });
 
 for (const route of routes) {
@@ -65,6 +75,8 @@ const wsProxy = createProxyMiddleware({
   }
 });
 app.use(wsProxy);
+
+app.use(authErrorHandler);
 
 app
   .listen(port, () => log(`running at http://localhost:${port}`))

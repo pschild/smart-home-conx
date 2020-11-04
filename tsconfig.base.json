@@ -18,7 +18,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@smart-home-conx/utils": ["libs/utils/src/index.ts"]
+      "@smart-home-conx/utils": ["libs/utils/src/index.ts"],
+      "@smart-home-conx/auth": ["libs/auth/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
