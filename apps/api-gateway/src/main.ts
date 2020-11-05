@@ -37,17 +37,23 @@ const port = 3333;
 
 app.post('/authenticate', (req, res) => {
   const { username, password } = req.body;
-  try {
-    const token = authenticate(username, password);
-    return res.json({ token });
-  } catch(err) {
-    log(`Unauthorized request detected!
+
+  log(`Try to authenticate:
       hostname=${req.hostname}
       ip=${req.ip}
       originalUrl=${req.originalUrl}
       user-agent=${req.headers['user-agent']}
       auth=${req.headers['authorization']}
-    `);
+      username=${username}
+      password=${password}
+  `);
+
+  try {
+    const token = authenticate(username, password);
+    log(`Success! Token: ${token}`);
+    return res.json({ token });
+  } catch(err) {
+    log(`Unauthorized request detected! Error: ${err.message}`);
     throw new UnauthorizedError(err.message);
   }
 });
