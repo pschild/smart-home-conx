@@ -28,6 +28,7 @@ FROM node:14-alpine
 WORKDIR /app
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY .env /app/.env
+COPY ssh /app/ssh
 # specific:
 COPY --from=builder /app/dist/apps/api-gateway /app
 # specific:

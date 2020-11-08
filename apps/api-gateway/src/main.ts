@@ -1,3 +1,5 @@
+import * as https from 'https';
+import * as fs from 'fs';
 import * as express from 'express';
 import * as cors from 'cors';
 import { Application } from 'express';
@@ -7,6 +9,7 @@ import * as expressJwt from 'express-jwt';
 import * as dotenv from 'dotenv';
 import { log } from '@smart-home-conx/utils';
 import { UnauthorizedError, authErrorHandler, authenticate } from '@smart-home-conx/auth';
+import { addMinutes } from 'date-fns';
 
 dotenv.config();
 
@@ -26,6 +29,12 @@ const routes = [
     "address": "http://esp-update-server:9042"
   }
 ];
+
+// Certificate
+const key = fs.readFileSync('../ssh/privkey.pem', 'utf8');
+const cert = fs.readFileSync('../ssh/cert.pem', 'utf8');
+const ca = fs.readFileSync('../ssh/chain.pem', 'utf8');
+const credentials = { key, cert, ca };
 
 const app: Application = express();
 app.use(urlencoded({ extended: false }));
@@ -51,7 +60,7 @@ app.post('/authenticate', (req, res) => {
   try {
     const token = authenticate(username, password);
     log(`Success! Token: ${token}`);
-    return res.json({ token });
+    return res.json({ token, expiresAt: addMinutes(new Date(), 15) });
   } catch(err) {
     log(`Unauthorized request detected! Error: ${err.message}`);
     throw new UnauthorizedError(err.message);
@@ -84,6 +93,8 @@ app.use(wsProxy);
 
 app.use(authErrorHandler);
 
-app
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer
   .listen(port, () => log(`running at http://localhost:${port}`))
   .on('upgrade', wsProxy.upgrade);
