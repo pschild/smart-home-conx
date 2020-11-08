@@ -50,7 +50,8 @@ $ cd smart-home-connx
 $ cp /etc/letsencrypt/live/<URL>/cert.pem ./ssh  
 $ cp /etc/letsencrypt/live/<URL>/privkey.pem ./ssh  
 $ cp /etc/letsencrypt/live/<URL>/chain.pem ./ssh  
-$ exit
+$ exit  
+$ sudo chown -R pi:pi ssh/
 
 ## Clean up
 

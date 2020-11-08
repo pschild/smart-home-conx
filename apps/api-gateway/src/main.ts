@@ -31,9 +31,9 @@ const routes = [
 ];
 
 // Certificate
-const key = fs.readFileSync('../ssh/privkey.pem', 'utf8');
-const cert = fs.readFileSync('../ssh/cert.pem', 'utf8');
-const ca = fs.readFileSync('../ssh/chain.pem', 'utf8');
+const key = fs.readFileSync('./ssh/privkey.pem', 'utf8');
+const cert = fs.readFileSync('./ssh/cert.pem', 'utf8');
+const ca = fs.readFileSync('./ssh/chain.pem', 'utf8');
 const credentials = { key, cert, ca };
 
 const app: Application = express();
