@@ -7,7 +7,7 @@ Forward port 80 (external) to port 8090 (internal):
 ## Installing and running letsencrypt
 
 $ git clone https://github.com/letsencrypt/letsencrypt  
-$ ./letsencrypt-auto certonly --manual --email <YOUR_EMAIL> -d <URL>  
+$ ./letsencrypt-auto certonly --manual --email <YOUR_EMAIL> -d \<URL\>  
 
 Results in something like:
 
@@ -29,14 +29,14 @@ At this point, don't press Enter, but continue with next step in another termina
 3. $ docker exec -it letsencrypt-authenticator sh  
 
   $ mkdir -p .well-known/acme-challenge  
-  $ echo "<CONTENT>" > .well-known/acme-challenge/<FILENAME>  
+  $ echo "\<CONTENT\>" > .well-known/acme-challenge/\<FILENAME\>  
   $ exit  
 
-4. Call http://<URL>/.well-known/acme-challenge/<FILENAME> to make sure that the file can be reached from outside.
+4. Call http://\<URL\>/.well-known/acme-challenge/\<FILENAME\> to make sure that the file can be reached from outside.
 
 ## Finalizing letsencrypt
 
-If the generation of the certificate succeeded, you will be shown sometging like
+If the generation of the certificate succeeded, you will be shown something like
 
 > Congratulations! Your certificate and chain have been saved at:  
 > /etc/letsencrypt/live/\<URL\>/fullchain.pem  
@@ -47,9 +47,10 @@ Copy the generated privkey and cert:
 
 $ sudo -i  
 $ cd smart-home-connx  
-$ cp /etc/letsencrypt/live/<URL>/cert.pem ./ssh  
-$ cp /etc/letsencrypt/live/<URL>/privkey.pem ./ssh  
-$ cp /etc/letsencrypt/live/<URL>/chain.pem ./ssh  
+$ cp /etc/letsencrypt/live/\<URL\>/cert.pem ./ssh  
+$ cp /etc/letsencrypt/live/\<URL\>/privkey.pem ./ssh  
+$ cp /etc/letsencrypt/live/\<URL\>/chain.pem ./ssh  
+$ cp /etc/letsencrypt/live/\<URL\>/fullchain.pem ./ssh  
 $ exit  
 $ sudo chown -R pi:pi ssh/
 
