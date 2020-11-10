@@ -10,10 +10,12 @@ import * as expressJwt from 'express-jwt';
 import * as dotenv from 'dotenv';
 import { log } from '@smart-home-conx/utils';
 import { UnauthorizedError, authErrorHandler, authenticate } from '@smart-home-conx/auth';
-import { addMinutes } from 'date-fns';
+import { addMilliseconds } from 'date-fns';
 import { environment } from './environments/environment';
 
 dotenv.config();
+
+const SESSION_LIFETIME: number = 1 * 24 * 60 * 60 * 1000; // 1 day, given in ms
 
 const MQTT_BROKER_TARGET = `http://mqtt-broker:1884`;
 
@@ -54,9 +56,9 @@ app.post('/authenticate', (req, res) => {
   `);
 
   try {
-    const token = authenticate(username, password);
+    const token = authenticate(username, password, SESSION_LIFETIME);
     log(`Success! Token: ${token}`);
-    return res.json({ token, expiresAt: addMinutes(new Date(), 15) });
+    return res.json({ token, expiresAt: addMilliseconds(new Date(), SESSION_LIFETIME) });
   } catch(err) {
     log(`Unauthorized request detected! Error: ${err.message}`);
     throw new UnauthorizedError(err.message);

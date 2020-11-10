@@ -47,8 +47,12 @@ if [[ !($(which docker) && $(docker --version)) ]];
     echo "AMAZON_PASSWORD=${amazonPasswordPrompt}" >> .env
     echo "AMAZON_MFA_SECRET=${amazonMfaPrompt}" >> .env
 
-    echo "Starting services..."
-    cd ../docker-infrastructure
-    sudo docker-compose up -d
+    echo "Aborting, because manual action for installing SSL certs is necessary!"
+
+    # cd ../docker-infrastructure
+    # echo "Building containers for PRODUCTION..."
+    # sudo docker-compose build --build-arg PRODUCTION=true
+    # echo "Starting containers..."
+    # sudo docker-compose up -d
 
 fi

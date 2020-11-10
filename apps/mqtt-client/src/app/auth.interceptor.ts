@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../environments/environment';
+import { AuthenticationService } from './authentication.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor() {}
+  constructor(private authenticationService: AuthenticationService) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log('intercepted');
-    request = request.clone({
-      setHeaders: {
-        Authorization: `Basic ${btoa(`${environment.env.SERVICE_USER}:${environment.env.SERVICE_PASSWORD}`)}`
-      }
-    });
+    if (this.authenticationService.isLoggedIn()) {
+      const token = this.authenticationService.getToken();
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+
     return next.handle(request);
   }
 }

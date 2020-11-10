@@ -1,10 +1,8 @@
-<button (click)="sendMessage()">Send ESP_7888034/movement</button>
+<nav>
+  <div>
+    <a routerLink="/">Playground</a>
+    <a (click)="logout()">Logout</a>
+  </div>
+</nav>
 
-<br/>
-
-<input type="text" [formControl]="speachText">
-<button (click)="speak()">Speak</button>
-
-<br/>
-
-<button (click)="getCommutingHistory()">Get Commuting History</button>
+<router-outlet></router-outlet>
