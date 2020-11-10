@@ -4,6 +4,7 @@ import * as path from 'path';
 import { findBinaryForUpdate } from './app/binary.provider';
 import { log, isAuthorized } from '@smart-home-conx/utils';
 import * as dotenv from 'dotenv';
+import { environment } from './environments/environment';
 
 dotenv.config();
 
@@ -79,4 +80,5 @@ app.get('/ota', async (req: Request, res: Response) => {
 
 app.listen(port, () => {
   log(`running at http://localhost:${port}`);
+  log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
 });

@@ -5,6 +5,7 @@ import { getHours } from 'date-fns';
 import { forkJoin, fromEvent } from 'rxjs';
 import { filter, map, mergeMap, tap, throttleTime } from 'rxjs/operators';
 import { log, ofTopicEquals } from '@smart-home-conx/utils';
+import { environment } from './environments/environment';
 
 const app: Application = express();
 const port = 9052;
@@ -38,5 +39,6 @@ mqttClient.on('connect', () => {
 
     app.listen(port, () => {
         log(`running at http://localhost:${port}`);
+        log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
     });
 });

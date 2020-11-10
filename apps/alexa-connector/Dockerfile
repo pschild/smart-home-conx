@@ -12,7 +12,8 @@ WORKDIR /app
 COPY . .
 COPY --from=all-deps /app/node_modules /app/node_modules
 # specific:
-RUN npm run build:alexa-connector -- --prod
+ARG PRODUCTION
+RUN if [ "$PRODUCTION" = "true" ]; then npm run build:alexa-connector -- --prod; else npm run build:alexa-connector; fi
 
 ######################################################################
 FROM node:14-alpine as prod-deps

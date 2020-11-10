@@ -1,3 +1,4 @@
+import * as http from 'http';
 import * as https from 'https';
 import * as fs from 'fs';
 import * as express from 'express';
@@ -10,6 +11,7 @@ import * as dotenv from 'dotenv';
 import { log } from '@smart-home-conx/utils';
 import { UnauthorizedError, authErrorHandler, authenticate } from '@smart-home-conx/auth';
 import { addMinutes } from 'date-fns';
+import { environment } from './environments/environment';
 
 dotenv.config();
 
@@ -29,12 +31,6 @@ const routes = [
     "address": "http://esp-update-server:9042"
   }
 ];
-
-// Certificate
-const key = fs.readFileSync('./ssh/privkey.pem', 'utf8');
-const cert = fs.readFileSync('./ssh/cert.pem', 'utf8');
-const ca = fs.readFileSync('./ssh/chain.pem', 'utf8');
-const credentials = { key, cert, ca };
 
 const app: Application = express();
 app.use(urlencoded({ extended: false }));
@@ -93,8 +89,21 @@ app.use(wsProxy);
 
 app.use(authErrorHandler);
 
-const httpsServer = https.createServer(credentials, app);
+let server;
+if (environment.production) {
+  const key = fs.readFileSync('./ssh/privkey.pem', 'utf8');
+  const cert = fs.readFileSync('./ssh/cert.pem', 'utf8');
+  const ca = fs.readFileSync('./ssh/chain.pem', 'utf8');
+  const credentials = { key, cert, ca };
+  server = https.createServer(credentials, app);
+} else {
+  server = http.createServer(app);
+}
 
-httpsServer
-  .listen(port, () => log(`running at http://localhost:${port}`))
+server
+  .listen(port, () => {
+    log(`running at http://localhost:${port}`);
+    log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+    environment.production ? log(`SSL enabled`) : log(`SSL diabled`);
+  })
   .on('upgrade', wsProxy.upgrade);

@@ -12,7 +12,8 @@ WORKDIR /app
 COPY . .
 COPY --from=all-deps /app/node_modules /app/node_modules
 # specific:
-RUN npm run build:mqtt-broker -- --prod
+ARG PRODUCTION
+RUN if [ "$PRODUCTION" = "true" ]; then npm run build:mqtt-broker -- --prod; else npm run build:mqtt-broker; fi
 
 ######################################################################
 FROM node:14-alpine as prod-deps

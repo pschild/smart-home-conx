@@ -6,6 +6,7 @@ import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
 import { log, ofTopicEquals, isAuthorized } from '@smart-home-conx/utils';
 import * as dotenv from 'dotenv';
+import { environment } from './environments/environment';
 
 dotenv.config();
 
@@ -97,5 +98,6 @@ mqttClient.on('connect', () => {
 
   app.listen(port, () => {
     log(`running at http://localhost:${port}`);
+    log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
   });
 });

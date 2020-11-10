@@ -4,6 +4,7 @@ import * as http from 'http';
 import * as aedes from 'aedes';
 import * as ws from 'websocket-stream';
 import { format } from 'date-fns';
+import { environment } from './environments/environment';
 
 // const mongodb = require('mongodb');
 // const mongoUri = `mongodb://192.168.178.28:27017/`;
@@ -18,12 +19,14 @@ const PORT_WS = 1884;
 // start http server
 httpServer.listen(PORT_HTTP, () => {
   log(`HTTP server listening on port ${PORT_HTTP}`);
+  log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
 });
 
 // start ws server
 ws.createServer({ server: wsServer }, instance.handle as any);
 wsServer.listen(PORT_WS, () => {
   log(`WS server listening on port ${PORT_WS}`);
+  log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
 });
 
 instance.on('subscribe', (subscriptions, client) => {

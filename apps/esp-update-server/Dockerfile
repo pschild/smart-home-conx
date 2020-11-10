@@ -12,7 +12,8 @@ WORKDIR /app
 COPY . .
 COPY --from=all-deps /app/node_modules /app/node_modules
 # specific:
-RUN npm run build:esp-update-server -- --prod
+ARG PRODUCTION
+RUN if [ "$PRODUCTION" = "true" ]; then npm run build:esp-update-server -- --prod; else npm run build:esp-update-server; fi
 
 ######################################################################
 FROM node:14-alpine as prod-deps

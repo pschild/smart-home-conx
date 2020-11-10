@@ -74,6 +74,7 @@ services:
       dockerfile: apps/mqtt-client/Dockerfile
     container_name: mqtt-client
     ports:
+      - "9080:80"
       - "9082:443"
     restart: always
 

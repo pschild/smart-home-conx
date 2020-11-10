@@ -8,6 +8,7 @@ import * as mqtt from 'async-mqtt';
 import { format, add } from 'date-fns';
 import { log, isAuthorized } from '@smart-home-conx/utils';
 import * as dotenv from 'dotenv';
+import { environment } from './environments/environment';
 
 dotenv.config();
 
@@ -115,6 +116,7 @@ mqttClient.on('connect', () => {
   log(`connected with MQTT broker`);
   app.listen(port, () => {
     log(`running at http://localhost:${port}`);
+    log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
   });
 });
 
