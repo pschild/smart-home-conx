@@ -15,7 +15,7 @@ import { environment } from './environments/environment';
 
 dotenv.config();
 
-const SESSION_LIFETIME: number = 1 * 24 * 60 * 60 * 1000; // 1 day, given in ms
+const TOKEN_LIFETIME: number = 1 * 24 * 60 * 60 * 1000; // 1 day, given in ms
 
 const MQTT_BROKER_TARGET = `http://mqtt-broker:1884`;
 
@@ -56,9 +56,9 @@ app.post('/authenticate', (req, res) => {
   `);
 
   try {
-    const token = authenticate(username, password, SESSION_LIFETIME);
+    const token = authenticate(username, password, TOKEN_LIFETIME);
     log(`Success! Token: ${token}`);
-    return res.json({ token, expiresAt: addMilliseconds(new Date(), SESSION_LIFETIME) });
+    return res.json({ token, expiresAt: addMilliseconds(new Date(), TOKEN_LIFETIME) });
   } catch(err) {
     log(`Unauthorized request detected! Error: ${err.message}`);
     throw new UnauthorizedError(err.message);

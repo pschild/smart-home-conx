@@ -8,10 +8,10 @@ export function authErrorHandler(err, req, res, next): any {
   return res.status(500).json({ message: err.message });
 }
 
-export function authenticate(username: string, password: string, sessionLifetime: number): string | undefined {
+export function authenticate(username: string, password: string, tokenLifetime: number): string | undefined {
   if (username === process.env.SERVICE_USER && password === process.env.SERVICE_PASSWORD) {
     const payload = { sub: process.env.SERVICE_USER, foo: 'bar' };
-    return jsonwebtoken.sign(payload, process.env.SERVICE_SECRET, { expiresIn: sessionLifetime });
+    return jsonwebtoken.sign(payload, process.env.SERVICE_SECRET, { expiresIn: tokenLifetime });
   } else {
     throw new UnauthorizedError();
   }
