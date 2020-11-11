@@ -1,37 +1,32 @@
+ARG SERVICE_NAME=esp-update-server
+
 ######################################################################
-FROM node:14-alpine as all-deps
+FROM node:14-alpine as build
 ######################################################################
 WORKDIR /app
+
 COPY package.json yarn.lock decorate-angular-cli.js ./
 RUN export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true && npm install
-
-######################################################################
-FROM node:14-alpine as builder
-######################################################################
-WORKDIR /app
 COPY . .
-COPY --from=all-deps /app/node_modules /app/node_modules
+
 # specific:
 ARG PRODUCTION
-RUN if [ "$PRODUCTION" = "true" ]; then npm run build:esp-update-server -- --prod; else npm run build:esp-update-server; fi
+ARG SERVICE_NAME
+RUN if [ "$PRODUCTION" = "true" ]; then npm run build:$SERVICE_NAME -- --prod; else npm run build:$SERVICE_NAME; fi
 
-######################################################################
-FROM node:14-alpine as prod-deps
-######################################################################
-WORKDIR /app
-COPY package.json package-lock.json /app/
-# RUN npm install --prod --ignore-scripts
-RUN npm ci --production --ignore-scripts && npm cache clean --force
+RUN npm run vendor
 
 ######################################################################
 FROM node:14-alpine
 ######################################################################
 WORKDIR /app
-COPY --from=prod-deps /app/node_modules /app/node_modules
+
 COPY .env /app/.env
+
 # specific:
-COPY --from=builder /app/dist/apps/esp-update-server /app
-# specific:
+ARG SERVICE_NAME
+COPY --from=build /app/dist/apps/$SERVICE_NAME/vendorApp /app
+
 RUN apk update && apk add tzdata
 ENV TZ=Europe/Berlin
-CMD ["node", "./main.js"]
+CMD ["node", "./index.js"]
