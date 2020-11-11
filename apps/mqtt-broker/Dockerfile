@@ -14,7 +14,7 @@ ARG PRODUCTION
 ARG SERVICE_NAME
 RUN if [ "$PRODUCTION" = "true" ]; then npm run build:$SERVICE_NAME -- --prod; else npm run build:$SERVICE_NAME; fi
 
-RUN npm run vendor
+RUN npm run ncc:$SERVICE_NAME
 
 ######################################################################
 FROM node:14-alpine
@@ -25,7 +25,7 @@ COPY .env /app/.env
 
 # specific:
 ARG SERVICE_NAME
-COPY --from=build /app/dist/apps/$SERVICE_NAME/vendorApp /app
+COPY --from=build /app/dist/apps/$SERVICE_NAME/vendor /app
 
 RUN apk update && apk add tzdata
 ENV TZ=Europe/Berlin

@@ -6,12 +6,35 @@ This project was generated using [Nx](https://nx.dev).
 
 ## Development
 
+### Setup
+
 1. Copy .env.template to .env and provide necessary credentials and secrets.  
+
+       SERVICE_USER:      username for authentication in api-gateway  
+       SERVICE_PASSWORD:  password for authentication in api-gateway  
+       SERVICE_SECRET:    secret (any string) used to generate and verify JWTs  
+       AMAZON_EMAIL:      email address used for Amazon log-in (see README in alexa-connector)  
+       AMAZON_PASSWORD:   password used for Amazon log-in (see README in alexa-connector)  
+       AMAZON_MFA_SECRET: MFA used for Amazon log-in (see README in alexa-connector)  
 2. ~~Run `docker-compose up -d` to build and start all services. Run `docker-compose up -d --build <APP>` to run and rebuild a specific service.~~  
-   Run `docker-compose build && docker-compose up -d` (or `npm run docker:start:all:dev`) to start all containers in **DEV** mode. Connections via SSL are not possible, so only use this for development on your local machine.  
+   Run
+   
+       docker-compose build && docker-compose up -d
+   
+   (or `npm run docker:start:all:dev`) to start all containers in **DEV** mode. Connections via SSL are not possible, so only use this for development on your local machine.  
    -- OR --  
-   Run `docker-compose build --build-arg PRODUCTION=true && docker-compose up -d` (or `npm run docker:start:all:prod`) to start all containers in **PROD** mode. This include SSL certificates.
+   Run
+   
+       docker-compose build --build-arg PRODUCTION=true && docker-compose up -d
+   
+   (or `npm run docker:start:all:prod`) to start all containers in **PROD** mode. This includes SSL certificates.
 3. During development, you can start a single service by running `npm run start:<SERVICE>` or build it by running `npm run build:<SERVICE>`.
+
+### ncc
+
+[ncc](https://github.com/vercel/ncc) is a "simple CLI for compiling a Node.js module into a single file, together with all its dependencies", so that no extra `node_modules` folder is necessary.  
+After building, each app will be ran through ncc and so compressed to a single `index.js`.  
+Use `npm run ncc:<APP>` to start ncc.
 
 ### Helpful commands
 
