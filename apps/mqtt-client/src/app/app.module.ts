@@ -18,7 +18,7 @@ import { environment } from '../environments/environment';
     MqttModule.forRoot({
       hostname: window.location.hostname,
       port: 3333,
-      path: '',
+      path: '/broker',
       protocol: environment.production ? 'wss' : 'ws',
       clientId: 'mqtt-client',
       // username: '',

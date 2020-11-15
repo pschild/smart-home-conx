@@ -87,7 +87,7 @@ const wsProxy = createProxyMiddleware({
     'X-Gateway-Secret': 's3cr3t'
   }
 });
-app.use(wsProxy);
+app.use('/broker', wsProxy);
 
 app.use(authErrorHandler);
 
