@@ -1,10 +1,22 @@
 <button (click)="sendMessage()">Send ESP_7888034/movement</button>
 
 <br/>
+<br/>
 
 <input type="text" [formControl]="speachText">
 <button (click)="speak()">Speak</button>
 
 <br/>
+<br/>
 
 <button (click)="getCommutingHistory()">Get Commuting History</button>
+
+<br/>
+<br/>
+
+<button (click)="triggerPioBuild()">Trigger PIO Build</button>
+<button (click)="killPioBuild()">Kill PIO Build</button>
+<br/>
+<textarea *ngIf="logMessages$ | async as logMessages" style="width: 100%; height: 400px;">
+  {{ logMessages }}
+</textarea>
