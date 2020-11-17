@@ -10,7 +10,7 @@ export class SocketService {
   private socket: Socket;
 
   constructor() {
-    this.socket = io('http://localhost:3333', { path: '/pio-ws' });
+    this.socket = io(`${window.location.protocol}//${window.location.hostname}:3333`, { path: '/pio-ws' });
     this.socket.on('connect', () => console.log('my ID:', this.socket.id));
   }
 
