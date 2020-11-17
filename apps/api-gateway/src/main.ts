@@ -1,6 +1,7 @@
 import * as http from 'http';
 import * as https from 'https';
 import * as fs from 'fs';
+import { Socket } from 'net';
 import * as express from 'express';
 import * as cors from 'cors';
 import { Application } from 'express';
@@ -16,8 +17,6 @@ import { environment } from './environments/environment';
 dotenv.config();
 
 const TOKEN_LIFETIME: number = 1 * 24 * 60 * 60 * 1000; // 1 day, given in ms
-
-const MQTT_BROKER_TARGET = `http://mqtt-broker:1884`;
 
 const routes = [
   {
@@ -79,15 +78,25 @@ for (const route of routes) {
   );
 }
 
-const wsProxy = createProxyMiddleware({
-  target: MQTT_BROKER_TARGET,
+const brokerProxy = createProxyMiddleware({
+  target: `http://mqtt-broker:1884`,
   ws: true,
   // auth: `${process.env.SERVICE_USER}:${process.env.SERVICE_PASSWORD}`,
   headers: {
     'X-Gateway-Secret': 's3cr3t'
   }
 });
-app.use('/broker', wsProxy);
+app.use('/broker', brokerProxy);
+
+const espUpdateServerProxy = createProxyMiddleware({
+  target: `http://esp-update-server:9042`,
+  ws: true,
+  // auth: `${process.env.SERVICE_USER}:${process.env.SERVICE_PASSWORD}`,
+  headers: {
+    'X-Gateway-Secret': 's3cr3t'
+  }
+});
+app.use('/pio-ws', espUpdateServerProxy);
 
 app.use(authErrorHandler);
 
@@ -108,4 +117,7 @@ server
     log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
     environment.production ? log(`SSL enabled`) : log(`SSL diabled`);
   })
-  .on('upgrade', wsProxy.upgrade);
+  .on('upgrade', (req: express.Request, socket: Socket, head: any) => {
+    brokerProxy.upgrade(req, socket, head);
+    espUpdateServerProxy.upgrade(req, socket, head);
+  });
