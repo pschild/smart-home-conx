@@ -9,7 +9,7 @@ import { json, urlencoded } from 'body-parser';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import * as expressJwt from 'express-jwt';
 import * as dotenv from 'dotenv';
-import { log } from '@smart-home-conx/utils';
+import { isDocker, log } from '@smart-home-conx/utils';
 import { UnauthorizedError, authErrorHandler, authenticate } from '@smart-home-conx/auth';
 import { addMilliseconds } from 'date-fns';
 import { environment } from './environments/environment';
@@ -20,16 +20,16 @@ const TOKEN_LIFETIME: number = 1 * 24 * 60 * 60 * 1000; // 1 day, given in ms
 
 const routes = [
   {
-    "route": "/commuter",
-    "address": "http://adesso-commuter-server:9062"
+    route: `/commuter`,
+    address: isDocker() ? `http://adesso-commuter-server:9062` : `http://localhost:9062`
   },
   {
-    "route": "/alexa",
-    "address": "http://alexa-connector:9072"
+    route: `/alexa`,
+    address: isDocker() ? `http://alexa-connector:9072` : `http://localhost:9072`
   },
   {
-    "route": "/ota",
-    "address": "http://esp-update-server:9042"
+    route: `/ota`,
+    address: isDocker() ? `http://esp-update-server:9042` : `http://localhost:9042`
   }
 ];
 
@@ -37,7 +37,7 @@ const app: Application = express();
 app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use(cors());
-app.use(expressJwt({ secret: process.env.SERVICE_SECRET, algorithms: ['HS256'] }).unless({ path: ['/authenticate'] }));
+app.use(expressJwt({ secret: process.env.SERVICE_SECRET, algorithms: ['HS256'] }).unless({ path: ['/authenticate', /\/pio-ws\/.*/] }));
 
 const port = 3333;
 
@@ -78,9 +78,8 @@ for (const route of routes) {
   );
 }
 
-const brokerProxy = createProxyMiddleware({
-  target: `http://mqtt-broker:1884`,
-  ws: true,
+const brokerProxy = createProxyMiddleware('/broker', {
+  target: isDocker() ? `ws://mqtt-broker:1884` : `ws://localhost:1884`,
   // auth: `${process.env.SERVICE_USER}:${process.env.SERVICE_PASSWORD}`,
   headers: {
     'X-Gateway-Secret': 's3cr3t'
@@ -88,15 +87,15 @@ const brokerProxy = createProxyMiddleware({
 });
 app.use('/broker', brokerProxy);
 
-const espUpdateServerProxy = createProxyMiddleware({
-  target: `http://esp-update-server:9042`,
+const espUpdateServerProxy = createProxyMiddleware('/pio-ws', {
+  target: isDocker() ? `http://esp-update-server:9042` : `http://localhost:9042`,
   ws: true,
   // auth: `${process.env.SERVICE_USER}:${process.env.SERVICE_PASSWORD}`,
   headers: {
     'X-Gateway-Secret': 's3cr3t'
   }
 });
-app.use('/pio-ws', espUpdateServerProxy);
+app.use(espUpdateServerProxy);
 
 app.use(authErrorHandler);
 
@@ -118,6 +117,6 @@ server
     environment.production ? log(`SSL enabled`) : log(`SSL diabled`);
   })
   .on('upgrade', (req: express.Request, socket: Socket, head: any) => {
+    // we need to proxy WebSockets for broker without initial http request, so we subscribe to the upgrade event manually
     brokerProxy.upgrade(req, socket, head);
-    espUpdateServerProxy.upgrade(req, socket, head);
   });
