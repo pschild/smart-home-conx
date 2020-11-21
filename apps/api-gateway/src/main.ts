@@ -37,29 +37,6 @@ const app: Application = express();
 
 const port = 3333;
 
-app.post('/authenticate', (req, res) => {
-  const { username, password } = req.body;
-
-  log(`Try to authenticate:
-      hostname=${req.hostname}
-      ip=${req.ip}
-      originalUrl=${req.originalUrl}
-      user-agent=${req.headers['user-agent']}
-      auth=${req.headers['authorization']}
-      username=${username}
-      password=${password}
-  `);
-
-  try {
-    const token = authenticate(username, password, TOKEN_LIFETIME);
-    log(`Success! Token: ${token}`);
-    return res.json({ token, expiresAt: addMilliseconds(new Date(), TOKEN_LIFETIME) });
-  } catch(err) {
-    log(`Unauthorized request detected! Error: ${err.message}`);
-    throw new UnauthorizedError(err.message);
-  }
-});
-
 for (const route of routes) {
   app.use(route.route,
     createProxyMiddleware({
@@ -102,6 +79,29 @@ app.use(urlencoded({ extended: false }));
 app.use(json());
 app.use(cors());
 app.use(expressJwt({ secret: process.env.SERVICE_SECRET, algorithms: ['HS256'] }).unless({ path: ['/authenticate', /\/pio-ws\/.*/] }));
+
+app.post('/authenticate', (req, res) => {
+  const { username, password } = req.body;
+
+  log(`Try to authenticate:
+      hostname=${req.hostname}
+      ip=${req.ip}
+      originalUrl=${req.originalUrl}
+      user-agent=${req.headers['user-agent']}
+      auth=${req.headers['authorization']}
+      username=${username}
+      password=${password}
+  `);
+
+  try {
+    const token = authenticate(username, password, TOKEN_LIFETIME);
+    log(`Success! Token: ${token}`);
+    return res.json({ token, expiresAt: addMilliseconds(new Date(), TOKEN_LIFETIME) });
+  } catch(err) {
+    log(`Unauthorized request detected! Error: ${err.message}`);
+    throw new UnauthorizedError(err.message);
+  }
+});
 
 app.use(authErrorHandler);
 
