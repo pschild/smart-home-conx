@@ -34,8 +34,6 @@ const routes = [
 ];
 
 const app: Application = express();
-app.use(cors());
-app.use(expressJwt({ secret: process.env.SERVICE_SECRET, algorithms: ['HS256'] }).unless({ path: ['/authenticate', /\/pio-ws\/.*/] }));
 
 const port = 3333;
 
@@ -102,6 +100,8 @@ app.use(espUpdateServerProxy);
 // see https://github.com/chimurai/http-proxy-middleware/issues/320
 app.use(urlencoded({ extended: false }));
 app.use(json());
+app.use(cors());
+app.use(expressJwt({ secret: process.env.SERVICE_SECRET, algorithms: ['HS256'] }).unless({ path: ['/authenticate', /\/pio-ws\/.*/] }));
 
 app.use(authErrorHandler);
 
