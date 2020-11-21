@@ -87,14 +87,18 @@
     "http-proxy-middleware": "^1.0.6",
     "jsonwebtoken": "^8.5.1",
     "ngx-mqtt": "^7.0.14",
+    "octonode": "^0.9.5",
     "puppeteer": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~6.5.5",
+    "semver": "^7.3.2",
     "serve-index": "^1.9.1",
+    "simple-git": "^2.23.0",
     "socket.io": "^3.0.1",
     "socket.io-client": "^3.0.1",
     "typescript-ioc": "^3.2.2",
     "websocket-stream": "^5.5.2",
+    "zip-lib": "^0.7.1",
     "zone.js": "^0.10.2"
   },
   "devDependencies": {

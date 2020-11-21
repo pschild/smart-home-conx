@@ -34,8 +34,6 @@ const routes = [
 ];
 
 const app: Application = express();
-app.use(urlencoded({ extended: false }));
-app.use(json());
 app.use(cors());
 app.use(expressJwt({ secret: process.env.SERVICE_SECRET, algorithms: ['HS256'] }).unless({ path: ['/authenticate', /\/pio-ws\/.*/] }));
 
@@ -72,6 +70,7 @@ for (const route of routes) {
       headers: {
         'X-Gateway-Secret': 's3cr3t'
       },
+      logLevel: 'debug',
       // remove the service name from path
       pathRewrite: (path, req) => path.replace(route.route, '')
     })
@@ -83,7 +82,8 @@ const brokerProxy = createProxyMiddleware('/broker', {
   // auth: `${process.env.SERVICE_USER}:${process.env.SERVICE_PASSWORD}`,
   headers: {
     'X-Gateway-Secret': 's3cr3t'
-  }
+  },
+  logLevel: 'debug'
 });
 app.use('/broker', brokerProxy);
 
@@ -93,9 +93,15 @@ const espUpdateServerProxy = createProxyMiddleware('/pio-ws', {
   // auth: `${process.env.SERVICE_USER}:${process.env.SERVICE_PASSWORD}`,
   headers: {
     'X-Gateway-Secret': 's3cr3t'
-  }
+  },
+  logLevel: 'debug'
 });
 app.use(espUpdateServerProxy);
+
+// put bodyParser after all proxy middlewares and routes without proxy after bodyParser
+// see https://github.com/chimurai/http-proxy-middleware/issues/320
+app.use(urlencoded({ extended: false }));
+app.use(json());
 
 app.use(authErrorHandler);
 

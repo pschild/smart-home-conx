@@ -18,7 +18,10 @@ export class HttpService {
   }
 
   triggerPioBuild(libName: string): Observable<any> {
-    return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/ota/build/run/${libName}`);
+    return this.httpClient.post(`${window.location.protocol}//${window.location.hostname}:3333/ota/build/run`, {
+      libName,
+      chipIds: [3356673, 3356430]
+    });
   }
 
   killPioBuild(): Observable<any> {

@@ -14,8 +14,14 @@
 <br/>
 <br/>
 
+<select multiple>
+  <option>#1 NodeMCU</option>
+  <option>#2 ESP01</option>
+  <option>#3 ESP12F</option>
+  <option>...</option>
+</select>
 <button (click)="triggerPioBuild()">Trigger PIO Build</button>
-<button (click)="killPioBuild()">Kill PIO Build</button>
+<button (click)="killPioBuild()">Kill active PIO Build</button>
 <br/>
 <textarea *ngIf="logMessages$ | async as logMessages" style="width: 100%; height: 400px;">
   {{ logMessages }}

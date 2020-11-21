@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { json } from 'body-parser';
 import { Application, Request, Response } from 'express';
 import * as http from 'http';
 import { Inject } from 'typescript-ioc';
@@ -9,6 +10,10 @@ import * as dotenv from 'dotenv';
 import { environment } from './environments/environment';
 import { PioBuildManager } from './app/pio/pio-build-manager';
 import { SocketManager } from './app/socket/socket-manager';
+import { GithubManager } from './app/github/github-manager';
+import { GitManager } from './app/git/git-manager';
+import { switchMap } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
 
 dotenv.config();
 
@@ -23,6 +28,12 @@ class EspUpdateServerApplication {
   @Inject
   socketManager: SocketManager;
 
+  @Inject
+  gitManager: GitManager;
+
+  @Inject
+  githubManager: GithubManager;
+
   constructor() {
     const app: Application = express();
 
@@ -34,6 +45,7 @@ class EspUpdateServerApplication {
     // });
 
     app.use(express.static(path.join(__dirname, 'binfiles')));
+    app.use(json());
 
     app.get('/', (req, res) => {
       // log(JSON.stringify(req.headers));
@@ -93,10 +105,24 @@ class EspUpdateServerApplication {
       }
     });
 
-    app.get('/build/run/:libName', async (req, res) => {
-      const runner = this.pioBuildManager.create(req.params.libName);
-      this.pioBuildManager.start(runner).subscribe({
-        error(err) { res.status(500).json({ error: err && err.message ? err.message : `PioRunner quit unexpectedly` }); },
+    app.post('/build/run', async (req, res) => {
+      if (this.pioBuildManager.isRunning()) {
+        return res.status(500).json({ error: 'Could not start build. Another build is already running.' });
+      }
+
+      const { libName, releaseType, chipIds } = req.body;
+
+      this.gitManager.cloneOrUpdate(libName).pipe(
+        switchMap(() => this.githubManager.getNextVersion(libName, releaseType)),
+        switchMap(nextVersion => {
+          const runner = this.pioBuildManager.create(libName, nextVersion, chipIds);
+          return forkJoin([of(nextVersion), this.pioBuildManager.start(runner)]);
+        }),
+        switchMap(([nextVersion, pioBuildResult]) => this.githubManager.createRelease(libName, nextVersion)),
+        switchMap(releaseId => this.githubManager.uploadArchive(libName, releaseId)),
+        switchMap(() => this.pioBuildManager.copyBinFiles(libName, chipIds))
+      ).subscribe({
+        error(err) { res.status(500).json({ error: err && err.message ? err.message : `Running build failed due to an unknown error.` }); },
         complete() { res.status(200).json({ success: true }); }
       });
     });

@@ -43,3 +43,21 @@ function hasDockerCGroup() {
     return false;
   }
 }
+
+// TODO: retrieve via http call and make configurable
+export interface EspConfig {
+  id: number;
+  model: string;
+  description?: string;
+  pioEnv: string;
+  chipId: number;
+}
+
+export const ESP_CONFIG: EspConfig[] = [
+  { id: 1, model: 'ESP-12F', description: 'Bewegungsmelder AM312, Schlafzimmer', pioEnv: 'esp12e', chipId: 3357047 },
+  { id: 2, model: 'ESP-12F', description: 'nicht verbaut', pioEnv: 'esp12e', chipId: 7888034 },
+  { id: 3, model: 'ESP-12F', description: 'nicht verbaut', pioEnv: 'esp12e', chipId: 3356673 },
+  { id: 4, model: 'ESP-12F', description: 'nicht verbaut', pioEnv: 'esp12e', chipId: 3356430 },
+  { id: 5, model: 'ESP-01', description: 'nicht verbaut', pioEnv: 'esp01_1m', chipId: 226047 },
+  { id: 6, model: 'NodeMCU', description: 'OTA Test', pioEnv: 'nodemcuv2', chipId: 750287 }
+];

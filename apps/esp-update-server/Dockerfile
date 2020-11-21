@@ -48,7 +48,7 @@ RUN ln -s ~/.platformio/penv/bin/platformio /usr/local/bin/platformio \
     && ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio \
     && ln -s ~/.platformio/penv/bin/piodebuggdb /usr/local/bin/piodebuggdb
 
-RUN cd .. && mkdir esp-projects && cd esp-projects && git clone https://github.com/pschild/esp-motion-sensor
+RUN cd .. && mkdir esp-projects
 
 COPY .env /app/.env
 

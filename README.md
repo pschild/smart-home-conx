@@ -16,6 +16,9 @@ This project was generated using [Nx](https://nx.dev).
        AMAZON_EMAIL:      email address used for Amazon log-in (see README in alexa-connector)  
        AMAZON_PASSWORD:   password used for Amazon log-in (see README in alexa-connector)  
        AMAZON_MFA_SECRET: MFA used for Amazon log-in (see README in alexa-connector)  
+       WIFI_SSID:         SSID of your WiFi passed to firmwares that are built with pio  
+       WIFI_PASS:         Password of your WiFi passed to firmwares that are built with pio  
+       GITHUB_ACCESS_TOKEN: tbd  
 2. ~~Run `docker-compose up -d` to build and start all services. Run `docker-compose up -d --build <APP>` to run and rebuild a specific service.~~  
    Run
    
