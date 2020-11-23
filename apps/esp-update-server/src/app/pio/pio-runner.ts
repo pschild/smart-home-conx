@@ -33,7 +33,7 @@ export class PioRunner {
           ...process.env,
           WIFI_SSID: process.env.WIFI_SSID,
           WIFI_PASS: process.env.WIFI_PASS,
-          FIRMWARE_VERSION: `v${this.version}`
+          FIRMWARE_VERSION: `${this.libName}_v${this.version}`
         }
       });
 

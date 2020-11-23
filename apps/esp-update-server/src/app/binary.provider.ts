@@ -3,7 +3,7 @@ import { promises as fsPromises } from 'fs';
 import { log } from '@smart-home-conx/utils';
 import { getEspBinaryPath } from './path.utils';
 
-export const findBinaryForUpdate = async (chipId: string): Promise<string | undefined> => {
+export const findBinaryForUpdate = async (chipId: string, currentVersion?: string): Promise<string | undefined> => {
   const chipFolderPath = path.resolve(getEspBinaryPath(), chipId);
   try {
     const binFilesInDirectory = (await fsPromises.readdir(chipFolderPath)).filter(fileName => fileName.match(/\.bin$/));
@@ -11,15 +11,34 @@ export const findBinaryForUpdate = async (chipId: string): Promise<string | unde
       log(`\tNo bin files found in ${chipFolderPath}`);
       return;
     }
+
     if (binFilesInDirectory.length > 1) {
       log(`\tMore than 1 *.bin file found in ${chipFolderPath}: ${binFilesInDirectory}`);
       return;
     }
-    return path.resolve(chipFolderPath, binFilesInDirectory[0]);
+
+    const onlyBinFileName = binFilesInDirectory[0];
+    if (isSameVersion(onlyBinFileName, currentVersion)) {
+      log(`\tNo other version available. Current: ${currentVersion}, found: ${onlyBinFileName}`);
+      return;
+    }
+
+    return path.resolve(chipFolderPath, onlyBinFileName);
   } catch (err) {
     log(`\tError reading directory ${chipFolderPath}: ${err}`);
   }
 };
+
+function isSameVersion(versionStr1: string, versionStr2: string): boolean {
+  const VERSION_PATTERN = /v?(\d+\.\d+\.\d+)/;
+
+  const versionNo1 = versionStr1.match(VERSION_PATTERN);
+  const versionNo2 = versionStr2.match(VERSION_PATTERN);
+
+  return versionNo1 && versionNo1.length
+    && versionNo2 && versionNo2.length
+    && versionNo1[0] === versionNo2[0];
+}
 
 export const originateFromEsp = headers => {
   return headers['user-agent']

@@ -40,7 +40,7 @@ export class PioBuildManager {
       const pioEnv = this.getConfigByChipId(chipId).pioEnv;
       const sourceFilePath = path.join(getPathToEspLib(libName), '.pio', 'build', pioEnv, 'firmware.bin');
       const targetDirPath = path.resolve(getEspBinaryPath(), chipId.toString());
-      const targetFilePath = path.join(targetDirPath, `${libName}-v${version}.bin`);
+      const targetFilePath = path.join(targetDirPath, `${libName}_v${version}.bin`);
 
       // Deletes directory contents if the directory is not empty. If the directory does not exist, it is created.
       fsx.emptyDirSync(targetDirPath);

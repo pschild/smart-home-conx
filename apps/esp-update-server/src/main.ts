@@ -59,7 +59,7 @@ class EspUpdateServerApplication {
       log(`ESP Chip ${chipId} is using version ${currentVersion}.`);
       log(`\tChecking for new version...`);
 
-      const pathToBinary: string = await findBinaryForUpdate(chipId);
+      const pathToBinary: string = await findBinaryForUpdate(chipId, currentVersion);
       if (pathToBinary) {
         log(`\tSending new binary at ${pathToBinary}...`);
         res.sendFile(pathToBinary, err => {
