@@ -27,9 +27,9 @@ export class GithubManager {
   }
 
   createRelease(libName: string, version: string): Observable<string> {
-    log(`creating release for Github...`);
     const repository = this.client.repo(`pschild/${libName}`);
     return new Observable(observer => {
+      log(`creating release for Github...`);
       repository.release({ name: `v${version}`, tag_name: version }, (_, release) => {
         observer.next(release.id);
         observer.complete();
@@ -38,16 +38,15 @@ export class GithubManager {
   }
 
   uploadArchive(libName: string, releaseId: string): Observable<any> {
-    log(`uploading archive to Github...`);
     const release = this.client.release(`pschild/${libName}`, releaseId);
     return new Observable(observer => {
+      log(`uploading archive to Github...`);
       const buildDirPath = path.join(isDocker() ? '' : '.', environment.espProjectsDir, libName, '.pio', 'build');
       const zipFilePath = path.join(isDocker() ? '' : '.', environment.espProjectsDir, libName, 'release.zip');
 
       if (!fs.existsSync(buildDirPath)) {
         throw new Error(`Could not find directory '${buildDirPath}' for upload`);
       }
-
       zip.archiveFolder(buildDirPath, zipFilePath)
         .then(() => fs.readFileSync(zipFilePath))
         .then(zipFile => release.uploadAssets(zipFile, { name: 'release.zip' }, (_, result) => {
@@ -60,7 +59,11 @@ export class GithubManager {
   private getLatestVersion(libName: string): Observable<string> {
     const repository = this.client.repo(`pschild/${libName}`);
     return new Observable(observer => {
-      repository.releases((_, releases) => {
+      repository.releases((err, releases) => {
+        if (err) {
+          return observer.error(new Error(`Error during version check: ${err.message}`));
+        }
+
         const liveReleases = releases
           .filter(release => !release.draft && !release.prerelease)
           .map(release => ({ id: release.id, tag_name: release.tag_name }));

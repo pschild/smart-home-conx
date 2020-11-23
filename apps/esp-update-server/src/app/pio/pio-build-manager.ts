@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import { EspConfig, ESP_CONFIG, isDocker, log } from '@smart-home-conx/utils';
-import { Observable, of, throwError } from 'rxjs';
+import { forkJoin, Observable, throwError } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { Singleton } from 'typescript-ioc';
 import { environment } from '../../environments/environment';
@@ -34,21 +34,32 @@ export class PioBuildManager {
     }
   }
 
-  copyBinFiles(libName: string, chipIds: number[]): Observable<any> {
-    log(`copy binaries...`);
+  copyBinFiles(libName: string, chipIds: number[], version: string): Observable<string[]> {
+    const copyTasks$: Observable<string>[] = [];
     for (const chipId of chipIds) {
       const pioEnv = this.getConfigByChipId(chipId).pioEnv;
       const sourceFilePath = path.join(this.buildPath(libName), '.pio', 'build', pioEnv, 'firmware.bin');
       const targetDirPath = path.resolve(__dirname, 'binfiles', chipId.toString());
-      const targetFilePath = path.join(targetDirPath, 'firmware.bin');
+      const targetFilePath = path.join(targetDirPath, `firmware-v${version}.bin`);
 
       // ensure that the target driectory exists
       fs.mkdirSync(targetDirPath, { recursive: true });
 
-      fs.copyFileSync(sourceFilePath, targetFilePath);
-      log(`copied ${sourceFilePath} to ${targetFilePath}`);
+      const copyTask$ = new Observable<string>(observer => {
+        fs.copyFile(sourceFilePath, targetFilePath, err => {
+          if (err) {
+            observer.error(err);
+          } else {
+            log(`copied ${sourceFilePath} to ${targetFilePath}`);
+            observer.next(targetFilePath);
+            observer.complete();
+          }
+        });
+      });
+
+      copyTasks$.push(copyTask$);
     }
-    return of(true);
+    return forkJoin(copyTasks$);
   }
 
   isRunning(): boolean {

@@ -12,8 +12,8 @@ import { PioBuildManager } from './app/pio/pio-build-manager';
 import { SocketManager } from './app/socket/socket-manager';
 import { GithubManager } from './app/github/github-manager';
 import { GitManager } from './app/git/git-manager';
-import { switchMap } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import { forkJoin, merge, concat } from 'rxjs';
 
 dotenv.config();
 
@@ -112,15 +112,23 @@ class EspUpdateServerApplication {
 
       const { libName, releaseType, chipIds } = req.body;
 
-      this.gitManager.cloneOrUpdate(libName).pipe(
-        switchMap(() => this.githubManager.getNextVersion(libName, releaseType)),
-        switchMap(nextVersion => {
-          const runner = this.pioBuildManager.create(libName, nextVersion, chipIds);
-          return forkJoin([of(nextVersion), this.pioBuildManager.start(runner)]);
-        }),
-        switchMap(([nextVersion, pioBuildResult]) => this.githubManager.createRelease(libName, nextVersion)),
-        switchMap(releaseId => this.githubManager.uploadArchive(libName, releaseId)),
-        switchMap(() => this.pioBuildManager.copyBinFiles(libName, chipIds))
+      const cloneOrUpdate$ = this.gitManager.cloneOrUpdate(libName);
+      const nextVersion$ = this.githubManager.getNextVersion(libName, releaseType);
+      const pioBuild$ = nextVersion => this.pioBuildManager.start(this.pioBuildManager.create(libName, nextVersion, chipIds));
+      const releaseAndArchive$ = nextVersion => this.githubManager.createRelease(libName, nextVersion).pipe(
+        mergeMap(releaseId => this.githubManager.uploadArchive(libName, releaseId))
+      )
+      const copyBinFiles$ = nextVersion => this.pioBuildManager.copyBinFiles(libName, chipIds, nextVersion);
+
+      /**
+       * START ───┬─── cloneOrUpdate$ ───┬──── pioBuild$ ───┬─── releaseAndArchive$ ───┬─── END
+       *          └─── nextVersion$ ─────┘                  └─── copyBinFiles$ ────────┘
+       */
+      forkJoin([cloneOrUpdate$, nextVersion$]).pipe(
+        mergeMap(([cloneOrUpdate, nextVersion]) => concat(
+          pioBuild$(nextVersion),
+          forkJoin([releaseAndArchive$(nextVersion), copyBinFiles$(nextVersion)])
+        ))
       ).subscribe({
         error(err) { res.status(500).json({ error: err && err.message ? err.message : `Running build failed due to an unknown error.` }); },
         complete() { res.status(200).json({ success: true }); }

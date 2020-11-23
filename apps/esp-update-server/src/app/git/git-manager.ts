@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import { from, Observable, throwError } from 'rxjs';
 import { Singleton } from 'typescript-ioc';
 import simpleGit, { SimpleGit } from 'simple-git';
-import { catchError } from 'rxjs/operators';
+import { PullResult } from 'simple-git/typings/response';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { isDocker, log } from '@smart-home-conx/utils';
 
@@ -15,21 +16,21 @@ export class GitManager {
     this.gitClient = simpleGit();
   }
 
-  cloneOrUpdate(libName: string): Observable<unknown> {
+  cloneOrUpdate(libName: string): Observable<string | PullResult> {
     const repoDir = this.buildPath(libName);
     if (!fs.existsSync(repoDir)) {
-      log(`Cloning repo...`);
       return from(
         this.gitClient.clone(`https://github.com/pschild/${libName}`, repoDir)
       ).pipe(
+        tap(() => log(`Cloning repo...`)),
         catchError(err => throwError(new Error(`Error during clone: ${err.message}`)))
       );
     } else {
-      log(`Repo exists. Pulling...`);
       return from(
         this.gitClient.cwd(repoDir)
           .then(() => this.gitClient.pull())
       ).pipe(
+        tap(() => log(`Repo exists. Pulling...`)),
         catchError(err => throwError(new Error(`Error during cwd/pull: ${err.message}`)))
       );
     }
