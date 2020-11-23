@@ -38,7 +38,7 @@ services:
       dockerfile: apps/esp-update-server/Dockerfile
     container_name: esp-update-server
     volumes:
-      - esp-binfiles:/app/binfiles
+      - esp-binaries:/esp-binaries
     ports:
       - "9042:9042"
     restart: always
@@ -79,7 +79,7 @@ services:
     restart: always
 
 volumes:
-  esp-binfiles:
-    name: esp-binfiles
+  esp-binaries:
+    name: esp-binaries
   amazon-env:
     name: amazon-env

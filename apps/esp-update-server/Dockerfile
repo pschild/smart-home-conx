@@ -48,7 +48,7 @@ RUN ln -s ~/.platformio/penv/bin/platformio /usr/local/bin/platformio \
     && ln -s ~/.platformio/penv/bin/pio /usr/local/bin/pio \
     && ln -s ~/.platformio/penv/bin/piodebuggdb /usr/local/bin/piodebuggdb
 
-RUN cd .. && mkdir esp-projects
+RUN cd .. && mkdir esp-projects && mkdir esp-binaries
 
 COPY .env /app/.env
 

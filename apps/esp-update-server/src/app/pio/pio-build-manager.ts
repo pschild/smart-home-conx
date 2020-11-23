@@ -1,11 +1,11 @@
 import * as path from 'path';
-import * as fs from 'fs';
-import { EspConfig, ESP_CONFIG, isDocker, log } from '@smart-home-conx/utils';
+import * as fsx from 'fs-extra';
+import { EspConfig, ESP_CONFIG, log } from '@smart-home-conx/utils';
 import { forkJoin, Observable, throwError } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { Singleton } from 'typescript-ioc';
-import { environment } from '../../environments/environment';
 import { PioRunner } from './pio-runner';
+import { getEspBinaryPath, getPathToEspLib } from '../path.utils';
 
 @Singleton
 export class PioBuildManager {
@@ -38,17 +38,17 @@ export class PioBuildManager {
     const copyTasks$: Observable<string>[] = [];
     for (const chipId of chipIds) {
       const pioEnv = this.getConfigByChipId(chipId).pioEnv;
-      const sourceFilePath = path.join(this.buildPath(libName), '.pio', 'build', pioEnv, 'firmware.bin');
-      const targetDirPath = path.resolve(__dirname, 'binfiles', chipId.toString());
-      const targetFilePath = path.join(targetDirPath, `firmware-v${version}.bin`);
+      const sourceFilePath = path.join(getPathToEspLib(libName), '.pio', 'build', pioEnv, 'firmware.bin');
+      const targetDirPath = path.resolve(getEspBinaryPath(), chipId.toString());
+      const targetFilePath = path.join(targetDirPath, `${libName}-v${version}.bin`);
 
-      // ensure that the target driectory exists
-      fs.mkdirSync(targetDirPath, { recursive: true });
+      // Deletes directory contents if the directory is not empty. If the directory does not exist, it is created.
+      fsx.emptyDirSync(targetDirPath);
 
       const copyTask$ = new Observable<string>(observer => {
-        fs.copyFile(sourceFilePath, targetFilePath, err => {
+        fsx.copy(sourceFilePath, targetFilePath, err => {
           if (err) {
-            observer.error(err);
+            return observer.error(err);
           } else {
             log(`copied ${sourceFilePath} to ${targetFilePath}`);
             observer.next(targetFilePath);
@@ -72,11 +72,6 @@ export class PioBuildManager {
 
   private getConfigByChipId(chipId: number): EspConfig {
     return ESP_CONFIG.find(esp => esp.chipId === chipId);
-  }
-
-  private buildPath(libName: string): string {
-    const prefix = isDocker() ? '' : '.';
-    return `${prefix}/${environment.espProjectsDir}/${libName}`;
   }
 
 }

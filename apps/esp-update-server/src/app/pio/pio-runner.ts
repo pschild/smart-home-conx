@@ -3,8 +3,8 @@ import { ChildProcess, spawn } from 'child_process';
 import { SocketManager } from '../socket/socket-manager';
 import { Inject } from 'typescript-ioc';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
-import { isDocker, log } from '@smart-home-conx/utils';
+import { log } from '@smart-home-conx/utils';
+import { getPathToEspLib } from '../path.utils';
 
 export class PioRunner {
 
@@ -16,7 +16,7 @@ export class PioRunner {
   constructor(private libName: string, private version: string, private targets: Set<string>) { }
 
   run(): Observable<string> {
-    const espLibPath = this.buildPath();
+    const espLibPath = getPathToEspLib(this.libName);
     const textDecoder = new TextDecoder('utf-8');
 
     return new Observable(observer => {
@@ -33,7 +33,7 @@ export class PioRunner {
           ...process.env,
           WIFI_SSID: process.env.WIFI_SSID,
           WIFI_PASS: process.env.WIFI_PASS,
-          FIRMWARE_VERSION: this.version
+          FIRMWARE_VERSION: `v${this.version}`
         }
       });
 
@@ -64,11 +64,6 @@ export class PioRunner {
 
   stop(): boolean {
     return this.process.kill();
-  }
-
-  private buildPath(): string {
-    const prefix = isDocker() ? '' : '.';
-    return `${prefix}/${environment.espProjectsDir}/${this.libName}`;
   }
 
 }

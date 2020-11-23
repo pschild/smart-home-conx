@@ -5,9 +5,9 @@ import { Singleton } from 'typescript-ioc';
 import * as octonode from 'octonode';
 import * as semver from 'semver';
 import { map, tap } from 'rxjs/operators';
-import { isDocker, log } from '@smart-home-conx/utils';
+import { log } from '@smart-home-conx/utils';
 import * as zip from 'zip-lib';
-import { environment } from '../../environments/environment';
+import { getPathToEspLib } from '../path.utils';
 
 @Singleton
 export class GithubManager {
@@ -41,8 +41,8 @@ export class GithubManager {
     const release = this.client.release(`pschild/${libName}`, releaseId);
     return new Observable(observer => {
       log(`uploading archive to Github...`);
-      const buildDirPath = path.join(isDocker() ? '' : '.', environment.espProjectsDir, libName, '.pio', 'build');
-      const zipFilePath = path.join(isDocker() ? '' : '.', environment.espProjectsDir, libName, 'release.zip');
+      const buildDirPath = path.join(getPathToEspLib(libName), '.pio', 'build');
+      const zipFilePath = path.join(getPathToEspLib(libName), 'release.zip');
 
       if (!fs.existsSync(buildDirPath)) {
         throw new Error(`Could not find directory '${buildDirPath}' for upload`);
