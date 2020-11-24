@@ -23,9 +23,8 @@ const messages$ = fromEvent(mqttClient, 'message').pipe(
 // movements
 messages$.pipe(
   ofTopicEquals('ESP_7888034/movement'),
-  tap(_ => log('Detected topic...')),
   mergeMap(([topic, message]) => getSolarTimesForDate$(new Date())),
-  filter((sunriseSunsetData: SolarTimes) => isAfter(new Date(), sunriseSunsetData.sunset) || isBefore(new Date(), sunriseSunsetData.sunrise)),
+  filter((sunriseSunsetData: SolarTimes) => isAfter(new Date(), sunriseSunsetData.civilTwilightEnd) || isBefore(new Date(), sunriseSunsetData.civilTwilightBegin)),
   // filter(([topic, message]) => getHours(new Date()) >= 22 || getHours(new Date()) <= 6), // only trigger between 22:00 and 06:59
   tap(_ => log('Passed solar time check...')),
   throttleTime(1000 * 60 * 5), // throttle for 5 min
@@ -35,7 +34,7 @@ messages$.pipe(
     mqttClient.publish('relais/status', 'on')
   ])),
   tap(publishedTopics => log(`Published MQTT ${publishedTopics.length} messages...`))
-).subscribe(result => log(`Result: [${result}]`));
+).subscribe(result => log(`Done.`));
 
 mqttClient.on('connect', () => {
   log(`connected with MQTT broker`);
