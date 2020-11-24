@@ -4,14 +4,14 @@ import * as mqtt from 'async-mqtt';
 import { isAfter, isBefore } from 'date-fns';
 import { forkJoin, fromEvent } from 'rxjs';
 import { filter, map, mergeMap, tap, throttleTime } from 'rxjs/operators';
-import { log, ofTopicEquals } from '@smart-home-conx/utils';
+import { isDocker, log, ofTopicEquals } from '@smart-home-conx/utils';
 import { environment } from './environments/environment';
 import { getSolarTimesForDate$, SolarTimes } from './app/solar-times';
 
 const app: Application = express();
 const port = 9052;
 
-const mqttClient = mqtt.connect('http://mqtt-broker:1883', { clientId: 'esp-pir-manager' });
+const mqttClient = mqtt.connect(isDocker() ? `http://mqtt-broker:1883` : `http://localhost:1883`, { clientId: 'esp-pir-manager' });
 // const mqttClient = mqtt.connect('http://broker.emqx.io', { clientId: 'esp-pir-manager' }); // testing
 mqttClient.subscribe('ESP_7888034/movement');
 

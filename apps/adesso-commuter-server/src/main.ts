@@ -6,13 +6,13 @@ import { TravelTimeService } from './app/travel-time.service';
 import * as serveIndex from 'serve-index';
 import * as mqtt from 'async-mqtt';
 import { format, add } from 'date-fns';
-import { log, isAuthorized } from '@smart-home-conx/utils';
+import { log, isAuthorized, isDocker } from '@smart-home-conx/utils';
 import * as dotenv from 'dotenv';
 import { environment } from './environments/environment';
 
 dotenv.config();
 
-const mqttClient = mqtt.connect('http://mqtt-broker:1883', { clientId: 'adesso-commuter-server' });
+const mqttClient = mqtt.connect(isDocker() ? `http://mqtt-broker:1883` : `http://localhost:1883`, { clientId: 'adesso-commuter-server' });
 
 const app: Application = express();
 const port = 9062;

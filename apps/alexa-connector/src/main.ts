@@ -4,13 +4,13 @@ const { exec } = require('child_process');
 import * as mqtt from 'async-mqtt';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
-import { log, ofTopicEquals, isAuthorized } from '@smart-home-conx/utils';
+import { log, ofTopicEquals, isAuthorized, isDocker } from '@smart-home-conx/utils';
 import * as dotenv from 'dotenv';
 import { environment } from './environments/environment';
 
 dotenv.config();
 
-const mqttClient = mqtt.connect('http://mqtt-broker:1883', { clientId: 'alexa-connector' });
+const mqttClient = mqtt.connect(isDocker() ? `http://mqtt-broker:1883` : `http://localhost:1883`, { clientId: 'alexa-connector' });
 // const mqttClient = mqtt.connect('http://broker.emqx.io', { clientId: 'alexa-connector' }); // testing
 mqttClient.subscribe('alexa/in/automation');
 mqttClient.subscribe('alexa/in/speak');

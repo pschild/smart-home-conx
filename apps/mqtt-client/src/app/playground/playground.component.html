@@ -15,10 +15,21 @@
 <br/>
 
 <select multiple>
-  <option>#1 NodeMCU</option>
-  <option>#2 ESP01</option>
-  <option>#3 ESP12F</option>
-  <option>...</option>
+  <option value="123456">#1 NodeMCU</option>
+  <option value="654789">#2 ESP01</option>
+  <option value="869864">#3 ESP12F</option>
+  <option value="324515">...</option>
+</select>
+<select>
+  <option value="major">major (1.0.1 => 2.0.0)</option>
+  <option value="minor">minor (1.0.1 => 1.1.0)</option>
+  <option value="patch" selected>patch (1.0.1 => 1.0.2)</option>
+</select>
+<select>
+  <option value="esp-commuting-display">esp-commuting-display</option>
+  <option value="esp-motion-sensor">esp-motion-sensor</option>
+  <option value="esp-mqtt">esp-mqtt</option>
+  <option value="esp-relais">esp-relais</option>
 </select>
 <button (click)="triggerPioBuild()">Trigger PIO Build</button>
 <button (click)="killPioBuild()">Kill active PIO Build</button>
