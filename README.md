@@ -21,16 +21,31 @@ This project was generated using [Nx](https://nx.dev).
        GITHUB_ACCESS_TOKEN: tbd  
 2. ~~Run `docker-compose up -d` to build and start all services. Run `docker-compose up -d --build <APP>` to run and rebuild a specific service.~~  
    Run
-   
+
        docker-compose build && docker-compose up -d
-   
-   (or `npm run docker:start:all:dev`) to start all containers in **DEV** mode. Connections via SSL are not possible, so only use this for development on your local machine.  
-   -- OR --  
+
+   (or `npm run docker:start:all:dev`) to start all containers in **DEV** mode. Connections via SSL are not possible, so only use this for development on your local machine.
+
+   -- OR --
+
    Run
-   
+
        docker-compose build --build-arg PRODUCTION=true && docker-compose up -d
-   
+
    (or `npm run docker:start:all:prod`) to start all containers in **PROD** mode. This includes SSL certificates.
+
+   -- OR --
+
+   Run
+
+       docker-compose build --build-arg PRODUCTION=true service1 service2 ... serviceN && docker-compose up -d
+
+   to start specific containers in **PROD** mode.
+
+   Example:
+
+       docker-compose build --build-arg PRODUCTION=true esp-update-server mqtt-client && docker-compose up -d
+
 3. During development, you can start a single service by running `npm run start:<SERVICE>` or build it by running `npm run build:<SERVICE>`.
 
 ### ncc
