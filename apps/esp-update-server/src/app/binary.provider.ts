@@ -18,7 +18,7 @@ export const findBinaryForUpdate = async (chipId: string, currentVersion?: strin
     }
 
     const onlyBinFileName = binFilesInDirectory[0];
-    if (isSameVersion(onlyBinFileName, currentVersion)) {
+    if (!!currentVersion && isSameVersion(onlyBinFileName, currentVersion)) {
       log(`\tNo other version available. Current: ${currentVersion}, found: ${onlyBinFileName}`);
       return;
     }

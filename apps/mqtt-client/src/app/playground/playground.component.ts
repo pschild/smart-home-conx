@@ -6,6 +6,7 @@ import { SocketService } from '../socket.service';
 import { EventMqttService } from '../event-mqtt.service';
 import { map, scan, share, takeUntil } from 'rxjs/operators';
 import { merge, Observable } from 'rxjs';
+import { EspConfig } from '@smart-home-conx/utils';
 
 @Component({
   selector: 'smart-home-conx-playground',
@@ -14,6 +15,8 @@ import { merge, Observable } from 'rxjs';
 export class PlaygroundComponent implements OnInit {
 
   logMessages$: Observable<string>;
+
+  espConfig$: Observable<EspConfig[]>;
 
   speachText = new FormControl('');
 
@@ -30,6 +33,9 @@ export class PlaygroundComponent implements OnInit {
 
     this.eventMqttService.observe('adesso-commuter-server/commuting/#')
       .subscribe((data: IMqttMessage) => console.log('commuting', data.payload.toString()));
+
+    this.espConfig$ = this.httpService.getEspConfig();
+    this.espConfig$.subscribe(esps => console.log(esps));
   }
 
   sendMessage(): void {

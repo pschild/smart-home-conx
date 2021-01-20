@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { EspConfig } from '@smart-home-conx/utils';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,10 @@ export class HttpService {
 
   killPioBuild(): Observable<any> {
     return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/ota/build/kill`);
+  }
+
+  getEspConfig(): Observable<EspConfig[]> {
+    return this.httpClient.get<EspConfig[]>(`${window.location.protocol}//${window.location.hostname}:3333/ota/esp-config`);
   }
 
 }

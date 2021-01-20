@@ -4,7 +4,7 @@ import { Application, Request, Response } from 'express';
 import * as http from 'http';
 import { Inject } from 'typescript-ioc';
 import { originateFromEsp, findBinaryForUpdate } from './app/binary.provider';
-import { log, isAuthorized } from '@smart-home-conx/utils';
+import { log, isAuthorized, ESP_CONFIG } from '@smart-home-conx/utils';
 import * as dotenv from 'dotenv';
 import { environment } from './environments/environment';
 import { PioBuildManager } from './app/pio/pio-build-manager';
@@ -72,6 +72,10 @@ class EspUpdateServerApplication {
       } else {
         res.status(304).end();
       }
+    });
+
+    app.get('/esp-config', (req: Request, res: Response) => {
+      res.status(200).json(ESP_CONFIG);
     });
 
     app.post('/build/run', async (req, res) => {
