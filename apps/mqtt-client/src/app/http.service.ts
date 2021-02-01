@@ -14,6 +14,10 @@ export class HttpService {
     return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/alexa/speak/${encodeURI(speachText)}`);
   }
 
+  command(commandText: string): Observable<any> {
+    return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/alexa/textcommand/${encodeURI(commandText)}`);
+  }
+
   commutingHistory(): Observable<any> {
     return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/commuter/history`);
   }

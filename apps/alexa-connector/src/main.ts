@@ -14,6 +14,7 @@ const mqttClient = mqtt.connect(isDocker() ? `http://mqtt-broker:1883` : `http:/
 // const mqttClient = mqtt.connect('http://broker.emqx.io', { clientId: 'alexa-connector' }); // testing
 mqttClient.subscribe('alexa/in/automation');
 mqttClient.subscribe('alexa/in/speak');
+mqttClient.subscribe('alexa/in/textcommand');
 
 const app: Application = express();
 const port = 9072;
@@ -25,7 +26,7 @@ const port = 9072;
 //   return next();
 // });
 
-function execCommand(device: string, command: { action: 'speak' | 'automation', param: string }): Observable<string> {
+function execCommand(device: string, command: { action: 'speak' | 'automation' | 'textcommand', param: string }): Observable<string> {
   return new Observable<string>(subscriber => {
     let commandStr = `./assets/alexa-remote-control/alexa_remote_control.sh -d '${device}'`;
     switch (command.action) {
@@ -34,6 +35,9 @@ function execCommand(device: string, command: { action: 'speak' | 'automation', 
         break;
       case 'automation':
         commandStr += ` -e automation:'${command.param}'`;
+        break;
+      case 'textcommand':
+        commandStr += ` -e textcommand:'${command.param}'`;
         break;
     }
 
@@ -73,8 +77,19 @@ messages$.pipe(
   mergeMap(([topic, message]) => execCommand('Philippes Echo Flex', { action: 'speak', param: message }))
 ).subscribe(result => log(`Result: ${result}`));
 
+// textcommand commands
+messages$.pipe(
+  ofTopicEquals('alexa/in/textcommand'),
+  mergeMap(([topic, message]) => execCommand('Philippes Echo Flex', { action: 'textcommand', param: message }))
+).subscribe(result => log(`Result: ${result}`));
+
 app.get('/speak/:speech', (req, res) => {
   mqttClient.publish('alexa/in/speak', req.params.speech);
+  res.status(200).end();
+});
+
+app.get('/textcommand/:command', (req, res) => {
+  mqttClient.publish('alexa/in/textcommand', req.params.command);
   res.status(200).end();
 });
 

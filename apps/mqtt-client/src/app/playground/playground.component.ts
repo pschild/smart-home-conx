@@ -19,6 +19,7 @@ export class PlaygroundComponent implements OnInit {
   espConfig$: Observable<EspConfig[]>;
 
   speachText = new FormControl('');
+  commandText = new FormControl('');
 
   constructor(
     private httpService: HttpService,
@@ -44,6 +45,10 @@ export class PlaygroundComponent implements OnInit {
 
   speak(): void {
     this.httpService.speak(this.speachText.value).subscribe(console.log);
+  }
+
+  sendCommand(): void {
+    this.httpService.command(this.commandText.value).subscribe(console.log);
   }
 
   getCommutingHistory(): void {
