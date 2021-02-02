@@ -98,6 +98,7 @@
     "simple-git": "^2.23.0",
     "socket.io": "^3.0.1",
     "socket.io-client": "^3.0.1",
+    "suncalc2": "^1.8.1",
     "typescript-ioc": "^3.2.2",
     "websocket-stream": "^5.5.2",
     "zip-lib": "^0.7.1",

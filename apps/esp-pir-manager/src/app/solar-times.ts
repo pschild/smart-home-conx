@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { from, iif, Observable, of } from "rxjs";
 import { map, tap } from 'rxjs/operators';
 import axios, { AxiosResponse } from 'axios';
+import * as SunCalc from 'suncalc2';
 
 export interface SolarTimesResponse {
   results: {
@@ -41,5 +42,10 @@ export const getSolarTimesForDate$ = (date: Date): Observable<SolarTimes> => {
   );
   const cache$ = of(CACHE).pipe(tap(() => log(`used cache: ${JSON.stringify(CACHE)}`)));
 
-  return iif(() => !!CACHE && CACHE.key === ymd, cache$, apiCall$);
+  return iif(() => !!CACHE && CACHE.key === ymd, cache$, apiCall$).pipe(
+    tap(_ => {
+      const times = SunCalc.getTimes(date, 51.668189, 6.148282);
+      log(`suncalc2 = ${JSON.stringify(times)}`);
+    })
+  );
 }
