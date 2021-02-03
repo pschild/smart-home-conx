@@ -1,5 +1,5 @@
 import { log } from '@smart-home-conx/utils';
-import { format } from 'date-fns';
+import { format, isAfter, isBefore } from 'date-fns';
 import { from, iif, Observable, of } from "rxjs";
 import { map, tap } from 'rxjs/operators';
 import axios, { AxiosResponse } from 'axios';
@@ -48,4 +48,14 @@ export const getSolarTimesForDate$ = (date: Date): Observable<SolarTimes> => {
       log(`suncalc2 = ${JSON.stringify(times)}`);
     })
   );
+}
+
+/**
+ * Checks whether the time of the given date is between the times for sunset and sunrise.
+ * In other words, it checks, whether it is "night"/"dark".
+ */
+export function isNight(date: Date): boolean {
+  const { dusk, dawn } = SunCalc.getTimes(date, 51.668189, 6.148282);
+  log(`SunCalc times for ${format(date, 'yyyy-MM-dd HH:mm')}: ${JSON.stringify(SunCalc.getTimes(date, 51.668189, 6.148282))}`);
+  return isAfter(date, new Date(dusk)) || isBefore(date, new Date(dawn));
 }

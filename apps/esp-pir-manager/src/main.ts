@@ -6,7 +6,7 @@ import { forkJoin, fromEvent } from 'rxjs';
 import { filter, map, mergeMap, tap, throttleTime } from 'rxjs/operators';
 import { isDocker, log, ofTopicEquals } from '@smart-home-conx/utils';
 import { environment } from './environments/environment';
-import { getSolarTimesForDate$, SolarTimes } from './app/solar-times';
+import { getSolarTimesForDate$, isNight, SolarTimes } from './app/solar-times';
 
 const app: Application = express();
 const port = 9052;
@@ -23,8 +23,9 @@ const messages$ = fromEvent(mqttClient, 'message').pipe(
 // movements
 messages$.pipe(
   ofTopicEquals('ESP_7888034/movement'),
-  mergeMap(([topic, message]) => getSolarTimesForDate$(new Date())),
-  filter((sunriseSunsetData: SolarTimes) => isAfter(new Date(), sunriseSunsetData.civilTwilightEnd) || isBefore(new Date(), sunriseSunsetData.civilTwilightBegin)),
+  filter(_ => isNight(new Date())),
+  // mergeMap(([topic, message]) => getSolarTimesForDate$(new Date())),
+  // filter((sunriseSunsetData: SolarTimes) => isAfter(new Date(), sunriseSunsetData.civilTwilightEnd) || isBefore(new Date(), sunriseSunsetData.civilTwilightBegin)),
   // filter(([topic, message]) => getHours(new Date()) >= 22 || getHours(new Date()) <= 6), // only trigger between 22:00 and 06:59
   tap(_ => log('Passed solar time check...')),
   throttleTime(1000 * 60 * 5), // throttle for 5 min

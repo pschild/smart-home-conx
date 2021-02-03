@@ -18,7 +18,10 @@ This project was generated using [Nx](https://nx.dev).
        AMAZON_MFA_SECRET: MFA used for Amazon log-in (see README in alexa-connector)  
        WIFI_SSID:         SSID of your WiFi passed to firmwares that are built with pio  
        WIFI_PASS:         Password of your WiFi passed to firmwares that are built with pio  
-       GITHUB_ACCESS_TOKEN: tbd  
+       GITHUB_ACCESS_TOKEN: Token for accessing GitHub API  
+       OPEN_WEATHER_MAP_APP_ID: AppID to retrieve data from OpenWeatherMap API  
+       HOME_POSITION_LAT: Latitude of your home's position  
+       HOME_POSITION_LON: Longitude of your home's position  
 2. ~~Run `docker-compose up -d` to build and start all services. Run `docker-compose up -d --build <APP>` to run and rebuild a specific service.~~  
    Run
 
