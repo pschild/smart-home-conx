@@ -89,6 +89,7 @@
     "http-proxy-middleware": "^1.0.6",
     "jsonwebtoken": "^8.5.1",
     "ngx-mqtt": "^7.0.14",
+    "node-telegram-bot-api": "^0.51.0",
     "octonode": "^0.9.5",
     "puppeteer": "^4.0.0",
     "reflect-metadata": "^0.1.13",

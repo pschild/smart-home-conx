@@ -14,6 +14,7 @@ import { GitManager } from './app/git/git-manager';
 import { mergeMap } from 'rxjs/operators';
 import { forkJoin, concat } from 'rxjs';
 import { getEspBinaryPath } from './app/path.utils';
+import { Telegram } from '@smart-home-conx/messenger-connector';
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ class EspUpdateServerApplication {
       const pathToBinary: string = await findBinaryForUpdate(chipId, currentVersion);
       if (pathToBinary) {
         log(`\tSending new binary at ${pathToBinary}...`);
+        Telegram.sendMessage(`ESP ${chipId} updated auf Version "${pathToBinary}"`);
         res.sendFile(pathToBinary, err => {
           if (err) {
             log(`\t\tThere was an error sending the binary in path ${pathToBinary}:`);

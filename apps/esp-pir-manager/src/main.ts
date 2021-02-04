@@ -7,6 +7,7 @@ import { filter, map, mergeMap, tap, throttleTime } from 'rxjs/operators';
 import { isDocker, log, ofTopicEquals } from '@smart-home-conx/utils';
 import { environment } from './environments/environment';
 import { getSolarTimesForDate$, isNight, SolarTimes } from './app/solar-times';
+import { Telegram } from '@smart-home-conx/messenger-connector';
 
 const app: Application = express();
 const port = 9052;
@@ -34,7 +35,8 @@ messages$.pipe(
     mqttClient.publish('alexa/in/automation', 'Kleines Licht'),
     mqttClient.publish('relais/status', 'on')
   ])),
-  tap(publishedTopics => log(`Published MQTT ${publishedTopics.length} messages...`))
+  tap(publishedTopics => log(`Published MQTT ${publishedTopics.length} messages...`)),
+  tap(_ => Telegram.sendMessage(`Nachtlicht ausgelöst`))
 ).subscribe(result => log(`Done.`));
 
 mqttClient.on('connect', () => {

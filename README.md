@@ -10,18 +10,20 @@ This project was generated using [Nx](https://nx.dev).
 
 1. Copy .env.template to .env and provide necessary credentials and secrets.  
 
-       SERVICE_USER:      username for authentication in api-gateway  
-       SERVICE_PASSWORD:  password for authentication in api-gateway  
-       SERVICE_SECRET:    secret (any string) used to generate and verify JWTs  
-       AMAZON_EMAIL:      email address used for Amazon log-in (see README in alexa-connector)  
-       AMAZON_PASSWORD:   password used for Amazon log-in (see README in alexa-connector)  
-       AMAZON_MFA_SECRET: MFA used for Amazon log-in (see README in alexa-connector)  
-       WIFI_SSID:         SSID of your WiFi passed to firmwares that are built with pio  
-       WIFI_PASS:         Password of your WiFi passed to firmwares that are built with pio  
-       GITHUB_ACCESS_TOKEN: Token for accessing GitHub API  
-       OPEN_WEATHER_MAP_APP_ID: AppID to retrieve data from OpenWeatherMap API  
-       HOME_POSITION_LAT: Latitude of your home's position  
-       HOME_POSITION_LON: Longitude of your home's position  
+       SERVICE_USER:            username for authentication in api-gateway  
+       SERVICE_PASSWORD:        password for authentication in api-gateway  
+       SERVICE_SECRET:          secret (any string) used to generate and verify JWTs  
+       AMAZON_EMAIL:            email address used for Amazon log-in (see README in alexa-connector)  
+       AMAZON_PASSWORD:         password used for Amazon log-in (see README in alexa-connector)  
+       AMAZON_MFA_SECRET:       MFA used for Amazon log-in (see README in alexa-connector)  
+       WIFI_SSID:               SSID of your WiFi passed to firmwares that are built with pio  
+       WIFI_PASS:               Password of your WiFi passed to firmwares that are built with pio  
+       GITHUB_ACCESS_TOKEN:     Token for accessing GitHub API  
+       OPEN_WEATHER_MAP_APP_ID: App ID to retrieve data from OpenWeatherMap API  
+       HOME_POSITION_LAT:       Latitude of your home's position  
+       HOME_POSITION_LON:       Longitude of your home's position  
+       TELEGRAM_API_TOKEN:      Token for accessing Telegram API  
+       TELEGRAM_RECEIVER_IDS:   Telegram Chat IDs to send messages to (comma-separated list)  
 2. ~~Run `docker-compose up -d` to build and start all services. Run `docker-compose up -d --build <APP>` to run and rebuild a specific service.~~  
    Run
 

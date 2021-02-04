@@ -473,6 +473,31 @@
           }
         }
       }
+    },
+    "messenger-connector": {
+      "root": "libs/messenger-connector",
+      "sourceRoot": "libs/messenger-connector/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/messenger-connector/tsconfig.lib.json",
+              "libs/messenger-connector/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/messenger-connector/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/messenger-connector/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

@@ -9,5 +9,6 @@ module.exports = {
     '<rootDir>/apps/api-gateway',
     '<rootDir>/libs/utils',
     '<rootDir>/libs/auth',
+    '<rootDir>/libs/messenger-connector',
   ],
 };

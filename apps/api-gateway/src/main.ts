@@ -12,6 +12,7 @@ import * as dotenv from 'dotenv';
 import { isDocker, log } from '@smart-home-conx/utils';
 import { UnauthorizedError, authErrorHandler, authenticate } from '@smart-home-conx/auth';
 import { addMilliseconds } from 'date-fns';
+import { Telegram } from '@smart-home-conx/messenger-connector';
 import { environment } from './environments/environment';
 
 dotenv.config();
@@ -98,6 +99,7 @@ app.post('/authenticate', (req, res) => {
     log(`Success! Token: ${token}`);
     return res.json({ token, expiresAt: addMilliseconds(new Date(), TOKEN_LIFETIME) });
   } catch(err) {
+    Telegram.sendMessage(`Login für Benutzer "${username}" fehlgeschlagen!`);
     log(`Unauthorized request detected! Error: ${err.message}`);
     throw new UnauthorizedError(err.message);
   }
