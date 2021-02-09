@@ -121,7 +121,7 @@ app.get('/show-alexa-devices', (req, res) => {
 
 app.get('/devices', async (req, res) => {
   try {
-    const deviceList = await fsPromises.readFile(path.join('/tmp', '.alexa.devicelist.json'));
+    const deviceList = await fsPromises.readFile(path.join('/tmp', '.alexa.devicelist.json'), 'utf8');
     return res.status(200).json(deviceList);
   } catch (err) {
     return res.status(500).json({ error: err && err.message ? err.message : `Could not read devicelist.` });
