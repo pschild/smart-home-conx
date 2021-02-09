@@ -3,10 +3,20 @@
 <br/>
 <br/>
 
+Device:
+<select [formControl]="alexaDevice">
+  <option value="ALL">Alle</option>
+  <option value="Philippes Echo Show">Philippes Echo Show</option>
+  <option value="Philippes Echo">Philippes Echo</option>
+  <option value="Philippes Echo Flex">Philippes Echo Flex</option>
+  <option value="Überall">Überall</option>
+</select>
+
+<br/>
+
 <input type="text" [formControl]="speachText">
 <button (click)="speak()">Speak</button>
 
-<br/>
 <br/>
 
 <input type="text" [formControl]="commandText">

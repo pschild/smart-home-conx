@@ -20,6 +20,7 @@ export class PlaygroundComponent implements OnInit {
 
   speachText = new FormControl('');
   commandText = new FormControl('');
+  alexaDevice = new FormControl('');
 
   constructor(
     private httpService: HttpService,
@@ -44,7 +45,7 @@ export class PlaygroundComponent implements OnInit {
   }
 
   speak(): void {
-    this.httpService.speak(this.speachText.value).subscribe(console.log);
+    this.httpService.speak(this.alexaDevice.value, this.speachText.value).subscribe(console.log);
   }
 
   sendCommand(): void {

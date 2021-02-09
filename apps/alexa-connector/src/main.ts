@@ -1,6 +1,9 @@
 import * as express from 'express';
 import { Application } from 'express';
+import { json } from 'body-parser';
 const { exec } = require('child_process');
+import * as path from 'path';
+import { promises as fsPromises } from 'fs';
 import * as mqtt from 'async-mqtt';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
 import { catchError, map, mergeMap, tap } from 'rxjs/operators';
@@ -17,6 +20,7 @@ mqttClient.subscribe('alexa/in/speak');
 mqttClient.subscribe('alexa/in/textcommand');
 
 const app: Application = express();
+app.use(json());
 const port = 9072;
 
 // app.use((req, res, next) => {
@@ -74,7 +78,8 @@ messages$.pipe(
 // speak commands
 messages$.pipe(
   ofTopicEquals('alexa/in/speak'),
-  mergeMap(([topic, message]) => execCommand('Philippes Echo Flex', { action: 'speak', param: message }))
+  map(([topic, message]) => JSON.parse(message)),
+  mergeMap(message => execCommand(message.device, { action: 'speak', param: message.message }))
 ).subscribe(result => log(`Result: ${result}`));
 
 // textcommand commands
@@ -83,8 +88,14 @@ messages$.pipe(
   mergeMap(([topic, message]) => execCommand('Philippes Echo Flex', { action: 'textcommand', param: message }))
 ).subscribe(result => log(`Result: ${result}`));
 
-app.get('/speak/:speech', (req, res) => {
-  mqttClient.publish('alexa/in/speak', req.params.speech);
+// app.get('/speak/:speech', (req, res) => {
+//   mqttClient.publish('alexa/in/speak', req.params.speech);
+//   res.status(200).end();
+// });
+
+app.post('/speak', (req, res) => {
+  const { device, message } = req.body;
+  mqttClient.publish('alexa/in/speak', JSON.stringify({ device, message }));
   res.status(200).end();
 });
 
@@ -106,6 +117,15 @@ app.get('/show-alexa-devices', (req, res) => {
     log(`stdout: ${stdout}`);
     return res.status(200).json({ status: 'success', stdout });
   });
+});
+
+app.get('/devices', async (req, res) => {
+  try {
+    const deviceList = await fsPromises.readFile(path.join('/tmp', '.alexa.devicelist.json'));
+    return res.status(200).json(deviceList);
+  } catch (err) {
+    return res.status(500).json({ error: err && err.message ? err.message : `Could not read devicelist.` });
+  }
 });
 
 mqttClient.on('connect', () => {
