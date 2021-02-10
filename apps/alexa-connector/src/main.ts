@@ -113,7 +113,10 @@ app.get('/show-alexa-devices', (req, res) => {
 
 app.get('/devices', (req, res) => {
   readDeviceList().pipe(
-    retryWhen(errors => errors.pipe(switchMap(_ => loadAvailableDevices()))),
+    catchError(err => {
+      log(`Could not read device list. Load and retry...`);
+      return loadAvailableDevices().pipe(switchMap(_ => readDeviceList()));
+    }),
     catchError(err => {
       res.status(500).json({ error: err && err.message ? err.message : `Could not read devicelist.` });
       return EMPTY;
