@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { EspConfig } from '@smart-home-conx/utils';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,11 @@ export class HttpService {
 
   getDeviceList(): Observable<any> {
     return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/alexa/devices`).pipe(
-      map(response => response.devices)
+      catchError(err => {
+        console.error(err);
+        return of([]);
+      }),
+      map(response => response && response.devices ? response.devices : response)
     );
   }
 

@@ -3,7 +3,7 @@
 <br/>
 <br/>
 
-<div *ngIf="alexaDevices$ as devices">
+<div *ngIf="alexaDevices$ | async as devices">
   <ul>
     <li *ngFor="let device of devices">{{ device.accountName }} ({{ device.online ? 'online' : 'offline' }})</li>
   </ul>
