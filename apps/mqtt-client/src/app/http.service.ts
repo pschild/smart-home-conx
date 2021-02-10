@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EspConfig } from '@smart-home-conx/utils';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,16 +11,18 @@ export class HttpService {
 
   constructor(private httpClient: HttpClient) { }
 
-  speak(device: string, speachText: string): Observable<any> {
-    // return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/alexa/speak/${encodeURI(speachText)}`);
-    return this.httpClient.post(`${window.location.protocol}//${window.location.hostname}:3333/alexa/speak`, {
-      device,
-      message: encodeURI(speachText)
-    });
+  getDeviceList(): Observable<any> {
+    return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/alexa/devices`).pipe(
+      map(response => response.devices)
+    );
   }
 
-  command(commandText: string): Observable<any> {
-    return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/alexa/textcommand/${encodeURI(commandText)}`);
+  speak(device: string, speachText: string): Observable<any> {
+    return this.httpClient.post(`${window.location.protocol}//${window.location.hostname}:3333/alexa/speak`, { device, message: encodeURI(speachText) });
+  }
+
+  command(device: string, commandText: string): Observable<any> {
+    return this.httpClient.post(`${window.location.protocol}//${window.location.hostname}:3333/alexa/textcommand`, { device, message: encodeURI(commandText) });
   }
 
   commutingHistory(): Observable<any> {

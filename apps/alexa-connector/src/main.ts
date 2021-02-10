@@ -85,13 +85,9 @@ messages$.pipe(
 // textcommand commands
 messages$.pipe(
   ofTopicEquals('alexa/in/textcommand'),
-  mergeMap(([topic, message]) => execCommand('Philippes Echo Flex', { action: 'textcommand', param: message }))
+  map(([topic, message]) => JSON.parse(message)),
+  mergeMap(message => execCommand(message.device, { action: 'textcommand', param: message.message }))
 ).subscribe(result => log(`Result: ${result}`));
-
-// app.get('/speak/:speech', (req, res) => {
-//   mqttClient.publish('alexa/in/speak', req.params.speech);
-//   res.status(200).end();
-// });
 
 app.post('/speak', (req, res) => {
   const { device, message } = req.body;
@@ -99,8 +95,9 @@ app.post('/speak', (req, res) => {
   res.status(200).end();
 });
 
-app.get('/textcommand/:command', (req, res) => {
-  mqttClient.publish('alexa/in/textcommand', req.params.command);
+app.post('/textcommand', (req, res) => {
+  const { device, message } = req.body;
+  mqttClient.publish('alexa/in/textcommand', JSON.stringify({ device, message }));
   res.status(200).end();
 });
 
@@ -121,8 +118,8 @@ app.get('/show-alexa-devices', (req, res) => {
 
 app.get('/devices', async (req, res) => {
   try {
-    const deviceList = await fsPromises.readFile(path.join('/tmp', '.alexa.devicelist.json'), 'utf8');
-    return res.status(200).json(deviceList);
+    const content = await fsPromises.readFile(path.join('/tmp', '.alexa.devicelist.json'), 'utf8');
+    return res.status(200).json(JSON.parse(content));
   } catch (err) {
     return res.status(500).json({ error: err && err.message ? err.message : `Could not read devicelist.` });
   }

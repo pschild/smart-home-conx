@@ -3,6 +3,12 @@
 <br/>
 <br/>
 
+<div *ngIf="alexaDevices$ as devices">
+  <ul>
+    <li *ngFor="let device of devices">{{ device.accountName }} ({{ device.online ? 'online' : 'offline' }})</li>
+  </ul>
+</div>
+
 Device:
 <select [formControl]="alexaDevice">
   <option value="ALL">Alle</option>

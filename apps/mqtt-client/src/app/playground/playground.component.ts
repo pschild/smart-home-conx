@@ -18,6 +18,8 @@ export class PlaygroundComponent implements OnInit {
 
   espConfig$: Observable<EspConfig[]>;
 
+  alexaDevices$: Observable<any>;
+
   speachText = new FormControl('');
   commandText = new FormControl('');
   alexaDevice = new FormControl('');
@@ -38,6 +40,8 @@ export class PlaygroundComponent implements OnInit {
 
     this.espConfig$ = this.httpService.getEspConfig();
     this.espConfig$.subscribe(esps => console.log(esps));
+
+    this.alexaDevices$ = this.httpService.getDeviceList();
   }
 
   sendMessage(): void {
@@ -49,7 +53,7 @@ export class PlaygroundComponent implements OnInit {
   }
 
   sendCommand(): void {
-    this.httpService.command(this.commandText.value).subscribe(console.log);
+    this.httpService.command(this.alexaDevice.value, this.commandText.value).subscribe(console.log);
   }
 
   getCommutingHistory(): void {
