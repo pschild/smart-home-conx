@@ -5,8 +5,8 @@ const { exec } = require('child_process');
 import * as path from 'path';
 import { promises as fsPromises } from 'fs';
 import * as mqtt from 'async-mqtt';
-import { EMPTY, fromEvent, Observable } from 'rxjs';
-import { catchError, map, mergeMap, share, tap } from 'rxjs/operators';
+import { EMPTY, from, fromEvent, Observable } from 'rxjs';
+import { catchError, map, mergeMap, retryWhen, share, switchMap, tap } from 'rxjs/operators';
 import { log, ofTopicEquals, isAuthorized, isDocker } from '@smart-home-conx/utils';
 import * as dotenv from 'dotenv';
 import { environment } from './environments/environment';
@@ -103,27 +103,22 @@ app.post('/textcommand', (req, res) => {
 });
 
 app.get('/show-alexa-devices', (req, res) => {
-  exec(`./assets/alexa-remote-control/alexa_remote_control.sh -a`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      return res.status(500).json({ status: 'error', error });
-    }
-    if (stderr) {
-      console.error(`stderr: ${stderr}`);
-      return res.status(500).json({ status: 'stderr', stderr });
-    }
-    log(`stdout: ${stdout}`);
-    return res.status(200).json({ status: 'success', stdout });
-  });
+  loadAvailableDevices().pipe(
+    catchError(err => {
+      res.status(500).json({ status: 'error', err });
+      return EMPTY;
+    })
+  ).subscribe(stdout => res.status(200).json({ status: 'success', stdout }));
 });
 
-app.get('/devices', async (req, res) => {
-  try {
-    const content = await fsPromises.readFile(path.join('/tmp', '.alexa.devicelist.json'), 'utf8');
-    return res.status(200).json(JSON.parse(content));
-  } catch (err) {
-    return res.status(500).json({ error: err && err.message ? err.message : `Could not read devicelist.` });
-  }
+app.get('/devices', (req, res) => {
+  readDeviceList().pipe(
+    retryWhen(errors => errors.pipe(switchMap(_ => loadAvailableDevices()))),
+    catchError(err => {
+      res.status(500).json({ error: err && err.message ? err.message : `Could not read devicelist.` });
+      return EMPTY;
+    })
+  ).subscribe(content => res.status(200).json(JSON.parse(content)));
 });
 
 mqttClient.on('connect', () => {
@@ -134,3 +129,25 @@ mqttClient.on('connect', () => {
     log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
   });
 });
+
+function loadAvailableDevices(): Observable<string> {
+  return new Observable<string>(subscriber => {
+    exec(`./assets/alexa-remote-control/alexa_remote_control.sh -a`, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        subscriber.error(error);
+      }
+      if (stderr) {
+        console.error(`stderr: ${stderr}`);
+        subscriber.error(stderr.toString());
+      }
+      log(`stdout: ${stdout}`);
+      subscriber.next(stdout);
+      subscriber.complete();
+    });
+  });
+}
+
+function readDeviceList(): Observable<string> {
+  return from(fsPromises.readFile(path.join('/tmp', '.alexa.devicelist.json'), 'utf8'));
+}
