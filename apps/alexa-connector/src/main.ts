@@ -91,13 +91,15 @@ messages$.pipe(
 ).subscribe(result => log(`Result: ${result}`));
 
 app.post('/speak', (req, res) => {
-  const { device, message } = req.body;
+  const device = req.body.device;
+  const message = decodeURI(req.body.message);
   mqttClient.publish('alexa/in/speak', JSON.stringify({ device, message }));
   res.status(200).end();
 });
 
 app.post('/textcommand', (req, res) => {
-  const { device, message } = req.body;
+  const device = req.body.device;
+  const message = decodeURI(req.body.message);
   mqttClient.publish('alexa/in/textcommand', JSON.stringify({ device, message }));
   res.status(200).end();
 });
@@ -113,10 +115,7 @@ app.get('/show-alexa-devices', (req, res) => {
 
 app.get('/devices', (req, res) => {
   readDeviceList().pipe(
-    catchError(err => {
-      log(`Could not read device list. Load and retry...`);
-      return loadAvailableDevices().pipe(switchMap(_ => readDeviceList()));
-    }),
+    catchError(err => loadAvailableDevices().pipe(switchMap(_ => readDeviceList()))),
     catchError(err => {
       res.status(500).json({ error: err && err.message ? err.message : `Could not read devicelist.` });
       return EMPTY;
