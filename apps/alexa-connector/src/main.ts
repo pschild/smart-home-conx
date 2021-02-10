@@ -6,7 +6,7 @@ import * as path from 'path';
 import { promises as fsPromises } from 'fs';
 import * as mqtt from 'async-mqtt';
 import { EMPTY, fromEvent, Observable } from 'rxjs';
-import { catchError, map, mergeMap, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, share, tap } from 'rxjs/operators';
 import { log, ofTopicEquals, isAuthorized, isDocker } from '@smart-home-conx/utils';
 import * as dotenv from 'dotenv';
 import { environment } from './environments/environment';
@@ -66,7 +66,8 @@ function execCommand(device: string, command: { action: 'speak' | 'automation' |
 
 const messages$ = fromEvent(mqttClient, 'message').pipe(
   map(([topic, message]) => [topic, message.toString()]),
-  tap(([topic, message]) => log(`Received MQTT message with topic=${topic}, message=${message}`))
+  tap(([topic, message]) => log(`Received MQTT message with topic=${topic}, message=${message}`)),
+  share() // share the same observable for each topic and avoid multiple emits
 );
 
 // automation commands

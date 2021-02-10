@@ -3,19 +3,10 @@
 <br/>
 <br/>
 
-<div *ngIf="alexaDevices$ | async as devices">
-  <ul>
-    <li *ngFor="let device of devices">{{ device.accountName }} ({{ device.online ? 'online' : 'offline' }})</li>
-  </ul>
-</div>
-
 Device:
-<select [formControl]="alexaDevice">
+<select *ngIf="alexaDevices$ | async as devices" [formControl]="alexaDevice">
   <option value="ALL">Alle</option>
-  <option value="Philippes Echo Show">Philippes Echo Show</option>
-  <option value="Philippes Echo">Philippes Echo</option>
-  <option value="Philippes Echo Flex">Philippes Echo Flex</option>
-  <option value="Überall">Überall</option>
+  <option *ngFor="let device of devices" [value]="device.accountName">{{ device.accountName }} ({{ device.online ? 'online' : 'offline' }})</option>
 </select>
 
 <br/>
