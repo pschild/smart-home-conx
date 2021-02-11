@@ -36,7 +36,7 @@ messages$.pipe(
     mqttClient.publish('relais/status', 'on')
   ])),
   tap(publishedTopics => log(`Published MQTT ${publishedTopics.length} messages...`)),
-  tap(_ => Telegram.sendMessage(`Nachtlicht ausgelöst`))
+  // tap(_ => Telegram.sendMessage(`Nachtlicht ausgelöst`))
 ).subscribe(result => log(`Done.`));
 
 mqttClient.on('connect', () => {
