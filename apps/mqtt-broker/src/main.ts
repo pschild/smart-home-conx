@@ -43,6 +43,10 @@ instance.on('unsubscribe', (subscriptions, client) => {
 // fired when a client connects
 instance.on('client', (client) => {
   log(`Client Connected: \x1b[33m${client ? client.id : client}\x1b[0m to broker ${instance.id}`);
+  const connectedClient = client ? client.id : client;
+  if (connectedClient.toString().startsWith('ESP_')) {
+    Telegram.sendMessage(`Client "${connectedClient}" connected✔️`);
+  }
 });
 
 // fired when a client disconnects
@@ -50,7 +54,7 @@ instance.on('clientDisconnect', (client) => {
   log(`Client Disconnected: \x1b[31m${client ? client.id : client}\x1b[0m to broker ${instance.id}`);
   const disconnectedClient = client ? client.id : client;
   if (disconnectedClient.toString().startsWith('ESP_')) {
-    Telegram.sendMessage(`Client "${disconnectedClient}" hat die Verbindung zum Broker verloren`);
+    Telegram.sendMessage(`Client "${disconnectedClient}" disconnected❌`);
   }
 });
 
