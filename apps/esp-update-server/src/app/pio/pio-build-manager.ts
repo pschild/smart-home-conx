@@ -28,7 +28,7 @@ export class PioBuildManager {
     );
   }
 
-  stopActive(): boolean {
+  stopActive(): void {
     if (this.activeRunner) {
       return this.activeRunner.stop();
     }
