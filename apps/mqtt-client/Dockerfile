@@ -26,7 +26,7 @@ ENV NGINXENV=${NGINXENV:-dev}
 
 # specific:
 COPY apps/mqtt-client/nginx.$NGINXENV.conf /etc/nginx/nginx.conf
-COPY ssh /app/ssh
+COPY ssl /app/ssl
 RUN rm -rf /usr/share/nginx/html/*
 COPY --from=build /app/dist/apps/mqtt-client /usr/share/nginx/html
 CMD ["nginx", "-g", "daemon off;"]

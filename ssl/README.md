@@ -55,10 +55,10 @@ Yes, my web server is not currently running on this machine
 ## 8. Install your certificate
 
 `$ cd smart-home-conx`  
-`$ cp /etc/letsencrypt/live/xyz.myfritz.net/cert.pem ./ssh`  
-`$ cp /etc/letsencrypt/live/xyz.myfritz.net/privkey.pem ./ssh`  
-`$ cp /etc/letsencrypt/live/xyz.myfritz.net/chain.pem ./ssh`  
-`$ cp /etc/letsencrypt/live/xyz.myfritz.net/fullchain.pem ./ssh`  
+`$ cp /etc/letsencrypt/live/xyz.myfritz.net/cert.pem ./ssl`  
+`$ cp /etc/letsencrypt/live/xyz.myfritz.net/privkey.pem ./ssl`  
+`$ cp /etc/letsencrypt/live/xyz.myfritz.net/chain.pem ./ssl`  
+`$ cp /etc/letsencrypt/live/xyz.myfritz.net/fullchain.pem ./ssl`  
 
 ## 9. Test automatic renewal
 
@@ -73,9 +73,9 @@ Adding the following line to /etc/hosts fixed that:
 To restart services that depends on the renewed certificates, create a script in /etc/letsencrypt/renewal-hooks/deploy/install-certs.sh:
 
 > #!/bin/bash  
-> echo "Copying *.pem files to smart-home-conx/ssh..."  
-> find /etc/letsencrypt/live c -exec cp -L -r '{}' /home/pi/smart-home-conx/ssh/ \;  
-> chown pi /home/pi/smart-home-conx/ssh/*  
+> echo "Copying *.pem files to smart-home-conx/ssl..."  
+> find /etc/letsencrypt/live c -exec cp -L -r '{}' /home/pi/smart-home-conx/ssl/ \;  
+> chown pi /home/pi/smart-home-conx/ssl/*  
 > echo "Done."  
 > echo "Restarting mqtt-client..."  
 > cd /home/pi/smart-home-conx/ && docker-compose build --build-arg PRODUCTION=true mqtt-client api-gateway && docker-compose up -d  

@@ -86,10 +86,10 @@ setup_smart_home_conx () {
   sudo cp $SHC_INSTALL_FILES_PATH/.env .env
 
   echo "Checking SSL setup..."
-  sudo cp /etc/letsencrypt/live/$CLEANED_DOMAIN/cert.pem ./ssh
-  sudo cp /etc/letsencrypt/live/$CLEANED_DOMAIN/privkey.pem ./ssh
-  sudo cp /etc/letsencrypt/live/$CLEANED_DOMAIN/chain.pem ./ssh
-  sudo cp /etc/letsencrypt/live/$CLEANED_DOMAIN/fullchain.pem ./ssh
+  sudo cp /etc/letsencrypt/live/$CLEANED_DOMAIN/cert.pem ./ssl
+  sudo cp /etc/letsencrypt/live/$CLEANED_DOMAIN/privkey.pem ./ssl
+  sudo cp /etc/letsencrypt/live/$CLEANED_DOMAIN/chain.pem ./ssl
+  sudo cp /etc/letsencrypt/live/$CLEANED_DOMAIN/fullchain.pem ./ssl
 }
 
 build_start_containers () {

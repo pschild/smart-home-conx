@@ -109,9 +109,9 @@ app.use(authErrorHandler);
 
 let server;
 if (environment.production) {
-  const key = fs.readFileSync('./ssh/privkey.pem', 'utf8');
-  const cert = fs.readFileSync('./ssh/cert.pem', 'utf8');
-  const ca = fs.readFileSync('./ssh/chain.pem', 'utf8');
+  const key = fs.readFileSync('./ssl/privkey.pem', 'utf8');
+  const cert = fs.readFileSync('./ssl/cert.pem', 'utf8');
+  const ca = fs.readFileSync('./ssl/chain.pem', 'utf8');
   const credentials = { key, cert, ca };
   server = https.createServer(credentials, app);
 } else {

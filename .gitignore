@@ -40,4 +40,4 @@ Thumbs.db
 
 *.env
 **/screenshots/*.png
-ssh/*.pem
+ssl/*.pem

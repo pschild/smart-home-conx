@@ -24,7 +24,7 @@ WORKDIR /app
 COPY .env /app/.env
 
 # specific:
-COPY ssh /app/ssh
+COPY ssl /app/ssl
 
 # specific:
 ARG SERVICE_NAME
