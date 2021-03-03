@@ -17,8 +17,9 @@ RUN if [ "$PRODUCTION" = "true" ]; then npm run build:$SERVICE_NAME -- --prod; e
 RUN npm run ncc:$SERVICE_NAME
 
 ######################################################################
-# We cannot use Apline image here because it's missing some dependencies, needed for pio to work
-FROM node:14
+# We cannot use Alpine image here because it's missing some dependencies, needed for pio to work
+# We need to use buster version as python > 3.6 is needed by pio!
+FROM node:14.16.0-buster
 ######################################################################
 WORKDIR /app
 
