@@ -13,6 +13,9 @@ This project was generated using [Nx](https://nx.dev).
        SERVICE_USER:            username for authentication in api-gateway  
        SERVICE_PASSWORD:        password for authentication in api-gateway  
        SERVICE_SECRET:          secret (any string) used to generate and verify JWTs  
+       PUBLIC_DOMAIN:           the public domain the services are available at, e.g. xyz.myfritz.net, used for generating SSL certs  
+       GIT_USER:                username for git (needed just for checkout/installation)  
+       GIT_EMAIL:               email for git (needed just for checkout/installation)  
        AMAZON_EMAIL:            email address used for Amazon log-in (see README in alexa-connector)  
        AMAZON_PASSWORD:         password used for Amazon log-in (see README in alexa-connector)  
        AMAZON_MFA_SECRET:       MFA used for Amazon log-in (see README in alexa-connector)  
