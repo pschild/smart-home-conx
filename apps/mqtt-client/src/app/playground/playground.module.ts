@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { PlaygroundRoutingModule } from './playground-routing.module';
 import { PlaygroundComponent } from './playground.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from '../material/material.module';
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    PlaygroundRoutingModule
+    PlaygroundRoutingModule,
+    MaterialModule
   ]
 })
 export class PlaygroundModule {
