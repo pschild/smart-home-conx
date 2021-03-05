@@ -3,7 +3,7 @@ import { Application } from 'express';
 import * as mqtt from 'async-mqtt';
 import { isAfter, isBefore } from 'date-fns';
 import { forkJoin, fromEvent } from 'rxjs';
-import { filter, map, mergeMap, tap, throttleTime } from 'rxjs/operators';
+import { bufferTime, filter, map, mergeMap, share, tap, throttleTime } from 'rxjs/operators';
 import { isDocker, log, ofTopicEquals } from '@smart-home-conx/utils';
 import { environment } from './environments/environment';
 import { getSolarTimesForDate$, isNight, SolarTimes } from './app/solar-times';
@@ -18,8 +18,15 @@ mqttClient.subscribe('ESP_7888034/movement');
 
 const messages$ = fromEvent(mqttClient, 'message').pipe(
   map(([topic, message]) => [topic, message.toString()]),
-  tap(([topic, message]) => log(`Received MQTT message with topic=${topic}, message=${message}`))
+  tap(([topic, message]) => log(`Received MQTT message with topic=${topic}, message=${message}`)),
+  share() // share the same observable for each topic and avoid multiple emits
 );
+
+messages$.pipe(
+  bufferTime(1_000 * 60 * 1), // check period of 1 min
+  filter(events => events.length >= 10), // send warning if trigger count is greater than 10 within checked period of 1 min
+  tap(events => log(`PIR sensor triggered ${events.length}x within 1 min!`))
+).subscribe(events => Telegram.sendMessage(`Bewegungsmelder zu oft ausgelöst (${events.length}x)!`));
 
 // movements
 messages$.pipe(
