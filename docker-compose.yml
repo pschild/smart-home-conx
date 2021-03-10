@@ -7,8 +7,8 @@ services:
       dockerfile: apps/mqtt-broker/Dockerfile
     container_name: mqtt-broker
     ports:
-      - "1883:1883"
-      - "1884:1884"
+      - 1883:1883
+      - 1884:1884
     restart: always
 
   api-gateway:
@@ -18,7 +18,7 @@ services:
       dockerfile: apps/api-gateway/Dockerfile
     container_name: api-gateway
     ports:
-      - "3333:3333"
+      - 3333:3333
     restart: always
 
   esp-pir-manager:
@@ -28,7 +28,7 @@ services:
       dockerfile: apps/esp-pir-manager/Dockerfile
     container_name: esp-pir-manager
     ports:
-      - "9052:9052"
+      - 9052:9052
     restart: always
 
   esp-update-server:
@@ -40,7 +40,7 @@ services:
     volumes:
       - esp-binaries:/esp-binaries
     ports:
-      - "9042:9042"
+      - 9042:9042
     restart: always
 
   adesso-commuter-server:
@@ -52,7 +52,7 @@ services:
     volumes:
       - /mnt/adesso-commuter-server/screenshots:/app/assets/screenshots
     ports:
-      - "9062:9062"
+      - 9062:9062
     restart: always
 
   alexa-connector:
@@ -64,7 +64,7 @@ services:
     volumes:
       - amazon-env:/app/assets/alexa-remote-control/env
     ports:
-      - "9072:9072"
+      - 9072:9072
     restart: always
 
   mqtt-client:
@@ -74,8 +74,29 @@ services:
       dockerfile: apps/mqtt-client/Dockerfile
     container_name: mqtt-client
     ports:
-      - "9080:80"
-      - "9082:443"
+      - 9080:80
+      - 9082:443
+    restart: always
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+  registry:
+    image: registry:2
+    container_name: registry
+    ports:
+      - 5000:5000
+    volumes:
+      - /mnt/registry:/var/lib/registry
     restart: always
 
 volumes:
@@ -83,3 +104,4 @@ volumes:
     name: esp-binaries
   amazon-env:
     name: amazon-env
+  portainer_data:
