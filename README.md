@@ -62,6 +62,37 @@ This project was generated using [Nx](https://nx.dev).
 After building, each app will be ran through ncc and so compressed to a single `index.js`.  
 Use `npm run ncc:<APP>` to start ncc.
 
+### Publish docker images to private registry
+
+The Pi in some cases ran out of memory, especially during building the Angular app.  
+In order to not letting the Pi doing too much work, the docker images can also be built on a different system, e.g. Windows.  
+To make that possible, the following settings need to be set for the Docker Engine in `Docker Desktop` (most important is to add the entry for `insecure-registries`; not quite sure about the `features` setting):  
+
+```
+{
+  "registry-mirrors": [],
+  "insecure-registries": ["192.168.178.28:5000"],
+  "debug": true,
+  "experimental": false,
+  "features": {
+    "buildkit": true
+  }
+}
+```
+
+The registry is hosted on the Pi itself as it is running as a docker service (see docker-compose.yml).  
+Run `npm run docker:mqtt-client:publish:prod` to build the mqtt-client for armv7 (for Raspberry Pi 3) and push it to the private registry.  
+You can check which images are located in the private registry by calling `GET http://192.168.178.28:5000/v2/_catalog`.  
+
+To remove an image from the registry execute the following steps ([source repo](https://github.com/burnettk/delete-docker-registry-image)):  
+1. `curl https://raw.githubusercontent.com/burnettk/delete-docker-registry-image/master/delete_docker_registry_image.py | sudo tee /usr/local/bin/delete_docker_registry_image >/dev/null`
+2. `sudo chmod a+x /usr/local/bin/delete_docker_registry_image`
+3. `export REGISTRY_DATA_DIR=/mnt/registry/docker/registry/v2 && sudo -E delete_docker_registry_image --image <name>`
+
+### Statistics about running containers
+
+Open http://<ip>:9000 to access the UI of [portainer](https://www.portainer.io/).
+
 ### Helpful commands
 
 Run `nx g @nrwl/angular:app my-app` to generate an angular application.
@@ -76,14 +107,7 @@ Run `nx g @nrwl/nest:app my-app` to generate a nest application.
 
 ## Production
 
-### Install from scratch (Untested yet!)
+### Install from scratch
 
-Use the script `install.sh` to setup everything from scratch (after a fresh installation of Raspbian).  
-Call the script and follow the instructions. The script will
-  - ensure that you change your password after fresh installation,
-  - update your system packages,
-  - install docker, docker-compose (+ dependencies), git (+ config),
-  - create the necessary folder structure,
-  - clone necessary repository,
-  - prepare env file
-  - and finally run the services (in dev mode, see "Dev and Prod Mode" for more information)
+Use the script `install/install-shc.sh` to setup everything from scratch (after a fresh installation of Raspbian).  
+See [./install/README.md](./install/README.md) for more details. 

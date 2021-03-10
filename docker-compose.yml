@@ -67,12 +67,20 @@ services:
       - 9072:9072
     restart: always
 
+  # mqtt-client:
+  #   image: mqtt-client
+  #   build:
+  #     context: .
+  #     dockerfile: apps/mqtt-client/Dockerfile
+  #   container_name: mqtt-client
+  #   ports:
+  #     - 9080:80
+  #     - 9082:443
+  #   restart: always
+
   mqtt-client:
-    image: mqtt-client
-    build:
-      context: .
-      dockerfile: apps/mqtt-client/Dockerfile
-    container_name: mqtt-client
+    image: localhost:5000/mqtt-client-arm
+    container_name: mqtt-client-arm
     ports:
       - 9080:80
       - 9082:443
