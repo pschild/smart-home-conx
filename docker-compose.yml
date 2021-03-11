@@ -29,6 +29,9 @@ services:
       context: .
       dockerfile: apps/esp-pir-manager/Dockerfile
     container_name: esp-pir-manager
+    depends_on:
+      - mqtt-broker
+      - api-gateway
     ports:
       - 9052:9052
     restart: always
@@ -39,6 +42,9 @@ services:
       context: .
       dockerfile: apps/esp-update-server/Dockerfile
     container_name: esp-update-server
+    depends_on:
+      - mqtt-broker
+      - api-gateway
     volumes:
       - esp-binaries:/esp-binaries
     ports:
@@ -51,6 +57,9 @@ services:
       context: .
       dockerfile: apps/adesso-commuter-server/Dockerfile
     container_name: adesso-commuter-server
+    depends_on:
+      - mqtt-broker
+      - api-gateway
     volumes:
       - /mnt/adesso-commuter-server/screenshots:/app/assets/screenshots
     ports:
@@ -63,6 +72,10 @@ services:
   #     context: .
   #     dockerfile: apps/alexa-connector/Dockerfile
   #   container_name: alexa-connector
+  #   depends_on:
+  #     - registry
+  #     - mqtt-broker
+  #     - api-gateway
   #   volumes:
   #     - amazon-env:/app/assets/alexa-remote-control/env
   #   ports:
@@ -74,6 +87,8 @@ services:
     container_name: alexa-connector
     depends_on:
       - registry
+      - mqtt-broker
+      - api-gateway
     volumes:
       - amazon-env:/app/assets/alexa-remote-control/env
     ports:
@@ -86,6 +101,10 @@ services:
   #     context: .
   #     dockerfile: apps/mqtt-client/Dockerfile
   #   container_name: mqtt-client
+  #   depends_on:
+  #     - registry
+  #     - mqtt-broker
+  #     - api-gateway
   #   ports:
   #     - 9080:80
   #     - 9082:443
@@ -98,6 +117,8 @@ services:
     container_name: mqtt-client
     depends_on:
       - registry
+      - mqtt-broker
+      - api-gateway
     ports:
       - 9080:80
       - 9082:443
