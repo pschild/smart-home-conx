@@ -89,6 +89,8 @@ To remove an image from the registry execute the following steps ([source repo](
 2. `sudo chmod a+x /usr/local/bin/delete_docker_registry_image`
 3. `export REGISTRY_DATA_DIR=/mnt/registry/docker/registry/v2 && sudo -E delete_docker_registry_image --image <name>`
 
+To restart a container using the latest image version from the registry, run `$ docker-compose pull && docker-compose up -d` on the Pi.
+
 ### Statistics about running containers
 
 Open http://<ip>:9000 to access the UI of [portainer](https://www.portainer.io/).
