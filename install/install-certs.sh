@@ -4,5 +4,5 @@ find /etc/letsencrypt/live -name "*.pem" -exec cp -L -r --remove-destination '{}
 chown pi /home/pi/smart-home-conx/ssl/*
 echo "Done."
 echo "Restarting services..."
-cd /home/pi/smart-home-conx/ && docker-compose build --build-arg PRODUCTION=true mqtt-client api-gateway && docker-compose up -d
+cd /home/pi/smart-home-conx/ && docker-compose restart mqtt-client api-gateway
 echo "Done."
