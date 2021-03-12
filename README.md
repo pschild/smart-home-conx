@@ -81,7 +81,8 @@ To make that possible, the following settings need to be set for the Docker Engi
 ```
 
 The registry is hosted on the Pi itself as it is running as a docker service (see docker-compose.yml).  
-Run `npm run docker:mqtt-client:publish:prod` to build the mqtt-client for armv7 (for Raspberry Pi 3) and push it to the private registry.  
+Run `npm run docker:<name>:publish:prod` to build the according image for armv7 (for Raspberry Pi 3) and push it to the private registry.  
+Run `npm run docker:publish:all:prod` to build and push all images.  
 You can check which images are located in the private registry by calling `GET http://192.168.178.28:5000/v2/_catalog`.  
 
 To remove an image from the registry execute the following steps ([source repo](https://github.com/burnettk/delete-docker-registry-image)):  

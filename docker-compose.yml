@@ -1,21 +1,38 @@
 version: "3.8"
 services:
+  # mqtt-broker:
+  #   image: mqtt-broker
+  #   build:
+  #     context: .
+  #     dockerfile: apps/mqtt-broker/Dockerfile
+  #   container_name: mqtt-broker
+  #   ports:
+  #     - 1883:1883
+  #     - 1884:1884
+  #   restart: always
+
   mqtt-broker:
-    image: mqtt-broker
-    build:
-      context: .
-      dockerfile: apps/mqtt-broker/Dockerfile
+    image: localhost:5000/mqtt-broker:latest
     container_name: mqtt-broker
     ports:
       - 1883:1883
       - 1884:1884
     restart: always
 
+  # api-gateway:
+  #   image: api-gateway
+  #   build:
+  #     context: .
+  #     dockerfile: apps/api-gateway/Dockerfile
+  #   container_name: api-gateway
+  #   ports:
+  #     - 3333:3333
+  #   volumes:
+  #     - ./ssl:/app/ssl
+  #   restart: always
+
   api-gateway:
-    image: api-gateway
-    build:
-      context: .
-      dockerfile: apps/api-gateway/Dockerfile
+    image: localhost:5000/api-gateway:latest
     container_name: api-gateway
     ports:
       - 3333:3333
@@ -23,11 +40,21 @@ services:
       - ./ssl:/app/ssl
     restart: always
 
+  # esp-pir-manager:
+  #   image: esp-pir-manager
+  #   build:
+  #     context: .
+  #     dockerfile: apps/esp-pir-manager/Dockerfile
+  #   container_name: esp-pir-manager
+  #   depends_on:
+  #     - mqtt-broker
+  #     - api-gateway
+  #   ports:
+  #     - 9052:9052
+  #   restart: always
+
   esp-pir-manager:
-    image: esp-pir-manager
-    build:
-      context: .
-      dockerfile: apps/esp-pir-manager/Dockerfile
+    image: localhost:5000/esp-pir-manager:latest
     container_name: esp-pir-manager
     depends_on:
       - mqtt-broker
@@ -36,11 +63,23 @@ services:
       - 9052:9052
     restart: always
 
+  # esp-update-server:
+  #   image: esp-update-server
+  #   build:
+  #     context: .
+  #     dockerfile: apps/esp-update-server/Dockerfile
+  #   container_name: esp-update-server
+  #   depends_on:
+  #     - mqtt-broker
+  #     - api-gateway
+  #   volumes:
+  #     - esp-binaries:/esp-binaries
+  #   ports:
+  #     - 9042:9042
+  #   restart: always
+
   esp-update-server:
-    image: esp-update-server
-    build:
-      context: .
-      dockerfile: apps/esp-update-server/Dockerfile
+    image: localhost:5000/esp-update-server:latest
     container_name: esp-update-server
     depends_on:
       - mqtt-broker
@@ -51,11 +90,23 @@ services:
       - 9042:9042
     restart: always
 
+  # adesso-commuter-server:
+  #   image: adesso-commuter-server
+  #   build:
+  #     context: .
+  #     dockerfile: apps/adesso-commuter-server/Dockerfile
+  #   container_name: adesso-commuter-server
+  #   depends_on:
+  #     - mqtt-broker
+  #     - api-gateway
+  #   volumes:
+  #     - /mnt/adesso-commuter-server/screenshots:/app/assets/screenshots
+  #   ports:
+  #     - 9062:9062
+  #   restart: always
+
   adesso-commuter-server:
-    image: adesso-commuter-server
-    build:
-      context: .
-      dockerfile: apps/adesso-commuter-server/Dockerfile
+    image: localhost:5000/adesso-commuter-server:latest
     container_name: adesso-commuter-server
     depends_on:
       - mqtt-broker
