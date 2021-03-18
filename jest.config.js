@@ -10,5 +10,8 @@ module.exports = {
     '<rootDir>/libs/utils',
     '<rootDir>/libs/auth',
     '<rootDir>/libs/messenger-connector',
+    '<rootDir>/apps/api',
+    '<rootDir>/libs/esp',
+    '<rootDir>/libs/preference',
   ],
 };

@@ -1,7 +1,10 @@
 version: "3.8"
 services:
   api:
-    image: localhost:5000/api:latest
+    image: api
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
     container_name: api
     depends_on:
       - mongodb
@@ -10,7 +13,10 @@ services:
     restart: always
 
   mqtt-broker:
-    image: localhost:5000/mqtt-broker:latest
+    image: mqtt-broker
+    build:
+      context: .
+      dockerfile: apps/mqtt-broker/Dockerfile
     container_name: mqtt-broker
     ports:
       - 1883:1883
@@ -18,16 +24,22 @@ services:
     restart: always
 
   api-gateway:
-    image: localhost:5000/api-gateway:latest
+    image: api-gateway
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
     container_name: api-gateway
     ports:
       - 3333:3333
-    volumes:
-      - ./ssl:/app/ssl
+    # volumes:
+    #   - ./ssl:/app/ssl
     restart: always
 
   esp-pir-manager:
-    image: localhost:5000/esp-pir-manager:latest
+    image: esp-pir-manager
+    build:
+      context: .
+      dockerfile: apps/esp-pir-manager/Dockerfile
     container_name: esp-pir-manager
     depends_on:
       - mqtt-broker
@@ -37,7 +49,10 @@ services:
     restart: always
 
   esp-update-server:
-    image: localhost:5000/esp-update-server:latest
+    image: esp-update-server
+    build:
+      context: .
+      dockerfile: apps/esp-update-server/Dockerfile
     container_name: esp-update-server
     depends_on:
       - mqtt-broker
@@ -49,7 +64,10 @@ services:
     restart: always
 
   adesso-commuter-server:
-    image: localhost:5000/adesso-commuter-server:latest
+    image: adesso-commuter-server
+    build:
+      context: .
+      dockerfile: apps/adesso-commuter-server/Dockerfile
     container_name: adesso-commuter-server
     depends_on:
       - mqtt-broker
@@ -61,7 +79,10 @@ services:
     restart: always
 
   alexa-connector:
-    image: localhost:5000/alexa-connector:latest
+    image: alexa-connector
+    build:
+      context: .
+      dockerfile: apps/alexa-connector/Dockerfile
     container_name: alexa-connector
     depends_on:
       - registry
@@ -74,7 +95,10 @@ services:
     restart: always
 
   mqtt-client:
-    image: localhost:5000/mqtt-client:latest
+    image: mqtt-client
+    build:
+      context: .
+      dockerfile: apps/mqtt-client/Dockerfile
     container_name: mqtt-client
     depends_on:
       - registry
@@ -83,8 +107,8 @@ services:
     ports:
       - 9080:80
       - 9082:443
-    volumes:
-      - ./ssl:/app/ssl
+    # volumes:
+    #   - ./ssl:/app/ssl
     restart: always
 
   mongodb:

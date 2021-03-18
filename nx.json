@@ -1,14 +1,9 @@
 {
   "npmScope": "smart-home-conx",
-  "affected": {
-    "defaultBase": "master"
-  },
+  "affected": { "defaultBase": "master" },
   "implicitDependencies": {
     "angular.json": "*",
-    "package.json": {
-      "dependencies": "*",
-      "devDependencies": "*"
-    },
+    "package.json": { "dependencies": "*", "devDependencies": "*" },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
     ".eslintrc.json": "*",
@@ -17,41 +12,22 @@
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
-      }
+      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
     }
   },
   "projects": {
-    "mqtt-client": {
-      "tags": []
-    },
-    "mqtt-broker": {
-      "tags": []
-    },
-    "esp-pir-manager": {
-      "tags": []
-    },
-    "utils": {
-      "tags": []
-    },
-    "esp-update-server": {
-      "tags": []
-    },
-    "adesso-commuter-server": {
-      "tags": []
-    },
-    "alexa-connector": {
-      "tags": []
-    },
-    "api-gateway": {
-      "tags": []
-    },
-    "auth": {
-      "tags": []
-    },
-    "messenger-connector": {
-      "tags": []
-    }
+    "mqtt-client": { "tags": [] },
+    "mqtt-broker": { "tags": [] },
+    "esp-pir-manager": { "tags": [] },
+    "utils": { "tags": [] },
+    "esp-update-server": { "tags": [] },
+    "adesso-commuter-server": { "tags": [] },
+    "alexa-connector": { "tags": [] },
+    "api-gateway": { "tags": [] },
+    "auth": { "tags": [] },
+    "messenger-connector": { "tags": [] },
+    "api": { "tags": [] },
+    "esp": { "tags": [] },
+    "preference": { "tags": [] }
   }
 }

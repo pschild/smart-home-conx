@@ -20,7 +20,11 @@
     "paths": {
       "@smart-home-conx/utils": ["libs/utils/src/index.ts"],
       "@smart-home-conx/auth": ["libs/auth/src/index.ts"],
-      "@smart-home-conx/messenger-connector": ["libs/messenger-connector/src/index.ts"]
+      "@smart-home-conx/messenger-connector": [
+        "libs/messenger-connector/src/index.ts"
+      ],
+      "@smart-home-conx/esp": ["libs/esp/src/index.ts"],
+      "@smart-home-conx/preference": ["libs/preference/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

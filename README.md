@@ -62,6 +62,15 @@ This project was generated using [Nx](https://nx.dev).
 After building, each app will be ran through ncc and so compressed to a single `index.js`.  
 Use `npm run ncc:<APP>` to start ncc.
 
+### Setting up mongodb
+
+https://github.com/andresvidal/rpi3-mongodb3 ist used for running mongodb image.  
+As soon as the container is running, run following command to initially setup the database:  
+`docker exec -it mongodb mongo admin`
+
+Within the container's CLI, run  
+`db.createUser({ user: "<DB_USER>", pwd: "<DB_PASSWORD>", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] })`
+
 ### Publish docker images to private registry
 
 The Pi in some cases ran out of memory, especially during building the Angular app.  
