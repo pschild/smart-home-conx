@@ -10,5 +10,9 @@ module.exports = {
     '<rootDir>/libs/utils',
     '<rootDir>/libs/auth',
     '<rootDir>/libs/messenger-connector',
+    '<rootDir>/apps/logger',
+    '<rootDir>/apps/calculator',
+    '<rootDir>/apps/sense',
+    '<rootDir>/libs/log',
   ],
 };
