@@ -45,7 +45,7 @@ export class HttpService {
   }
 
   getEspConfig(): Observable<EspConfig[]> {
-    return this.httpClient.get<EspConfig[]>(`${window.location.protocol}//${window.location.hostname}:3333/ota/esp-config`);
+    return this.httpClient.get<EspConfig[]>(`${window.location.protocol}//${window.location.hostname}:3333/device`);
   }
 
 }

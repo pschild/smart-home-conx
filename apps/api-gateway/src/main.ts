@@ -31,6 +31,10 @@ const routes = [
   {
     route: `/ota`,
     address: isDocker() ? `http://esp-update-server:9042` : `http://localhost:9042`
+  },
+  {
+    route: `/device`,
+    address: isDocker() ? `http://device-manager:9092` : `http://localhost:9092`
   }
 ];
 
