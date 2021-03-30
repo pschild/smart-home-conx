@@ -94,19 +94,24 @@ To restart a container using the latest image version from the registry, run `$ 
 
 ### Statistics about running containers
 
-Open http://<ip>:9000 to access the UI of [portainer](https://www.portainer.io/).
+Open `http://<ip>:9000` to access the UI of [portainer](https://www.portainer.io/).
+
+### MongoDb
+
+To run a MongoDB instance on Raspberry Pi 3, the following docker image was used: https://github.com/andresvidal/rpi3-mongodb3  
+
+Because of some errors (trouble with lock file after stopping container) a custom Dockerfile based on the original one was created. It can be found in `mongodb/Dockerfile`. The only change that was made is adding `--journal` to the start command CMD.  
 
 ### Helpful commands
 
-Run `nx g @nrwl/angular:app my-app` to generate an angular application.
-Run `nx g @nrwl/angular:lib my-lib` to generate an angular library.
+Run `nx g @nrwl/{angular,node,express,nest}:{app,lib} foo` to generate an application/lib.
 
-Run `nx g @nrwl/node:app my-app` to generate a node application.
-Run `nx g @nrwl/node:lib my-lib` to generate a node library.
+Run `docker-compose [-f docker-compose.dev.yml] up -d [--build] [<SERVICE>]` to rebuild and start/only start all services/a specific service.
 
-Run `nx g @nrwl/express:app my-app` to generate an express application.
+Run `docker-compose pull && docker-compose up -d` on the Pi to restart a container using the latest image version from the registry.
 
-Run `nx g @nrwl/nest:app my-app` to generate a nest application.
+Run `docker buildx build [--build-arg PRODUCTION=true] --platform linux/arm/v7 -t 192.168.178.28:5000/<SERVICE>:latest -f ./apps/<SERVICE>/Dockerfile .` to build the given service for armv7 devices like Pi 3.  
+Run `docker push 192.168.178.28:5000/<SERVICE>:latest` to push the image to registry running on given IP.
 
 ## Production
 
