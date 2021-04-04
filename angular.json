@@ -573,59 +573,6 @@
         }
       }
     },
-    "api-device-feature": {
-      "root": "libs/api/device/feature",
-      "sourceRoot": "libs/api/device/feature/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/api/device/feature/tsconfig.lib.json",
-              "libs/api/device/feature/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/api/device/feature/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/device/feature"],
-          "options": {
-            "jestConfig": "libs/api/device/feature/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "api-device-data-access": {
-      "root": "libs/api/device/data-access",
-      "sourceRoot": "libs/api/device/data-access/src",
-      "projectType": "library",
-      "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/api/device/data-access/tsconfig.lib.json",
-              "libs/api/device/data-access/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/device/data-access/**/*"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/device/data-access"],
-          "options": {
-            "jestConfig": "libs/api/device/data-access/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "sensor-connector": {
       "root": "apps/sensor-connector",
       "sourceRoot": "apps/sensor-connector/src",

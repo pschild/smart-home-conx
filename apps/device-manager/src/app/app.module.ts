@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DeviceFeatureModule } from '@smart-home-conx/api/device/feature';
 import { isDocker } from '@smart-home-conx/utils';
+import { DeviceController } from './device.controller';
+import { DeviceService } from './device.service';
+import { Device } from './entity/device.entity';
 
 @Module({
   imports: [
@@ -15,9 +17,9 @@ import { isDocker } from '@smart-home-conx/utils';
       synchronize: true,
       logging: 'all' // not possible in mongoDb
     }),
-    DeviceFeatureModule
+    TypeOrmModule.forFeature([Device])
   ],
-  controllers: [],
-  providers: [],
+  controllers: [DeviceController],
+  providers: [DeviceService],
 })
 export class AppModule {}

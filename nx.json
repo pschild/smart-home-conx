@@ -27,8 +27,6 @@
     "auth": { "tags": [] },
     "messenger-connector": { "tags": [] },
     "device-manager": { "tags": [] },
-    "api-device-feature": { "tags": [] },
-    "api-device-data-access": { "tags": [] },
     "sensor-connector": { "tags": [] }
   }
 }

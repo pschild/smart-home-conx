@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DeleteResult, MongoRepository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Device } from './entity/device.entity';
-import { CreateDeviceDto } from './dto/create-device.dto';
-import { UpdateDeviceDto } from './dto/update-device.dto';
+import { CreateDeviceDto, UpdateDeviceDto } from './dto';
 
 @Injectable()
 export class DeviceService {

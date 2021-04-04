@@ -22,12 +22,6 @@
       "@smart-home-conx/auth": ["libs/auth/src/index.ts"],
       "@smart-home-conx/messenger-connector": [
         "libs/messenger-connector/src/index.ts"
-      ],
-      "@smart-home-conx/api/device/feature": [
-        "libs/api/device/feature/src/index.ts"
-      ],
-      "@smart-home-conx/api/device/data-access": [
-        "libs/api/device/data-access/src/index.ts"
       ]
     }
   },

@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { CreateDeviceDto, DeviceService, UpdateDeviceDto } from '@smart-home-conx/api/device/data-access';
+import { DeviceService } from './device.service';
+import { CreateDeviceDto, UpdateDeviceDto } from './dto';
 
 @Controller()
 export class DeviceController {
