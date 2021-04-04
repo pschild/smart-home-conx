@@ -9,8 +9,8 @@ import { UpdateDeviceDto } from './dto/update-device.dto';
 export class DeviceService {
 
   constructor(
-    @InjectRepository(Device) private repository: MongoRepository<Device>) {
-  }
+    @InjectRepository(Device) private repository: MongoRepository<Device>
+  ) {}
 
   create(createEspDto: CreateDeviceDto): Promise<Device> {
     return this.repository.save(createEspDto);
