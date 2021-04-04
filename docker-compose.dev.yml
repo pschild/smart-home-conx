@@ -12,6 +12,16 @@ services:
       - 9092:9092
     restart: always
 
+  sensor-connector:
+    image: sensor-connector
+    build:
+      context: .
+      dockerfile: apps/sensor-connector/Dockerfile
+    container_name: sensor-connector
+    ports:
+      - 9053:9053
+    restart: always
+
   mqtt-broker:
     image: mqtt-broker
     build:

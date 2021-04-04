@@ -625,6 +625,61 @@
           }
         }
       }
+    },
+    "sensor-connector": {
+      "root": "apps/sensor-connector",
+      "sourceRoot": "apps/sensor-connector/src",
+      "projectType": "application",
+      "prefix": "sensor-connector",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/sensor-connector",
+            "main": "apps/sensor-connector/src/main.ts",
+            "tsConfig": "apps/sensor-connector/tsconfig.app.json",
+            "assets": ["apps/sensor-connector/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/sensor-connector/src/environments/environment.ts",
+                  "with": "apps/sensor-connector/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "sensor-connector:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/sensor-connector/tsconfig.app.json",
+              "apps/sensor-connector/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/sensor-connector/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/sensor-connector"],
+          "options": {
+            "jestConfig": "apps/sensor-connector/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

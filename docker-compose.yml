@@ -9,6 +9,13 @@ services:
       - 9092:9092
     restart: always
 
+  sensor-connector:
+    image: localhost:5000/sensor-connector:latest
+    container_name: sensor-connector
+    ports:
+      - 9053:9053
+    restart: always
+
   mqtt-broker:
     image: localhost:5000/mqtt-broker:latest
     container_name: mqtt-broker
