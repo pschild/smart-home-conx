@@ -2,14 +2,13 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
 
 async function bootstrap() {
-  const port = 9053;
+  const port = 9032;
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice({
     transport: Transport.MQTT,
-    options: { url: 'mqtt://192.168.178.28:1883', clientId: 'sensor-connector' }
+    options: { url: 'mqtt://192.168.178.28:1883', clientId: 'logger' }
   });
 
   await app.startAllMicroservicesAsync();
@@ -18,7 +17,6 @@ async function bootstrap() {
   await app.listen(port, () => {
     Logger.log('Microservice listening on port ' + port);
     Logger.log('REST interface listening at http://localhost:' + port);
-    Logger.log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
   });
 }
 

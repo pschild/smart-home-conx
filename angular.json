@@ -627,6 +627,61 @@
           }
         }
       }
+    },
+    "logger": {
+      "root": "apps/logger",
+      "sourceRoot": "apps/logger/src",
+      "projectType": "application",
+      "prefix": "logger",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/logger",
+            "main": "apps/logger/src/main.ts",
+            "tsConfig": "apps/logger/tsconfig.app.json",
+            "assets": ["apps/logger/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/logger/src/environments/environment.ts",
+                  "with": "apps/logger/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "logger:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/logger/tsconfig.app.json",
+              "apps/logger/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/logger/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/logger"],
+          "options": {
+            "jestConfig": "apps/logger/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

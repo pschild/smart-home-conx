@@ -14,5 +14,6 @@ module.exports = {
     '<rootDir>/libs/api/device/feature',
     '<rootDir>/libs/api/device/data-access',
     '<rootDir>/apps/sensor-connector',
+    '<rootDir>/apps/logger',
   ],
 };

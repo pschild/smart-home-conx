@@ -16,6 +16,13 @@ services:
       - 9053:9053
     restart: always
 
+  logger:
+    image: localhost:5000/logger:latest
+    container_name: logger
+    ports:
+      - 9032:9032
+    restart: always
+
   mqtt-broker:
     image: localhost:5000/mqtt-broker:latest
     container_name: mqtt-broker
@@ -33,15 +40,15 @@ services:
       - ./ssl:/app/ssl
     restart: always
 
-  esp-pir-manager:
-    image: localhost:5000/esp-pir-manager:latest
-    container_name: esp-pir-manager
-    depends_on:
-      - mqtt-broker
-      - api-gateway
-    ports:
-      - 9052:9052
-    restart: always
+  # esp-pir-manager:
+  #   image: localhost:5000/esp-pir-manager:latest
+  #   container_name: esp-pir-manager
+  #   depends_on:
+  #     - mqtt-broker
+  #     - api-gateway
+  #   ports:
+  #     - 9052:9052
+  #   restart: always
 
   esp-update-server:
     image: localhost:5000/esp-update-server:latest

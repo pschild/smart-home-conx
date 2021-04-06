@@ -35,6 +35,10 @@ const routes = [
   {
     route: `/device`,
     address: isDocker() ? `http://device-manager:9092` : `http://localhost:9092`
+  },
+  {
+    route: `/logger`,
+    address: isDocker() ? `http://logger:9032` : `http://localhost:9032`
   }
 ];
 
