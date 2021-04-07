@@ -1,5 +1,15 @@
 version: "3.8"
 services:
+  messenger-connector:
+    image: messenger-connector
+    build:
+      context: .
+      dockerfile: apps/messenger-connector/Dockerfile
+    container_name: messenger-connector
+    ports:
+      - 9022:9022
+    restart: always
+
   device-manager:
     image: device-manager
     build:

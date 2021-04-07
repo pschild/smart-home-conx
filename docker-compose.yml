@@ -1,5 +1,12 @@
 version: "3.8"
 services:
+  messenger-connector:
+    image: localhost:5000/messenger-connector:latest
+    container_name: messenger-connector
+    ports:
+      - 9022:9022
+    restart: always
+
   device-manager:
     image: localhost:5000/device-manager:latest
     container_name: device-manager

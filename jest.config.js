@@ -13,5 +13,6 @@ module.exports = {
     '<rootDir>/apps/sensor-connector',
     '<rootDir>/apps/logger',
     '<rootDir>/apps/alexa-connector',
+    '<rootDir>/apps/messenger-connector',
   ],
 };
