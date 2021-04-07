@@ -31,7 +31,8 @@ export class MotionSensorController {
       throttleTime(1_000 * 60 * 5), // throttle for 5 min
       tap(_ => log(`Throttle check: OK`)),
       mergeMap(() => forkJoin([
-        this.mqttClient.send('alexa/in/automation', 'Kleines Licht'),
+        // TODO: replace static device name
+        this.mqttClient.send('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'Kleines Licht' }),
         this.mqttClient.send('relais/status', 'on')
       ]))
     ).subscribe(events => {

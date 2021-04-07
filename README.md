@@ -106,6 +106,8 @@ Because of some errors (trouble with lock file after stopping container) a custo
 
 Run `nx g @nrwl/{angular,node,express,nest}:{app,lib} foo` to generate an application/lib.
 
+Run `nx g @nrwl/workspace:remove foo` to remove an application/lib.
+
 Run `docker-compose [-f docker-compose.dev.yml] up -d [--build] [<SERVICE>]` to rebuild and start/only start all services/a specific service.
 
 Run `docker-compose pull && docker-compose up -d` on the Pi to restart a container using the latest image version from the registry.

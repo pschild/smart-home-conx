@@ -5,7 +5,6 @@ module.exports = {
     '<rootDir>/apps/esp-pir-manager',
     '<rootDir>/apps/esp-update-server',
     '<rootDir>/apps/adesso-commuter-server',
-    '<rootDir>/apps/alexa-connector',
     '<rootDir>/apps/api-gateway',
     '<rootDir>/libs/utils',
     '<rootDir>/libs/auth',
@@ -13,5 +12,6 @@ module.exports = {
     '<rootDir>/apps/device-manager',
     '<rootDir>/apps/sensor-connector',
     '<rootDir>/apps/logger',
+    '<rootDir>/apps/alexa-connector',
   ],
 };

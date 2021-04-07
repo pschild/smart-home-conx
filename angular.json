@@ -354,62 +354,6 @@
         }
       }
     },
-    "alexa-connector": {
-      "root": "apps/alexa-connector",
-      "sourceRoot": "apps/alexa-connector/src",
-      "projectType": "application",
-      "prefix": "alexa-connector",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/alexa-connector",
-            "main": "apps/alexa-connector/src/main.ts",
-            "tsConfig": "apps/alexa-connector/tsconfig.app.json",
-            "assets": ["apps/alexa-connector/src/assets"]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/alexa-connector/src/environments/environment.ts",
-                  "with": "apps/alexa-connector/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "alexa-connector:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/alexa-connector/tsconfig.app.json",
-              "apps/alexa-connector/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/alexa-connector/**/*"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/alexa-connector/jest.config.js",
-            "passWithNoTests": true
-          },
-          "outputs": ["coverage/apps/alexa-connector"]
-        }
-      }
-    },
     "api-gateway": {
       "root": "apps/api-gateway",
       "sourceRoot": "apps/api-gateway/src",
@@ -678,6 +622,61 @@
           "outputs": ["coverage/apps/logger"],
           "options": {
             "jestConfig": "apps/logger/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "alexa-connector": {
+      "root": "apps/alexa-connector",
+      "sourceRoot": "apps/alexa-connector/src",
+      "projectType": "application",
+      "prefix": "alexa-connector",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/alexa-connector",
+            "main": "apps/alexa-connector/src/main.ts",
+            "tsConfig": "apps/alexa-connector/tsconfig.app.json",
+            "assets": ["apps/alexa-connector/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/alexa-connector/src/environments/environment.ts",
+                  "with": "apps/alexa-connector/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "alexa-connector:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/alexa-connector/tsconfig.app.json",
+              "apps/alexa-connector/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/alexa-connector/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/alexa-connector"],
+          "options": {
+            "jestConfig": "apps/alexa-connector/jest.config.js",
             "passWithNoTests": true
           }
         }

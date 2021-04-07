@@ -22,12 +22,12 @@
     "utils": { "tags": [] },
     "esp-update-server": { "tags": [] },
     "adesso-commuter-server": { "tags": [] },
-    "alexa-connector": { "tags": [] },
     "api-gateway": { "tags": [] },
     "auth": { "tags": [] },
     "messenger-connector": { "tags": [] },
     "device-manager": { "tags": [] },
     "sensor-connector": { "tags": [] },
-    "logger": { "tags": [] }
+    "logger": { "tags": [] },
+    "alexa-connector": { "tags": [] }
   }
 }
