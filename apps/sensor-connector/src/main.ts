@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
+import { isDocker } from '@smart-home-conx/utils';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
@@ -9,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice({
     transport: Transport.MQTT,
-    options: { url: 'mqtt://192.168.178.28:1883', clientId: 'sensor-connector' }
+    options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883`, clientId: 'sensor-connector' }
   });
 
   await app.startAllMicroservicesAsync();

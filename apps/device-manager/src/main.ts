@@ -2,6 +2,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
 import { AppModule } from './app/app.module';
+import { environment } from './environments/environment';
 
 async function bootstrap() {
   const port = 9092;
@@ -17,6 +18,7 @@ async function bootstrap() {
   await app.listen(port, () => {
     Logger.log('Microservice listening on port ' + port);
     Logger.log('REST interface listening at http://localhost:' + port);
+    Logger.log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
   });
 }
 

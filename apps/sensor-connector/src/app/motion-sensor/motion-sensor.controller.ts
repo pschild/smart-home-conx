@@ -3,7 +3,7 @@ import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transpo
 import { forkJoin, Subject } from 'rxjs';
 import { bufferTime, filter, mergeMap, tap, throttleTime } from 'rxjs/operators';
 import { MotionSensorService } from './motion-sensor.service';
-import { log } from '@smart-home-conx/utils';
+import { isDocker, log } from '@smart-home-conx/utils';
 import { Telegram } from '@smart-home-conx/messenger-connector';
 
 @Controller()
@@ -11,7 +11,7 @@ export class MotionSensorController {
 
   messageStream$ = new Subject<any>();
 
-  @Client({ transport: Transport.MQTT, options: { url: 'mqtt://192.168.178.28:1883' } })
+  @Client({ transport: Transport.MQTT, options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883` } })
   mqttClient: ClientProxy;
 
   constructor(private motionSensorService: MotionSensorService) {
