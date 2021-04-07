@@ -4,7 +4,6 @@ import { forkJoin, Subject } from 'rxjs';
 import { bufferTime, filter, mergeMap, tap, throttleTime } from 'rxjs/operators';
 import { MotionSensorService } from './motion-sensor.service';
 import { isDocker, log } from '@smart-home-conx/utils';
-import { Telegram } from '@smart-home-conx/messenger-connector';
 
 @Controller()
 export class MotionSensorController {
@@ -19,7 +18,7 @@ export class MotionSensorController {
       bufferTime(1_000 * 60 * 1), // check period of 1 min
       filter(events => events.length >= 10), // send warning if trigger count is greater than 10 within checked period
     ).subscribe(events => {
-      Telegram.sendMessage(`Bewegungsmelder zu oft ausgelöst (${events.length}x)!`);
+      this.mqttClient.emit('telegram/message', `Bewegungsmelder zu oft ausgelöst (${events.length}x)!`);
 
       log(`PIR sensor triggered ${events.length}x within 1 min`);
       this.mqttClient.emit('log', {source: 'sensor-connector', message: `[ESP_7888034] PIR sensor triggered ${events.length}x within 1 min`});
@@ -36,7 +35,7 @@ export class MotionSensorController {
         this.mqttClient.send('relais/status', 'on')
       ]))
     ).subscribe(events => {
-      // Telegram.sendMessage(`Nachtlicht ausgelöst`);
+      // this.mqttClient.emit('telegram/message', `Nachtlicht ausgelöst`);
 
       log(`triggered`);
       this.mqttClient.emit('log', {source: 'sensor-connector', message: `[ESP_7888034] triggered`});

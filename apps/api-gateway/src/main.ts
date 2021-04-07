@@ -12,10 +12,12 @@ import * as dotenv from 'dotenv';
 import { isDocker, log } from '@smart-home-conx/utils';
 import { UnauthorizedError, authErrorHandler, authenticate } from '@smart-home-conx/auth';
 import { addMilliseconds } from 'date-fns';
-import { Telegram } from '@smart-home-conx/messenger-connector';
 import { environment } from './environments/environment';
+import * as mqtt from 'async-mqtt';
 
 dotenv.config();
+
+const mqttClient = mqtt.connect(isDocker() ? `http://mqtt-broker:1883` : `http://localhost:1883`, { clientId: 'api-gateway' });
 
 const TOKEN_LIFETIME: number = 1 * 24 * 60 * 60 * 1000; // 1 day, given in ms
 
@@ -107,7 +109,11 @@ app.post('/authenticate', (req, res) => {
     log(`Success! Token: ${token}`);
     return res.json({ token, expiresAt: addMilliseconds(new Date(), TOKEN_LIFETIME) });
   } catch(err) {
-    Telegram.sendMessage(`Login für Benutzer "${username}" fehlgeschlagen!`);
+    // manually publish a mqtt message in the format of NestJs' abstraction: { pattern: string, data: any }
+    mqttClient.publish('telegram/message', JSON.stringify({
+      pattern: 'telegram/message',
+      data: `Login für Benutzer "${username}" fehlgeschlagen!`
+    }));
     log(`Unauthorized request detected! Error: ${err.message}`);
     throw new UnauthorizedError(err.message);
   }
@@ -126,13 +132,17 @@ if (environment.production) {
   server = http.createServer(app);
 }
 
-server
-  .listen(port, () => {
-    log(`running at http://localhost:${port}`);
-    log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
-    environment.production ? log(`SSL enabled`) : log(`SSL diabled`);
-  })
-  .on('upgrade', (req: express.Request, socket: Socket, head: any) => {
-    // we need to proxy WebSockets for broker without initial http request, so we subscribe to the upgrade event manually
-    brokerProxy.upgrade(req, socket, head);
-  });
+mqttClient.on('connect', () => {
+  log(`connected with MQTT broker`);
+
+  server
+    .listen(port, () => {
+      log(`running at http://localhost:${port}`);
+      log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+      environment.production ? log(`SSL enabled`) : log(`SSL diabled`);
+    })
+    .on('upgrade', (req: express.Request, socket: Socket, head: any) => {
+      // we need to proxy WebSockets for broker without initial http request, so we subscribe to the upgrade event manually
+      brokerProxy.upgrade(req, socket, head);
+    });
+});

@@ -5,7 +5,6 @@ import * as aedes from 'aedes';
 import * as ws from 'websocket-stream';
 import { format } from 'date-fns';
 import { environment } from './environments/environment';
-import { Telegram } from '@smart-home-conx/messenger-connector';
 
 // const mongodb = require('mongodb');
 // const mongoUri = `mongodb://192.168.178.28:27017/`;
@@ -45,7 +44,14 @@ instance.on('client', (client) => {
   log(`Client Connected: \x1b[33m${client ? client.id : client}\x1b[0m to broker ${instance.id}`);
   const connectedClient = client ? client.id : client;
   if (connectedClient.toString().startsWith('ESP_')) {
-    Telegram.sendMessage(`Client "${connectedClient}" connected✔️`);
+    instance.publish({
+      cmd: 'publish',
+      topic: 'telegram/message',
+      payload: `✔️ "${connectedClient}"`,
+      retain: false,
+      dup: false,
+      qos: 2
+    }, null);
   }
 });
 
@@ -54,7 +60,14 @@ instance.on('clientDisconnect', (client) => {
   log(`Client Disconnected: \x1b[31m${client ? client.id : client}\x1b[0m to broker ${instance.id}`);
   const disconnectedClient = client ? client.id : client;
   if (disconnectedClient.toString().startsWith('ESP_')) {
-    Telegram.sendMessage(`Client "${disconnectedClient}" disconnected❌`);
+    instance.publish({
+      cmd: 'publish',
+      topic: 'telegram/message',
+      payload: `❌ "${disconnectedClient}"`,
+      retain: false,
+      dup: false,
+      qos: 2
+    }, null);
   }
 });
 
