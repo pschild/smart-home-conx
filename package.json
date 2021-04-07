@@ -15,7 +15,7 @@
     "########### mongodb ###########": "############################################################################################################",
     "docker:mongodb:build-for-armv7": "docker buildx build --platform linux/arm/v7 -t 192.168.178.28:5000/mongodb:latest -f ./mongodb/Dockerfile .",
     "docker:mongodb:push-to-reg": "docker push 192.168.178.28:5000/mongodb:latest",
-    "docker:mongodb:publish": "npm run docker:mongodb:build-for-armv7 && docker:mongodb:push-to-reg",
+    "docker:mongodb:publish": "npm run docker:mongodb:build-for-armv7 && npm run docker:mongodb:push-to-reg",
     "########### messenger-connector ###########": "############################################################################################################",
     "start:messenger-connector": "nx serve messenger-connector",
     "build:messenger-connector": "nx build messenger-connector",
