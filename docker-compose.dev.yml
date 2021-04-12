@@ -78,12 +78,27 @@ services:
   #     - 9052:9052
   #   restart: always
 
-  esp-update-server:
-    image: esp-update-server
+  # esp-update-server:
+  #   image: esp-update-server
+  #   build:
+  #     context: .
+  #     dockerfile: apps/esp-update-server/Dockerfile
+  #   container_name: esp-update-server
+  #   depends_on:
+  #     - mqtt-broker
+  #     - api-gateway
+  #   volumes:
+  #     - esp-binaries:/esp-binaries
+  #   ports:
+  #     - 9042:9042
+  #   restart: always
+
+  ota-server:
+    image: ota-server
     build:
       context: .
-      dockerfile: apps/esp-update-server/Dockerfile
-    container_name: esp-update-server
+      dockerfile: apps/ota-server/Dockerfile
+    container_name: ota-server
     depends_on:
       - mqtt-broker
       - api-gateway

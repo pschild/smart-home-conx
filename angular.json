@@ -711,6 +711,61 @@
         }
       }
     },
+    "ota-server": {
+      "root": "apps/ota-server",
+      "sourceRoot": "apps/ota-server/src",
+      "projectType": "application",
+      "prefix": "ota-server",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/ota-server",
+            "main": "apps/ota-server/src/main.ts",
+            "tsConfig": "apps/ota-server/tsconfig.app.json",
+            "assets": ["apps/ota-server/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/ota-server/src/environments/environment.ts",
+                  "with": "apps/ota-server/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "ota-server:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/ota-server/tsconfig.app.json",
+              "apps/ota-server/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/ota-server/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/ota-server"],
+          "options": {
+            "jestConfig": "apps/ota-server/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-shared-data-access-models": {
       "root": "libs/api/shared/data-access/models",
       "sourceRoot": "libs/api/shared/data-access/models/src",

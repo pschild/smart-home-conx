@@ -1,18 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IMqttMessage } from 'ngx-mqtt';
 import { FormControl } from '@angular/forms';
 import { HttpService } from '../http.service';
 import { SocketService } from '../socket.service';
 import { EventMqttService } from '../event-mqtt.service';
 import { map, scan, share, takeUntil } from 'rxjs/operators';
-import { merge, Observable } from 'rxjs';
+import { merge, Observable, ReplaySubject } from 'rxjs';
 import { EspConfig } from '@smart-home-conx/utils';
 
 @Component({
   selector: 'smart-home-conx-playground',
   templateUrl: './playground.component.html',
 })
-export class PlaygroundComponent implements OnInit {
+export class PlaygroundComponent implements OnInit, OnDestroy {
+
+  private destroyed$: ReplaySubject<boolean> = new ReplaySubject(1);
 
   logMessages$: Observable<string>;
 
@@ -42,6 +44,19 @@ export class PlaygroundComponent implements OnInit {
     this.espConfig$.subscribe(esps => console.log(esps));
 
     this.alexaDevices$ = this.httpService.getDeviceList();
+
+    this.logMessages$ = merge(
+      this.socketService.listen(`esp-motion-sensor/stdout`),
+      this.socketService.listen(`esp-motion-sensor/stderr`).pipe(map(data => `[ERROR] ${data}`))
+    ).pipe(
+      takeUntil(this.destroyed$),
+      scan((acc, curr) => `${acc}\n${curr}`, '')
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next(true);
+    this.destroyed$.complete();
   }
 
   sendMessage(): void {
@@ -61,17 +76,7 @@ export class PlaygroundComponent implements OnInit {
   }
 
   triggerPioBuild(): void {
-    const call$ = this.httpService.triggerPioBuild('esp-motion-sensor').pipe(share());
-
-    this.logMessages$ = merge(
-      this.socketService.listen(`esp-motion-sensor/stdout`),
-      this.socketService.listen(`esp-motion-sensor/stderr`).pipe(map(data => `[ERROR] ${data}`))
-    ).pipe(
-      takeUntil(call$),
-      scan((acc, curr) => `${acc}\n${curr}`, '')
-    );
-
-    call$.subscribe(console.log);
+    this.httpService.triggerPioBuild('esp-motion-sensor', 'patch', [3356673, 3356430]).subscribe(console.log);
   }
 
   killPioBuild(): void {

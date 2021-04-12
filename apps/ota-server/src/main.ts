@@ -1,22 +1,20 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { Transport } from '@nestjs/microservices';
 import { AppModule } from './app/app.module';
+// TODO: with v8 of NestJs, this adapter can be used instead of the custom one
+// import { IoAdapter } from '@nestjs/platform-socket.io';
+import { IoAdapter } from './app/io-adapter';
 import { environment } from './environments/environment';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 async function bootstrap() {
-  const port = 9092;
+  const port = 9042;
   const app = await NestFactory.create(AppModule);
-  app.connectMicroservice({
-    transport: Transport.TCP,
-    options: { host: 'device-manager', retryAttempts: 5, retryDelay: 3000 } // do not specify the port because that leads to EADDRINUSE error when running in docker container
-  });
-
-  await app.startAllMicroservicesAsync();
-  // app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
+  app.useWebSocketAdapter(new IoAdapter(app));
   await app.listen(port, () => {
-    Logger.log('Microservice listening on port ' + port);
     Logger.log('REST interface listening at http://localhost:' + port);
     Logger.log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
   });

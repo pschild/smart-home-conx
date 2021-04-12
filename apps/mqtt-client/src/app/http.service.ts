@@ -33,11 +33,8 @@ export class HttpService {
     return this.httpClient.get(`${window.location.protocol}//${window.location.hostname}:3333/commuter/history`);
   }
 
-  triggerPioBuild(libName: string): Observable<any> {
-    return this.httpClient.post(`${window.location.protocol}//${window.location.hostname}:3333/ota/build/run`, {
-      libName,
-      chipIds: [3356673, 3356430]
-    });
+  triggerPioBuild(libName: string, releaseType: string, chipIds: number[]): Observable<any> {
+    return this.httpClient.post(`${window.location.protocol}//${window.location.hostname}:3333/ota/build/run`, { libName, releaseType, chipIds });
   }
 
   killPioBuild(): Observable<any> {

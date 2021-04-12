@@ -32,7 +32,7 @@ const routes = [
   },
   {
     route: `/ota`,
-    address: isDocker() ? `http://esp-update-server:9042` : `http://localhost:9042`
+    address: isDocker() ? `http://ota-server:9042` : `http://localhost:9042`
   },
   {
     route: `/device`,
@@ -76,7 +76,7 @@ const brokerProxy = createProxyMiddleware('/broker', {
 app.use('/broker', brokerProxy);
 
 const espUpdateServerProxy = createProxyMiddleware('/pio-ws', {
-  target: isDocker() ? `http://esp-update-server:9042` : `http://localhost:9042`,
+  target: isDocker() ? `http://ota-server:9042` : `http://localhost:9042`,
   ws: true,
   // auth: `${process.env.SERVICE_USER}:${process.env.SERVICE_PASSWORD}`,
   headers: {
@@ -139,7 +139,7 @@ mqttClient.on('connect', () => {
     .listen(port, () => {
       log(`running at http://localhost:${port}`);
       log(`running in ${environment.production ? 'PRODUCTION' : 'DEVELOPMENT'}`);
-      environment.production ? log(`SSL enabled`) : log(`SSL diabled`);
+      environment.production ? log(`SSL enabled`) : log(`SSL disabled`);
     })
     .on('upgrade', (req: express.Request, socket: Socket, head: any) => {
       // we need to proxy WebSockets for broker without initial http request, so we subscribe to the upgrade event manually

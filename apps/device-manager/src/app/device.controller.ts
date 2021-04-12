@@ -14,7 +14,7 @@ export class DeviceController {
   }
 
   @Get()
-  @MessagePattern('findAll')
+  @MessagePattern('loadDeviceList')
   findAll() {
     return this.deviceService.findAll();
   }
