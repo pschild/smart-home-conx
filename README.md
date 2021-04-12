@@ -52,7 +52,7 @@ This project was generated using [Nx](https://nx.dev).
 
    Example:
 
-       docker-compose build --build-arg PRODUCTION=true esp-update-server mqtt-client && docker-compose up -d
+       docker-compose build --build-arg PRODUCTION=true ota-server mqtt-client && docker-compose up -d
 
 3. During development, you can start a single service by running `npm run start:<SERVICE>` or build it by running `npm run build:<SERVICE>`.
 

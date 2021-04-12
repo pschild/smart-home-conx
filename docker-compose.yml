@@ -57,9 +57,21 @@ services:
   #     - 9052:9052
   #   restart: always
 
-  esp-update-server:
-    image: localhost:5000/esp-update-server:latest
-    container_name: esp-update-server
+  # esp-update-server:
+  #   image: localhost:5000/esp-update-server:latest
+  #   container_name: esp-update-server
+  #   depends_on:
+  #     - mqtt-broker
+  #     - api-gateway
+  #   volumes:
+  #     - esp-binaries:/esp-binaries
+  #   ports:
+  #     - 9042:9042
+  #   restart: always
+
+  ota-server:
+    image: localhost:5000/ota-server:latest
+    container_name: ota-server
     depends_on:
       - mqtt-broker
       - api-gateway
