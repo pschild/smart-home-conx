@@ -22,6 +22,9 @@
       "@smart-home-conx/auth": ["libs/auth/src/index.ts"],
       "@smart-home-conx/messenger-connector": [
         "libs/messenger-connector/src/index.ts"
+      ],
+      "@smart-home-conx/api/shared/data-access/models": [
+        "libs/api/shared/data-access/models/src/index.ts"
       ]
     }
   },

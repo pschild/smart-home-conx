@@ -710,6 +710,34 @@
           }
         }
       }
+    },
+    "api-shared-data-access-models": {
+      "root": "libs/api/shared/data-access/models",
+      "sourceRoot": "libs/api/shared/data-access/models/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/api/shared/data-access/models/tsconfig.lib.json",
+              "libs/api/shared/data-access/models/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/shared/data-access/models/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/shared/data-access/models"],
+          "options": {
+            "jestConfig": "libs/api/shared/data-access/models/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

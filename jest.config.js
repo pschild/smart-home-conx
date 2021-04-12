@@ -14,5 +14,6 @@ module.exports = {
     '<rootDir>/apps/logger',
     '<rootDir>/apps/alexa-connector',
     '<rootDir>/apps/messenger-connector',
+    '<rootDir>/libs/api/shared/data-access/models',
   ],
 };
