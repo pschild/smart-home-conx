@@ -5,7 +5,7 @@ FROM node:14-alpine as build
 ######################################################################
 WORKDIR /app
 
-COPY package.json yarn.lock decorate-angular-cli.js ./
+COPY package.json decorate-angular-cli.js ./
 RUN export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true && npm install
 COPY . .
 
