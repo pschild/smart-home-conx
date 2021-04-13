@@ -1,4 +1,5 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpException, HttpStatus, Post, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { Client, ClientProxy, Transport } from '@nestjs/microservices';
 import { concat, forkJoin } from 'rxjs';
 import { catchError, mapTo, mergeMap, tap } from 'rxjs/operators';
@@ -8,11 +9,17 @@ import { GithubService } from './github/github.service';
 import { PioBuilderService } from './pio/pio-builder.service';
 import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
 import { RunBuildDto } from './dto';
+import { EspRequestHeader } from './decorator/esp-request-header.decorator';
+import { isDocker, log } from '@smart-home-conx/utils';
+import { BinaryProvider } from './binary/binary.provider';
 
 @Controller()
 export class AppController {
 
-  @Client({ transport: Transport.TCP, options: { host: 'device-manager' } })
+  @Client({ transport: Transport.MQTT, options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883` } })
+  mqttClient: ClientProxy;
+
+  @Client({ transport: Transport.TCP, options: { host: isDocker() ? 'device-manager' : 'localhost' } })
   deviceClient: ClientProxy;
 
   constructor(
@@ -20,7 +27,33 @@ export class AppController {
     private readonly gitService: GitService,
     private readonly githubService: GithubService,
     private readonly gateway: EventsGateway,
+    private readonly binaryProvider: BinaryProvider,
   ) {}
+
+  @Get('ota')
+  async getBinary(
+    @Res() res: Response,
+    @EspRequestHeader() headers: any,
+    @Headers('x-esp8266-chip-id') chipId: number,
+    @Headers('x-esp8266-version') currentVersion: string
+  ) {
+    log(`ESP Chip ${chipId} is using version ${currentVersion}.`);
+    log(`\tChecking for new version...`);
+
+    const findBinaryResult: { path: string; fileName: string; } = await this.binaryProvider.findBinaryForUpdate(chipId, currentVersion);
+    if (findBinaryResult) {
+      log(`\tSending new binary ${findBinaryResult.path}...`);
+      this.mqttClient.emit('telegram/message', `🔄 ESP ${chipId} geupdated: ${currentVersion} => ${findBinaryResult.fileName}`);
+      return res.sendFile(findBinaryResult.path, err => {
+        if (err) {
+          log(`\t\tThere was an error sending the binary at ${findBinaryResult.path}:`);
+          log(err.toString());
+          res.status(304).end();
+        }
+      });
+    }
+    return res.status(304).end();
+  }
 
   @Post('build/run')
   async runBuild(@Body() runBuildDto: RunBuildDto) {
@@ -29,9 +62,9 @@ export class AppController {
     }
 
     // const { libName, releaseType, chipIds } = runBuildDto;
-    const libName = 'esp-motion-sensor';
+    const libName = 'esp-relais';
     const releaseType = 'patch';
-    const chipIds = [3356430];
+    const chipIds = [3357047];
 
     const espList = await this.deviceClient.send<DeviceModel[]>('loadDeviceList', {}).toPromise();
     const targets = new Set<string>(

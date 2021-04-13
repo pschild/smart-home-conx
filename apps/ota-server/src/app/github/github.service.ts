@@ -31,7 +31,7 @@ export class GithubService {
     return new Observable(observer => {
       log(`creating release for pschild/${libName}...`);
       repository.release({ name: `v${version}`, tag_name: version }, (_, release) => {
-        log(`done ${release.id}`);
+        log(`Done. releaseId=${release.id}`);
         observer.next(release.id);
         observer.complete();
       });

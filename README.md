@@ -86,8 +86,8 @@ Run `npm run docker:publish:all:prod` to build and push all images.
 You can check which images are located in the private registry by calling `GET http://192.168.178.28:5000/v2/_catalog`.  
 
 To remove an image from the registry execute the following steps ([source repo](https://github.com/burnettk/delete-docker-registry-image)):  
-1. `curl https://raw.githubusercontent.com/burnettk/delete-docker-registry-image/master/delete_docker_registry_image.py | sudo tee /usr/local/bin/delete_docker_registry_image >/dev/null`
-2. `sudo chmod a+x /usr/local/bin/delete_docker_registry_image`
+1. `curl https://raw.githubusercontent.com/burnettk/delete-docker-registry-image/master/delete_docker_registry_image.py | sudo tee /usr/local/bin/delete_docker_registry_image >/dev/null` (only once)
+2. `sudo chmod a+x /usr/local/bin/delete_docker_registry_image` (only once)
 3. `export REGISTRY_DATA_DIR=/mnt/registry/docker/registry/v2 && sudo -E delete_docker_registry_image --image <name>`
 
 To restart a container using the latest image version from the registry, run `$ docker-compose pull && docker-compose up -d` on the Pi.

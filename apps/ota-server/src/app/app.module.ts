@@ -5,16 +5,17 @@ import { EventsGateway } from './events.gateway';
 import { GitService } from './git/git.service';
 import { GithubService } from './github/github.service';
 import { PioBuilderService } from './pio/pio-builder.service';
+import { BinaryProvider } from './binary/binary.provider';
 
 @Module({
-  imports: [],
   controllers: [AppController],
   providers: [
     AppService,
     EventsGateway,
     PioBuilderService,
     GitService,
-    GithubService
+    GithubService,
+    BinaryProvider
   ]
 })
 export class AppModule {}
