@@ -25,7 +25,8 @@
       ],
       "@smart-home-conx/api/shared/data-access/models": [
         "libs/api/shared/data-access/models/src/index.ts"
-      ]
+      ],
+      "@smart-home-conx/influx": ["libs/influx/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

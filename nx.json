@@ -30,6 +30,7 @@
     "logger": { "tags": [] },
     "alexa-connector": { "tags": [] },
     "ota-server": { "tags": [] },
-    "api-shared-data-access-models": { "tags": [] }
+    "api-shared-data-access-models": { "tags": [] },
+    "influx": { "tags": [] }
   }
 }

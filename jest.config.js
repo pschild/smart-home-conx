@@ -16,5 +16,6 @@ module.exports = {
     '<rootDir>/apps/messenger-connector',
     '<rootDir>/apps/ota-server',
     '<rootDir>/libs/api/shared/data-access/models',
+    '<rootDir>/libs/influx',
   ],
 };

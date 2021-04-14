@@ -793,6 +793,31 @@
           }
         }
       }
+    },
+    "influx": {
+      "root": "libs/influx",
+      "sourceRoot": "libs/influx/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/influx/tsconfig.lib.json",
+              "libs/influx/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/influx/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/influx"],
+          "options": {
+            "jestConfig": "libs/influx/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

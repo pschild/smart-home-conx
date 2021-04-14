@@ -169,6 +169,15 @@ services:
       - db:/data/db
       - configdb:/data/configdb
 
+  influxdb:
+    image: 'arm32v7/influxdb:1.8.4'
+    container_name: influxdb
+    restart: always
+    ports:
+      - 8086:8086
+    volumes:
+      - influxdb-storage:/var/lib/influx.db
+
   portainer:
     image: portainer/portainer
     container_name: portainer
@@ -198,3 +207,4 @@ volumes:
   portainer_data:
   db:
   configdb:
+  influxdb-storage:
