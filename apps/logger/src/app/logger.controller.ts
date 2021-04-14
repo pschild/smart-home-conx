@@ -1,7 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { Ctx, MessagePattern, MqttContext, Payload } from '@nestjs/microservices';
 import { CreateLogDto } from './dto';
-
 import { LoggerService } from './logger.service';
 
 @Controller()

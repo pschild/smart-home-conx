@@ -1,9 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices';
 import { forkJoin, Subject } from 'rxjs';
 import { bufferTime, filter, mergeMap, tap, throttleTime } from 'rxjs/operators';
 import { MotionSensorService } from './motion-sensor.service';
 import { isDocker, log } from '@smart-home-conx/utils';
+import { InfluxService } from '@smart-home-conx/influx';
 
 @Controller()
 export class MotionSensorController {
@@ -13,7 +14,10 @@ export class MotionSensorController {
   @Client({ transport: Transport.MQTT, options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883` } })
   mqttClient: ClientProxy;
 
-  constructor(private motionSensorService: MotionSensorService) {
+  constructor(
+    private readonly motionSensorService: MotionSensorService,
+    private readonly influx: InfluxService
+  ) {
     this.messageStream$.pipe(
       bufferTime(1_000 * 60 * 1), // check period of 1 min
       filter(events => events.length >= 10), // send warning if trigger count is greater than 10 within checked period
@@ -38,14 +42,22 @@ export class MotionSensorController {
       // this.mqttClient.emit('telegram/message', `Nachtlicht ausgelöst`);
 
       log(`triggered`);
-      this.mqttClient.emit('log', {source: 'sensor-connector', message: `[ESP_7888034] triggered`});
+      this.mqttClient.emit('log', {source: 'sensor-connector', message: `[ESP_7888034] night light triggered`});
     });
   }
 
-  @MessagePattern('ESP_7888034/movement')
+  @MessagePattern('+/movement')
   create(@Payload() payload: any, @Ctx() context: MqttContext) {
-    this.mqttClient.emit('log', {source: 'sensor-connector', message: `[ESP_7888034] movement detected`});
+    const topic = context.getTopic();
+    const deviceId = topic.substring(0, topic.lastIndexOf('/'));
+    this.influx.insert({ measurement: 'movements', fields: { message: `movement detected` }, tags: { deviceId } });
+
     this.messageStream$.next(payload);
+  }
+
+  @Get('history')
+  getHistory() {
+    return this.influx.find(`select * from movements`);
   }
 
 }

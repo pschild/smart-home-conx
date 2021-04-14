@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { MongoRepository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { CreateLogDto } from './dto';
 import { Log } from './entity/log.entity';
+import { InfluxService } from '@smart-home-conx/influx';
+import { Observable } from 'rxjs';
+import { IResults } from 'influx';
 
 @Injectable()
 export class LoggerService {
 
-  constructor(
-    @InjectRepository(Log) private repository: MongoRepository<Log>
-  ) {}
+  constructor(private readonly influx: InfluxService) {}
 
-  create(createLogDto: CreateLogDto): Promise<Log> {
-    return this.repository.save(createLogDto);
+  create(createLogDto: CreateLogDto): Observable<void> {
+    return this.influx.insert({ measurement: 'log', fields: { message: createLogDto.message }, tags: { origin: createLogDto.source } });
   }
 
-  findAll(): Promise<Log[]> {
-    return this.repository.find();
+  findAll(): Observable<IResults<Log[]>> {
+    return this.influx.find<Log[]>(`select * from log`);
   }
 }

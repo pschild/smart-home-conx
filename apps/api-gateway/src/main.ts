@@ -39,6 +39,10 @@ const routes = [
     address: isDocker() ? `http://device-manager:9092` : `http://localhost:9092`
   },
   {
+    route: `/sensor-connector`,
+    address: isDocker() ? `http://sensor-connector:9053` : `http://localhost:9053`
+  },
+  {
     route: `/logger`,
     address: isDocker() ? `http://logger:9032` : `http://localhost:9032`
   }
@@ -109,10 +113,16 @@ app.post('/authenticate', (req, res) => {
     log(`Success! Token: ${token}`);
     return res.json({ token, expiresAt: addMilliseconds(new Date(), TOKEN_LIFETIME) });
   } catch(err) {
+    const message = `Login für Benutzer "${username}" fehlgeschlagen!`;
+
     // manually publish a mqtt message in the format of NestJs' abstraction: { pattern: string, data: any }
+    mqttClient.publish('log', JSON.stringify({
+      pattern: 'log',
+      data: {source: 'api-gateway', message}
+    }));
     mqttClient.publish('telegram/message', JSON.stringify({
       pattern: 'telegram/message',
-      data: `Login für Benutzer "${username}" fehlgeschlagen!`
+      data: message
     }));
     log(`Unauthorized request detected! Error: ${err.message}`);
     throw new UnauthorizedError(err.message);

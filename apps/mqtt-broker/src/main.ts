@@ -47,6 +47,9 @@ instance.on('client', (client) => {
     // IDEA: listen to unsubscribe events instead?
     // topic: $SYS/+/new/unsubscribes, payload: {"clientId":"ESP_12345","subs":[...]}
     instance.publish(createPacket('telegram/message', `✔️ "${connectedClient}"`), null);
+    instance.publish(createPacket('log', JSON.stringify({
+      pattern: 'log', data: {source: 'mqtt-broker', message: `"${connectedClient}" connected`}
+    })), null);
   }
 });
 
@@ -58,6 +61,9 @@ instance.on('clientDisconnect', (client) => {
     // IDEA: listen to unsubscribe events instead?
     // topic: $SYS/+/new/unsubscribes, payload: {"clientId":"ESP_12345","subs":[...]}
     instance.publish(createPacket('telegram/message', `❌ "${disconnectedClient}"`), null);
+    instance.publish(createPacket('log', JSON.stringify({
+      pattern: 'log',mdata: {source: 'mqtt-broker', message: `"${disconnectedClient}" disconnected`}
+    })), null);
   }
 });
 
