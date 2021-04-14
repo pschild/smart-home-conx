@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { HttpService } from '../http.service';
 import { SocketService } from '../socket.service';
 import { EventMqttService } from '../event-mqtt.service';
-import { map, scan, share, takeUntil } from 'rxjs/operators';
+import { map, mergeAll, scan, share, takeUntil, tap, toArray } from 'rxjs/operators';
 import { merge, Observable, ReplaySubject } from 'rxjs';
 import { EspConfig } from '@smart-home-conx/utils';
 
@@ -21,6 +21,9 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   espConfig$: Observable<EspConfig[]>;
 
   alexaDevices$: Observable<any>;
+
+  systemLog$: Observable<string[]>;
+  movementLog$: Observable<string[]>;
 
   speachText = new FormControl('');
   commandText = new FormControl('');
@@ -41,7 +44,7 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
       .subscribe((data: IMqttMessage) => console.log('commuting', data.payload.toString()));
 
     this.espConfig$ = this.httpService.getEspConfig();
-    this.espConfig$.subscribe(esps => console.log(esps));
+    this.espConfig$.subscribe(esps => console.log('esps', esps));
 
     this.alexaDevices$ = this.httpService.getDeviceList();
 
@@ -52,6 +55,9 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
       takeUntil(this.destroyed$),
       scan((acc, curr) => `${acc}\n${curr}`, '')
     );
+
+    this.systemLog$ = this.httpService.getLog();
+    this.movementLog$ = this.httpService.getMovementLog();
   }
 
   ngOnDestroy(): void {
