@@ -102,6 +102,10 @@ To run a MongoDB instance on Raspberry Pi 3, the following docker image was used
 
 Because of some errors (trouble with lock file after stopping container) a custom Dockerfile based on the original one was created. It can be found in `mongodb/Dockerfile`. The only change that was made is adding `--journal` to the start command CMD.  
 
+### InfluxDb
+
+To run an InfluxDb instance on Raspberry Pi 3, the following docker image was used: https://hub.docker.com/r/arm32v7/influxdb/  
+
 ### Helpful commands
 
 Run `nx g @nrwl/{angular,node,express,nest}:{app,lib} foo` to generate an application/lib.
@@ -112,8 +116,31 @@ Run `docker-compose [-f docker-compose.dev.yml] up -d [--build] [<SERVICE>]` to 
 
 Run `docker-compose pull && docker-compose up -d` on the Pi to restart a container using the latest image version from the registry.
 
-Run `docker buildx build [--build-arg PRODUCTION=true] --platform linux/arm/v7 -t 192.168.178.28:5000/<SERVICE>:latest -f ./apps/<SERVICE>/Dockerfile .` to build the given service for armv7 devices like Pi 3.  
-Run `docker push 192.168.178.28:5000/<SERVICE>:latest` to push the image to registry running on given IP.
+Run `./docker-build.sh --prod --publish --all -r 192.168.178.28:5000` to build all services and push them to the given registry. The script internally runs
+  - `docker buildx build [--build-arg PRODUCTION=true] --platform linux/arm/v7 -t 192.168.178.28:5000/<SERVICE>:latest -f ./apps/<SERVICE>/Dockerfile .` to build the given service for armv7 devices like Pi 3.
+  - `docker push 192.168.178.28:5000/<SERVICE>:latest` to push the image to registry running on given IP.
+
+Usage:
+```
+
+./docker-build.sh [options] [SERVICES...]
+
+Options:
+--prod:               Build services in production mode
+--publish:            Not only build but also publish built services to registry
+--all:                Run given commands for all services
+-r, --registry REG:   Specify the docker registry to push built images to
+                      (default: localhost:5000)
+```
+
+### Most used commands
+
+`docker-compose -f docker-compose.dev.yml up -d --build [<SERVICE>]` on dev machine  
+`nx serve <SERVICE>` on dev machine.
+
+`./docker-build.sh --prod --publish --all -r 192.168.178.28:5000 [<SERVICE>]` on dev machine, followed by  
+`docker-compose pull && docker-compose up -d [<SERVICE>]` on the Pi.  
+`docker image prune -a` can be run in addition to remove unused images.  
 
 ## Production
 

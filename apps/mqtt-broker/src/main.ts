@@ -1,13 +1,9 @@
 import * as net from 'net';
 import * as http from 'http';
-
 import * as aedes from 'aedes';
 import * as ws from 'websocket-stream';
 import { format } from 'date-fns';
 import { environment } from './environments/environment';
-
-// const mongodb = require('mongodb');
-// const mongoUri = `mongodb://192.168.178.28:27017/`;
 
 const instance = aedes();
 const httpServer = net.createServer(instance.handle);
@@ -62,7 +58,7 @@ instance.on('clientDisconnect', (client) => {
     // topic: $SYS/+/new/unsubscribes, payload: {"clientId":"ESP_12345","subs":[...]}
     instance.publish(createPacket('telegram/message', `❌ "${disconnectedClient}"`), null);
     instance.publish(createPacket('log', JSON.stringify({
-      pattern: 'log',mdata: {source: 'mqtt-broker', message: `"${disconnectedClient}" disconnected`}
+      pattern: 'log', data: {source: 'mqtt-broker', message: `"${disconnectedClient}" disconnected`}
     })), null);
   }
 });
@@ -71,10 +67,6 @@ instance.on('clientDisconnect', (client) => {
 instance.on('publish', (packet, client) => {
   // tslint:disable-next-line:max-line-length
   log(`Client \x1b[31m${client ? client.id : 'BROKER_' + instance.id}\x1b[0m has published ${packet.payload.toString()} on ${packet.topic} to broker ${instance.id}`);
-
-  if (packet.topic.search(/heartbeat/) < 0) {
-    persist(packet);
-  }
 });
 
 function createPacket(topic: string, payload: string): aedes.PublishPacket {
@@ -90,27 +82,4 @@ function createPacket(topic: string, payload: string): aedes.PublishPacket {
 
 function log(logMessage: string) {
   console.log(`${format(new Date(), 'dd.MM.yyyy HH:mm:ss.SSS')}: ${logMessage}`);
-}
-
-function persist(packet) {
-  /*
-  mongodb.MongoClient.connect(mongoUri, (error, database) => {
-    if (error != null) {
-      throw error;
-    }
-    const db = database.db('mydb');
-    const collection = db.collection(`mycoll`);
-    collection.createIndex({ topic: 1 });
-    const messageObject = {
-      topic: packet.topic,
-      datetime: new Date(),
-      message: packet.payload.toString()
-    };
-    collection.insertOne(messageObject, (error, result) => {
-      if (error != null) {
-        console.log('ERROR inserting to mongoDb: ' + error);
-      }
-    });
-  });
-  */
 }

@@ -170,7 +170,7 @@ services:
       - configdb:/data/configdb
 
   influxdb:
-    image: 'arm32v7/influxdb:1.8.4'
+    image: arm32v7/influxdb:1.8.4
     container_name: influxdb
     restart: always
     ports:

@@ -9,7 +9,7 @@ import { Device } from './entity/device.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mongodb',
-      host: isDocker() ? `mongodb` : `192.168.178.28`,
+      host: isDocker() ? `mongodb` : `localhost`,
       port: 27017,
       database: 'device',
       // entities: [Preference, Esp], // omitted in favor of autoLoadEntities
