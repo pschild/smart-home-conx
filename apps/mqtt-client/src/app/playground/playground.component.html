@@ -89,3 +89,10 @@
     {{x.time | date:'dd.MM.yyyy HH:mm:ss'}}: {{x.message}}
   </div>
 </div>
+
+<h2>DHT</h2>
+<div *ngIf="dhtLog$ | async as dhtLog" style="width: 100%; height: 200px; overflow-y: auto;">
+  <div *ngFor="let x of dhtLog">
+    {{x.time | date:'dd.MM.yyyy HH:mm:ss'}}: {{x.temperature}} °C, {{x.humidity}}%
+  </div>
+</div>

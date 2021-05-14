@@ -6,7 +6,7 @@ import { MotionSensorService } from './motion-sensor.service';
 import { isDocker, log } from '@smart-home-conx/utils';
 import { InfluxService } from '@smart-home-conx/influx';
 
-@Controller()
+@Controller('movement')
 export class MotionSensorController {
 
   messageStream$ = new Subject<any>();

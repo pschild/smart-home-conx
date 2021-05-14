@@ -46,7 +46,11 @@ export class HttpService {
   }
 
   getMovementLog(): Observable<any> {
-    return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/sensor-connector/history`);
+    return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/sensor-connector/movement/history`);
+  }
+
+  getDhtLog(): Observable<any> {
+    return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/sensor-connector/dht/history`);
   }
 
   getLog(): Observable<any> {

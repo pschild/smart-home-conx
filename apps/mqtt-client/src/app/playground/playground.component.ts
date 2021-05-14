@@ -24,6 +24,7 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
 
   systemLog$: Observable<string[]>;
   movementLog$: Observable<string[]>;
+  dhtLog$: Observable<string[]>;
 
   speachText = new FormControl('');
   commandText = new FormControl('');
@@ -58,6 +59,7 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
 
     this.systemLog$ = this.httpService.getLog();
     this.movementLog$ = this.httpService.getMovementLog();
+    this.dhtLog$ = this.httpService.getDhtLog();
   }
 
   ngOnDestroy(): void {
