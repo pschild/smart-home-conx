@@ -15,6 +15,6 @@ export class LoggerService {
   }
 
   findAll(): Observable<IResults<Log[]>> {
-    return this.influx.find<Log[]>(`select * from log`);
+    return this.influx.find<Log[]>(`select * from log WHERE time > now() - 1d`);
   }
 }

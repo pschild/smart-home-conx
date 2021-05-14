@@ -19,7 +19,7 @@ dotenv.config();
 
 const mqttClient = mqtt.connect(isDocker() ? `http://mqtt-broker:1883` : `http://localhost:1883`, { clientId: 'api-gateway' });
 
-const TOKEN_LIFETIME: number = 1 * 24 * 60 * 60 * 1000; // 1 day, given in ms
+const TOKEN_LIFETIME: number = 7 * 24 * 60 * 60 * 1000; // 7 days, given in ms
 
 const routes = [
   {

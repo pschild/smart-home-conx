@@ -57,7 +57,7 @@ export class MotionSensorController {
 
   @Get('history')
   getHistory() {
-    return this.influx.find(`select * from movements`);
+    return this.influx.find(`select * from movements WHERE time > now() - 1d`);
   }
 
 }
