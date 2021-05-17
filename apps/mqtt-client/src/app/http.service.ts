@@ -45,6 +45,10 @@ export class HttpService {
     return this.httpClient.get<EspConfig[]>(`${window.location.protocol}//${window.location.hostname}:3333/device`);
   }
 
+  getEspRepos(): Observable<string[]> {
+    return this.httpClient.get<string[]>(`${window.location.protocol}//${window.location.hostname}:3333/ota/github/repos`);
+  }
+
   getMovementLog(): Observable<any> {
     return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/sensor-connector/movement/history`);
   }

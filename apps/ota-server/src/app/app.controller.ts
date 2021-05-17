@@ -12,6 +12,7 @@ import { RunBuildDto } from './dto';
 import { EspRequestHeader } from './decorator/esp-request-header.decorator';
 import { isDocker, log } from '@smart-home-conx/utils';
 import { BinaryProvider } from './binary/binary.provider';
+import { ReleaseType } from './github/release-type.enum';
 
 @Controller()
 export class AppController {
@@ -61,11 +62,7 @@ export class AppController {
       throw new HttpException('Could not start build. Another build is already running.', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // const { libName, releaseType, chipIds } = runBuildDto;
-    const libName = 'esp-relais';
-    const releaseType = 'patch';
-    const chipIds = [3357047];
-
+    const { libName, releaseType, chipIds } = runBuildDto;
     const espList = await this.deviceClient.send<DeviceModel[]>('loadDeviceList', {}).toPromise();
     const targets = new Set<string>(
       espList.filter(esp => chipIds.includes(esp.chipId)).map(esp => esp.pioEnv)
@@ -76,7 +73,7 @@ export class AppController {
     }
 
     const cloneOrUpdate$ = this.gitService.cloneOrUpdate(libName);
-    const nextVersion$ = this.githubService.getNextVersion(libName, releaseType);
+    const nextVersion$ = this.githubService.getNextVersion(libName, releaseType as ReleaseType);
 
     const pioBuild$ = nextVersion => {
       const runner = this.pioBuilderService.create(libName, nextVersion, targets);

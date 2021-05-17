@@ -6,9 +6,10 @@ import { GitService } from './git/git.service';
 import { GithubService } from './github/github.service';
 import { PioBuilderService } from './pio/pio-builder.service';
 import { BinaryProvider } from './binary/binary.provider';
+import { GithubController } from './github/github.controller';
 
 @Module({
-  controllers: [AppController],
+  controllers: [AppController, GithubController],
   providers: [
     AppService,
     EventsGateway,

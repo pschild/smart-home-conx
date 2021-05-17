@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { log } from '@smart-home-conx/utils';
-import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { catchError, filter, map, mergeAll, mergeMap, tap, toArray } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import * as octonode from 'octonode';
 import * as semver from 'semver';
 import * as zip from 'zip-lib';
+import { ReleaseType } from './release-type.enum';
 
 @Injectable()
 export class GithubService {
@@ -18,7 +19,21 @@ export class GithubService {
     this.githubClient = octonode.client(process.env.GITHUB_ACCESS_TOKEN);
   }
 
-  getNextVersion(libName: string, releaseType: 'major' | 'minor' | 'patch' = 'patch'): Observable<string> {
+  getRepositories(): Observable<any> {
+    return from(this.githubClient.me().reposAsync({ per_page: 999 })).pipe(
+      map(([repos, headers]) => repos),
+      mergeAll(),
+      filter((repo: any) => repo.name.indexOf('esp-') === 0), // get only repo names starting with "esp-"
+      mergeMap((repo: any) => from(this.githubClient.repo(repo.full_name).contentsAsync('platformio.ini')).pipe(
+        map(([contents, headers]) => repo.name), // if there is a platform.ini file, return the repo's name
+        catchError(err => of(null))
+      )),
+      filter(repoName => !!repoName), // filter repos without platform.ini file
+      toArray()
+    );
+  }
+
+  getNextVersion(libName: string, releaseType: ReleaseType = 'patch'): Observable<string> {
     return this.getLatestVersion(libName).pipe(
       tap(latestVersion => log(`latest version: ${latestVersion}`)),
       map(latestVersion => latestVersion ? semver.inc(latestVersion, releaseType) : '0.0.1'),

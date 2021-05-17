@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { HttpService } from '../http.service';
 import { SocketService } from '../socket.service';
 import { EventMqttService } from '../event-mqtt.service';
-import { map, mergeAll, scan, share, takeUntil, tap, toArray } from 'rxjs/operators';
+import { map, scan, takeUntil } from 'rxjs/operators';
 import { merge, Observable, ReplaySubject } from 'rxjs';
 import { EspConfig } from '@smart-home-conx/utils';
 
@@ -19,6 +19,7 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   logMessages$: Observable<string>;
 
   espConfig$: Observable<EspConfig[]>;
+  espRepos$: Observable<string[]>;
 
   alexaDevices$: Observable<any>;
 
@@ -29,6 +30,10 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   speachText = new FormControl('');
   commandText = new FormControl('');
   alexaDevice = new FormControl('');
+
+  libName = new FormControl('');
+  releaseType = new FormControl('');
+  chipIds = new FormControl([]);
 
   constructor(
     private httpService: HttpService,
@@ -45,7 +50,7 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
       .subscribe((data: IMqttMessage) => console.log('commuting', data.payload.toString()));
 
     this.espConfig$ = this.httpService.getEspConfig();
-    this.espConfig$.subscribe(esps => console.log('esps', esps));
+    this.espRepos$ = this.httpService.getEspRepos();
 
     this.alexaDevices$ = this.httpService.getDeviceList();
 
@@ -84,7 +89,7 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   }
 
   triggerPioBuild(): void {
-    this.httpService.triggerPioBuild('esp-motion-sensor', 'patch', [3356673, 3356430]).subscribe(console.log);
+    this.httpService.triggerPioBuild(this.libName.value, this.releaseType.value, this.chipIds.value).subscribe(console.log);
   }
 
   killPioBuild(): void {
