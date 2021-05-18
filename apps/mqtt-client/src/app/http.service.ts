@@ -61,4 +61,10 @@ export class HttpService {
     return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/logger`);
   }
 
+  getLatestVoltage(chipId: string): Observable<string> {
+    return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/sensor-connector/voltage/${chipId}/latest`).pipe(
+      map(result => result.value)
+    );
+  }
+
 }

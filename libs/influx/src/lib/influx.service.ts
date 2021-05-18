@@ -1,6 +1,7 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { InfluxDB, IPoint, IResults } from 'influx';
 import { from, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { InfluxModuleOptions, INFLUX_DB_OPTIONS_TOKEN } from './interfaces';
 
 @Injectable()
@@ -29,6 +30,10 @@ export class InfluxService implements OnModuleInit {
 
   find<T>(query: string): Observable<IResults<T>> {
     return from(this.instance.query<T>(query));
+  }
+
+  findOne<T>(query: string): Observable<T> {
+    return from(this.instance.query<T>(query)).pipe(map(result => result[0]));
   }
 
   delete<T>(whereQuery?: string): Observable<IResults<T>> {

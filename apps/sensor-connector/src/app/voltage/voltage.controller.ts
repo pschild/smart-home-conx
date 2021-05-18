@@ -2,33 +2,32 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { Ctx, MessagePattern, MqttContext, Payload } from '@nestjs/microservices';
 import { InfluxService } from '@smart-home-conx/influx';
 
-@Controller('dht')
-export class DhtSensorController {
+@Controller('voltage')
+export class VoltageController {
 
   constructor(
     private readonly influx: InfluxService
   ) {}
 
-  @MessagePattern('devices/+/dht')
-  create(@Payload() payload: { temperature: number; humidity: number }, @Ctx() context: MqttContext) {
+  @MessagePattern('devices/+/voltage')
+  create(@Payload() payload: number, @Ctx() context: MqttContext) {
     const deviceIdMatch = context.getTopic().match(/(ESP_\d+)/);
     if (!deviceIdMatch) {
       throw new Error(`Could not find a deviceId. Topic=${context.getTopic()}`);
     }
     const deviceId = deviceIdMatch[0];
-    const { temperature, humidity } = payload;
 
-    this.influx.insert({ measurement: 'dht', fields: { temperature, humidity }, tags: { deviceId } });
+    this.influx.insert({ measurement: 'voltage', fields: { value: payload }, tags: { deviceId } });
   }
 
   @Get('history')
   getHistory() {
-    return this.influx.find(`select * from dht WHERE time > now() - 1d`);
+    return this.influx.find(`select * from voltage WHERE time > now() - 1d`);
   }
 
   @Get(':chipId/latest')
   getLatest(@Param('chipId') chipId: string) {
-    return this.influx.findOne(`select * from dht where deviceId = '${chipId}' order by time desc limit 1`);
+    return this.influx.findOne(`select * from voltage where deviceId = '${chipId}' order by time desc limit 1`);
   }
 
 }

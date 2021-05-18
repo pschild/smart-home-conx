@@ -135,10 +135,10 @@ Options:
 
 ### Most used commands
 
-`docker-compose -f docker-compose.dev.yml up -d --build [<SERVICE>]` on dev machine  
+`docker-compose -f docker-compose.dev.yml up -d [--no-deps] --build [<SERVICE>]` on dev machine  
 `nx serve <SERVICE>` on dev machine.
 
-`./docker-build.sh --prod --publish --all -r 192.168.178.28:5000 [<SERVICE>]` on dev machine, followed by  
+`./docker-build.sh --prod --publish [--all] -r 192.168.178.28:5000 [<SERVICE>]` on dev machine, followed by  
 `docker-compose pull && docker-compose up -d [<SERVICE>]` on the Pi.  
 `docker image prune -a` can be run in addition to remove unused images.  
 

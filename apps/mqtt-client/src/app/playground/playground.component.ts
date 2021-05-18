@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 import { HttpService } from '../http.service';
 import { SocketService } from '../socket.service';
 import { EventMqttService } from '../event-mqtt.service';
-import { map, scan, takeUntil } from 'rxjs/operators';
+import { map, scan, takeUntil, tap } from 'rxjs/operators';
 import { merge, Observable, ReplaySubject } from 'rxjs';
 import { EspConfig } from '@smart-home-conx/utils';
 
@@ -26,6 +26,8 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   systemLog$: Observable<string[]>;
   movementLog$: Observable<string[]>;
   dhtLog$: Observable<string[]>;
+
+  latestVoltage$: Observable<string>;
 
   speachText = new FormControl('');
   commandText = new FormControl('');
@@ -65,6 +67,11 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
     this.systemLog$ = this.httpService.getLog();
     this.movementLog$ = this.httpService.getMovementLog();
     this.dhtLog$ = this.httpService.getDhtLog();
+
+    this.latestVoltage$ = merge(
+      this.httpService.getLatestVoltage('ESP_12974077'),
+      this.eventMqttService.observe('devices/ESP_12974077/voltage').pipe(map(res => res.payload.toString()))
+    );
   }
 
   ngOnDestroy(): void {

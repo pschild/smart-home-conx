@@ -70,6 +70,11 @@
   {{ logMessages }}
 </textarea>
 
+<h2>ESP_12974077</h2>
+<div>
+  Batterie: {{latestVoltage$ | async}}V
+</div>
+
 <h2>Logs</h2>
 <div *ngIf="systemLog$ | async as systemLog" style="width: 100%; height: 200px; overflow-y: auto;">
   <div *ngFor="let x of systemLog">
