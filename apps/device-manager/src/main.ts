@@ -12,6 +12,10 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: { host: isDocker() ? 'device-manager' : 'localhost', retryAttempts: 5, retryDelay: 3000 } // do not specify the port because that leads to EADDRINUSE error when running in docker container
   });
+  app.connectMicroservice({
+    transport: Transport.MQTT,
+    options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883`, clientId: 'device-manager' }
+  });
 
   await app.startAllMicroservicesAsync();
   // app.enableCors();

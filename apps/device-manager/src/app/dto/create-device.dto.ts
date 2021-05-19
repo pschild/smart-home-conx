@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, IsOptional, IsBoolean } from 'class-validator';
 
 export class CreateDeviceDto {
 
@@ -13,7 +13,19 @@ export class CreateDeviceDto {
   @IsString()
   readonly pioEnv: string;
 
+  @IsOptional()
+  @IsString()
+  readonly firmware: string;
+
   @IsNotEmpty()
   @IsNumber()
   readonly chipId: number;
+
+  @IsOptional()
+  @IsString()
+  readonly place: string;
+
+  @IsBoolean()
+  readonly batteryPowered: boolean;
+
 }

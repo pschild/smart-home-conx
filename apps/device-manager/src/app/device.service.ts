@@ -3,6 +3,7 @@ import { DeleteResult, MongoRepository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Device } from './entity/device.entity';
 import { CreateDeviceDto, UpdateDeviceDto } from './dto';
+import { ConnectionStatus } from './enum/connection-status.enum';
 
 @Injectable()
 export class DeviceService {
@@ -12,7 +13,7 @@ export class DeviceService {
   ) {}
 
   create(createEspDto: CreateDeviceDto): Promise<Device> {
-    return this.repository.save(createEspDto);
+    return this.repository.save({ ...createEspDto, connectionStatus: ConnectionStatus.UNKNOWN, connectionStatusChangedAt: null });
   }
 
   findAll(): Promise<Device[]> {
@@ -21,6 +22,10 @@ export class DeviceService {
 
   findOne(_id: string): Promise<Device> {
     return this.repository.findOne(_id);
+  }
+
+  findByChipId(chipId: number): Promise<Device> {
+    return this.repository.findOne({ chipId });
   }
 
   update(_id: string, updateEspDto: UpdateDeviceDto): Promise<UpdateResult> {

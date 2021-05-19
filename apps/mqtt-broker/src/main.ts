@@ -38,29 +38,11 @@ instance.on('unsubscribe', (subscriptions, client) => {
 // fired when a client connects
 instance.on('client', (client) => {
   log(`Client Connected: \x1b[33m${client ? client.id : client}\x1b[0m to broker ${instance.id}`);
-  const connectedClient = client ? client.id : client;
-  if (connectedClient.toString().startsWith('ESP_')) {
-    // IDEA: listen to unsubscribe events instead?
-    // topic: $SYS/+/new/unsubscribes, payload: {"clientId":"ESP_12345","subs":[...]}
-    instance.publish(createPacket('telegram/message', `✔️ "${connectedClient}"`), null);
-    instance.publish(createPacket('log', JSON.stringify({
-      pattern: 'log', data: {source: 'mqtt-broker', message: `"${connectedClient}" connected`}
-    })), null);
-  }
 });
 
 // fired when a client disconnects
 instance.on('clientDisconnect', (client) => {
   log(`Client Disconnected: \x1b[31m${client ? client.id : client}\x1b[0m to broker ${instance.id}`);
-  const disconnectedClient = client ? client.id : client;
-  if (disconnectedClient.toString().startsWith('ESP_')) {
-    // IDEA: listen to unsubscribe events instead?
-    // topic: $SYS/+/new/unsubscribes, payload: {"clientId":"ESP_12345","subs":[...]}
-    instance.publish(createPacket('telegram/message', `❌ "${disconnectedClient}"`), null);
-    instance.publish(createPacket('log', JSON.stringify({
-      pattern: 'log', data: {source: 'mqtt-broker', message: `"${disconnectedClient}" disconnected`}
-    })), null);
-  }
 });
 
 // fired when a message is published
@@ -68,17 +50,6 @@ instance.on('publish', (packet, client) => {
   // tslint:disable-next-line:max-line-length
   log(`Client \x1b[31m${client ? client.id : 'BROKER_' + instance.id}\x1b[0m has published ${packet.payload.toString()} on ${packet.topic} to broker ${instance.id}`);
 });
-
-function createPacket(topic: string, payload: string): aedes.PublishPacket {
-  return {
-    cmd: 'publish',
-    topic,
-    payload,
-    retain: false,
-    dup: false,
-    qos: 0
-  };
-}
 
 function log(logMessage: string) {
   console.log(`${format(new Date(), 'dd.MM.yyyy HH:mm:ss.SSS')}: ${logMessage}`);
