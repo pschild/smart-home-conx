@@ -4,6 +4,8 @@ import { PlaygroundRoutingModule } from './playground-routing.module';
 import { PlaygroundComponent } from './playground.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../material/material.module';
+import { NgxsModule } from '@ngxs/store';
+import { PlaygroundState } from './state/playground.state';
 
 @NgModule({
   declarations: [
@@ -14,7 +16,8 @@ import { MaterialModule } from '../material/material.module';
     FormsModule,
     ReactiveFormsModule,
     PlaygroundRoutingModule,
-    MaterialModule
+    MaterialModule,
+    NgxsModule.forFeature([PlaygroundState])
   ]
 })
 export class PlaygroundModule {

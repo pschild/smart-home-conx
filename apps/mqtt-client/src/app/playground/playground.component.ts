@@ -4,9 +4,11 @@ import { FormControl } from '@angular/forms';
 import { HttpService } from '../http.service';
 import { SocketService } from '../socket.service';
 import { EventMqttService } from '../event-mqtt.service';
-import { map, scan, takeUntil, tap } from 'rxjs/operators';
+import { map, scan, takeUntil } from 'rxjs/operators';
 import { merge, Observable, ReplaySubject } from 'rxjs';
 import { EspConfig } from '@smart-home-conx/utils';
+import { Select } from '@ngxs/store';
+import { PlaygroundState } from './state/playground.state';
 
 @Component({
   selector: 'smart-home-conx-playground',
@@ -18,16 +20,27 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
 
   logMessages$: Observable<string>;
 
+  @Select(PlaygroundState.espList)
   espConfig$: Observable<EspConfig[]>;
-  espRepos$: Observable<string[]>;
 
+  @Select(PlaygroundState.alexaList)
   alexaDevices$: Observable<any>;
+
+  espRepos$: Observable<string[]>;
 
   systemLog$: Observable<string[]>;
   movementLog$: Observable<string[]>;
+
+  @Select(PlaygroundState.dhtValues)
   dhtLog$: Observable<string[]>;
 
+  @Select(PlaygroundState.latestTemperature)
+  latestTemperature$: Observable<any>;
+
   latestVoltage$: Observable<string>;
+
+  topic = new FormControl('devices/ESP_12974077/dht');
+  payload = new FormControl('{"temperature":18.9,"humidity":56.6}');
 
   speachText = new FormControl('');
   commandText = new FormControl('');
@@ -51,10 +64,7 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
     this.eventMqttService.observe('adesso-commuter-server/commuting/#')
       .subscribe((data: IMqttMessage) => console.log('commuting', data.payload.toString()));
 
-    this.espConfig$ = this.httpService.getEspConfig();
     this.espRepos$ = this.httpService.getEspRepos();
-
-    this.alexaDevices$ = this.httpService.getDeviceList();
 
     this.logMessages$ = merge(
       this.socketService.listen(`esp-motion-sensor/stdout`),
@@ -66,7 +76,6 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
 
     this.systemLog$ = this.httpService.getLog();
     this.movementLog$ = this.httpService.getMovementLog();
-    this.dhtLog$ = this.httpService.getDhtLog();
 
     this.latestVoltage$ = merge(
       this.httpService.getLatestVoltage('ESP_12974077'),
@@ -80,7 +89,7 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   }
 
   sendMessage(): void {
-    this.eventMqttService.publish('ESP_7888034/movement', 'foo').subscribe();
+    this.eventMqttService.publish(this.topic.value, this.payload.value).subscribe();
   }
 
   speak(): void {
