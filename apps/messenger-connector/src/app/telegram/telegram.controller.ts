@@ -1,20 +1,28 @@
 import { Controller } from '@nestjs/common';
 import { TelegramService } from './telegram.service';
 import { Ctx, MessagePattern, MqttContext, Payload } from '@nestjs/microservices';
+import { PreferenceService } from '../preference/preference.service';
 
 @Controller()
 export class TelegramController {
 
-  constructor(private readonly telegramService: TelegramService) {}
+  constructor(
+    private readonly telegramService: TelegramService,
+    private readonly preferenceService: PreferenceService
+  ) {}
 
   @MessagePattern('telegram/message')
-  sendMessage(@Payload() payload: string, @Ctx() context: MqttContext) {
-    return this.telegramService.sendMessage(payload);
+  async sendMessage(@Payload() payload: string, @Ctx() context: MqttContext) {
+    if (await this.preferenceService.getValueFor('telegramEnabled')) {
+      return this.telegramService.sendMessage(payload);
+    }
   }
 
   @MessagePattern('telegram/location')
-  sendLocation(@Payload() payload: { lat: number; lon: number }, @Ctx() context: MqttContext) {
-    const { lat, lon } = payload;
-    return this.telegramService.sendLocation(lat, lon);
+  async sendLocation(@Payload() payload: { lat: number; lon: number }, @Ctx() context: MqttContext) {
+    if (await this.preferenceService.getValueFor('telegramEnabled')) {
+      const { lat, lon } = payload;
+      return this.telegramService.sendLocation(lat, lon);
+    }
   }
 }
