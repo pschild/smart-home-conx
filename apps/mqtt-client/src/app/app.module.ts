@@ -13,6 +13,7 @@ import { MaterialModule } from './material/material.module';
 import { NgxsModule } from '@ngxs/store';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
+import { GatewayInterceptor } from './gateway.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -37,6 +38,11 @@ import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
     NgxsReduxDevtoolsPluginModule.forRoot({disabled: /* environment.production */false}),
   ],
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: GatewayInterceptor,
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

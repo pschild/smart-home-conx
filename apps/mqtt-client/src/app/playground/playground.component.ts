@@ -7,8 +7,10 @@ import { EventMqttService } from '../event-mqtt.service';
 import { map, scan, takeUntil } from 'rxjs/operators';
 import { merge, Observable, ReplaySubject } from 'rxjs';
 import { EspConfig } from '@smart-home-conx/utils';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import { PlaygroundState } from './state/playground.state';
+import { DeviceState } from '../device/state/device.state';
+import { PlaygroundActions } from './state/playground.actions';
 
 @Component({
   selector: 'smart-home-conx-playground',
@@ -20,11 +22,8 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
 
   logMessages$: Observable<string>;
 
-  @Select(PlaygroundState.espList)
+  @Select(DeviceState.espList)
   espConfig$: Observable<EspConfig[]>;
-
-  @Select(PlaygroundState.alexaList)
-  alexaDevices$: Observable<any>;
 
   espRepos$: Observable<string[]>;
 
@@ -42,10 +41,6 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   topic = new FormControl('devices/ESP_12974077/dht');
   payload = new FormControl('{"temperature":18.9,"humidity":56.6}');
 
-  speachText = new FormControl('');
-  commandText = new FormControl('');
-  alexaDevice = new FormControl('');
-
   libName = new FormControl('');
   releaseType = new FormControl('');
   chipIds = new FormControl([]);
@@ -53,11 +48,14 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   constructor(
     private httpService: HttpService,
     private eventMqttService: EventMqttService,
-    private socketService: SocketService
+    private socketService: SocketService,
+    private store: Store
   ) {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(new PlaygroundActions.LoadDhtHistory());
+
     this.eventMqttService.observe('devices/+/version')
       .subscribe((data: IMqttMessage) => console.log('esp ping', data.payload.toString()));
 
@@ -90,14 +88,6 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
 
   sendMessage(): void {
     this.eventMqttService.publish(this.topic.value, this.payload.value).subscribe();
-  }
-
-  speak(): void {
-    this.httpService.speak(this.alexaDevice.value, this.speachText.value).subscribe(console.log);
-  }
-
-  sendCommand(): void {
-    this.httpService.command(this.alexaDevice.value, this.commandText.value).subscribe(console.log);
   }
 
   getCommutingHistory(): void {

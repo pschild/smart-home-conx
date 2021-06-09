@@ -8,6 +8,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTabsModule } from '@angular/material/tabs';
 
 const materialModules = [
   MatButtonModule,
@@ -18,11 +22,18 @@ const materialModules = [
   MatToolbarModule,
   MatCheckboxModule,
   MatProgressSpinnerModule,
-  MatProgressBarModule
+  MatProgressBarModule,
+  MatDialogModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatTabsModule
 ];
 
 @NgModule({
   imports: [...materialModules],
-  exports: [...materialModules]
+  exports: [...materialModules],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'de-DE' }
+  ]
 })
 export class MaterialModule {}

@@ -13,7 +13,7 @@ export class AuthenticationService {
   }
 
   login(username: string, password: string): Observable<any> {
-    return this.http.post(`${window.location.protocol}//${window.location.hostname}:3333/authenticate`, { username, password }).pipe(
+    return this.http.post(`authenticate`, { username, password }).pipe(
       map(authResult => this.setSession(authResult))
     );
   }

@@ -22,31 +22,6 @@
 <br/>
 <br/>
 
-<mat-form-field *ngIf="alexaDevices$ | async as devices">
-  <mat-label>Gerät</mat-label>
-  <mat-select [formControl]="alexaDevice">
-    <mat-option value="ALL">Alle</mat-option>
-    <mat-option *ngFor="let device of devices" [value]="device.accountName">{{ device.accountName }}</mat-option>
-  </mat-select>
-</mat-form-field>
-
-<br/>
-
-<mat-form-field>
-  <input matInput placeholder="Guten Tag" [formControl]="speachText">
-</mat-form-field>
-<button mat-raised-button color="primary" (click)="speak()">
-  <mat-icon>campaign</mat-icon>
-  Speak
-</button>
-
-<br/>
-
-<mat-form-field>
-  <input matInput placeholder="Stelle einen Timer" [formControl]="commandText">
-</mat-form-field>
-<button mat-raised-button color="primary" (click)="sendCommand()">Kommando ausführen</button>
-
 <h2>ESP_12974077</h2>
 <div>
   Batterie: {{latestVoltage$ | async}}V
@@ -117,3 +92,16 @@
 <br/>
 
 <button mat-raised-button color="primary" (click)="getCommutingHistory()">Get Commuting History</button>
+
+<br/>
+<br/>
+
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <svg x="0" y="0">
+    <rect id="svg_1" height="300" width="400" y="0" x="0" stroke="#000" fill="#fff"/>
+
+    <svg x="50%" y="50%">
+      <rect id="svg_2" height="50" width="100" stroke="#f00" fill="#fff"/>
+    </svg>
+  </svg>
+</svg>

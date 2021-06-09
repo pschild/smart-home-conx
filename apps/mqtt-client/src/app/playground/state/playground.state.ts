@@ -1,25 +1,19 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken, NgxsOnInit } from '@ngxs/store';
-import { EspConfig } from '@smart-home-conx/utils';
-import { of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { EventMqttService } from '../../event-mqtt.service';
 import { PlaygroundActions } from './playground.actions';
 
 export const PLAYGROUND_STATE_NAME = new StateToken<PlaygroundStateModel>('playground');
 
 export interface PlaygroundStateModel {
-  espList: EspConfig[];
-  alexaList: [];
   dhtValues: { deviceId: string; temperature: number; humidity: number; time: Date; }[];
 }
 
 @State<PlaygroundStateModel>({
   name: PLAYGROUND_STATE_NAME,
   defaults: {
-    espList: [],
-    alexaList: [],
     dhtValues: []
   }
 })
@@ -30,16 +24,6 @@ export class PlaygroundState implements NgxsOnInit {
     private httpClient: HttpClient,
     private eventMqttService: EventMqttService
   ) {}
-
-  @Selector()
-  static espList(state: PlaygroundStateModel) {
-    return state.espList;
-  }
-
-  @Selector()
-  static alexaList(state: PlaygroundStateModel) {
-    return state.alexaList;
-  }
 
   @Selector()
   static dhtValues(state: PlaygroundStateModel) {
@@ -65,10 +49,6 @@ export class PlaygroundState implements NgxsOnInit {
   }
 
   ngxsOnInit(ctx?: StateContext<any>): any {
-    ctx.dispatch(new PlaygroundActions.LoadEspDevices());
-    ctx.dispatch(new PlaygroundActions.LoadAlexaDevices());
-    ctx.dispatch(new PlaygroundActions.LoadDhtHistory());
-
     this.eventMqttService.observe('devices/+/dht').pipe(
       map(res => ({ deviceId: res.topic.match(/(ESP_\d+)/)[0], payload: JSON.parse(res.payload.toString()) }))
     ).subscribe(result => ctx.dispatch(new PlaygroundActions.AddDhtValue(result.deviceId, result.payload)));
@@ -79,28 +59,9 @@ export class PlaygroundState implements NgxsOnInit {
     ctx.patchState({dhtValues: [...ctx.getState().dhtValues, {...action.payload, deviceId: action.deviceId, time: new Date().toISOString()}]});
   }
 
-  @Action(PlaygroundActions.LoadEspDevices)
-  loadEspDevices(ctx: StateContext<PlaygroundStateModel>) {
-    return this.httpClient.get<EspConfig[]>(`${window.location.protocol}//${window.location.hostname}:3333/device`).pipe(
-      tap(espList => ctx.patchState({espList}))
-    );
-  }
-
-  @Action(PlaygroundActions.LoadAlexaDevices)
-  loadAlexaDevices(ctx: StateContext<PlaygroundStateModel>) {
-    return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/alexa/devices`).pipe(
-      catchError(err => {
-        console.error(err);
-        return of([]);
-      }),
-      map(response => response && response.devices ? response.devices : response),
-      tap(alexaList => ctx.patchState({alexaList}))
-    );
-  }
-
   @Action(PlaygroundActions.LoadDhtHistory)
   loadDhtHistory(ctx: StateContext<PlaygroundStateModel>) {
-    return this.httpClient.get<any>(`${window.location.protocol}//${window.location.hostname}:3333/sensor-connector/dht/history`).pipe(
+    return this.httpClient.get<any>(`sensor-connector/dht/history`).pipe(
       tap(dhtValues => ctx.patchState({dhtValues}))
     );
   }

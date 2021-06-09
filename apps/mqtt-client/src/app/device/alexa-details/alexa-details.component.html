@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>{{data.accountName}}</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form" class="form-container">
+    <div>
+      <mat-form-field>
+        <input matInput placeholder="Guten Tag" formControlName="speechText">
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="speak()" [disabled]="!form.get('speechText').value">
+        <mat-icon>campaign</mat-icon>
+        Sprachausgabe
+      </button>
+    </div>
+    
+    <div>
+      <mat-form-field>
+        <input matInput placeholder="Stelle einen Timer" formControlName="commandText">
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="sendCommand()" [disabled]="!form.get('commandText').value">Kommando ausführen</button>
+    </div>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCloseClick()">Schließen</button>
+</div>

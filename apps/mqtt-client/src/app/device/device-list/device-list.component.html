@@ -1,0 +1,27 @@
+<mat-tab-group>
+  <mat-tab label="ESP-Geräte">
+    <ng-container *ngIf="espList$ | async as espList">
+      <div *ngFor="let esp of espList">
+        {{esp.model}} - {{esp.description}} - {{esp.chipId}}
+        <button mat-icon-button (click)="editDevice(esp)">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </ng-container>
+    <button mat-raised-button color="primary" (click)="createDevice()">
+      <mat-icon>add</mat-icon>
+      Erstellen
+    </button>
+  </mat-tab>
+
+  <mat-tab label="Alexa-Geräte">
+    <ng-container *ngIf="alexaDevices$ | async as alexaDeviceList">
+      <div *ngFor="let alexaDevice of alexaDeviceList">
+        {{alexaDevice.accountName}}
+        <button mat-icon-button (click)="showAlexaDetails(alexaDevice)">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+      </div>
+    </ng-container>
+  </mat-tab>
+</mat-tab-group>

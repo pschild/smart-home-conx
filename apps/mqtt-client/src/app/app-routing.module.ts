@@ -5,7 +5,7 @@ import { AuthGuard } from './auth.guard';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'playground',
+    redirectTo: 'devices',
     pathMatch: 'full'
   },
   {
@@ -16,6 +16,11 @@ const routes: Routes = [
     path: 'playground',
     canActivate: [AuthGuard],
     loadChildren: () => import('./playground/playground.module').then(m => m.PlaygroundModule)
+  },
+  {
+    path: 'devices',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./device/device.module').then(m => m.DeviceModule)
   }
 ];
 
