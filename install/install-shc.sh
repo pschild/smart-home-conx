@@ -63,7 +63,7 @@ install_git () {
 
 install_snapd_certbot () {
   echo "Installing snapd and certbot..."
-  sudo apt install snapd -y
+  sudo apt install snapd dos2unix -y
   sudo snap install core; sudo snap refresh core
   sudo snap install --classic certbot
   sudo ln -s /snap/bin/certbot /usr/bin/certbot
@@ -74,6 +74,7 @@ install_snapd_certbot () {
 
   echo "Creating renewal hook..."
   sudo cp $SHC_INSTALL_FILES_PATH/install-certs.sh /etc/letsencrypt/renewal-hooks/deploy/install-certs.sh
+  sudo dos2unix /etc/letsencrypt/renewal-hooks/deploy/install-certs.sh
 }
 
 setup_smart_home_conx () {
