@@ -17,27 +17,21 @@ export class AppController {
   ) {}
 
   @MessagePattern('alexa/in/automation')
-  automation(@Payload() payload: any, @Ctx() context: MqttContext) {
+  automation(@Payload() payload: { device: string; message: string; }, @Ctx() context: MqttContext) {
     this.mqttClient.emit('log', {source: 'alexa-connector', message: `automation: ${JSON.stringify(payload)}`});
-
-    // TODO: replace static name with payload.device
-    return this.commandService.execute('Philippes Echo Flex', { action: 'automation', param: payload.message });
+    return this.commandService.execute(payload.device, { action: 'automation', param: payload.message });
   }
 
   @MessagePattern('alexa/in/speak')
-  speak(@Payload() payload: any, @Ctx() context: MqttContext) {
+  speak(@Payload() payload: { device: string; message: string; }, @Ctx() context: MqttContext) {
     this.mqttClient.emit('log', {source: 'alexa-connector', message: `speak: ${JSON.stringify(payload)}`});
-
-    // TODO: replace static name with payload.device
-    return this.commandService.execute('Philippes Echo Flex', { action: 'speak', param: payload.message });
+    return this.commandService.execute(payload.device, { action: 'speak', param: payload.message });
   }
 
   @MessagePattern('alexa/in/textcommand')
-  textcommand(@Payload() payload: any, @Ctx() context: MqttContext) {
+  textcommand(@Payload() payload: { device: string; message: string; }, @Ctx() context: MqttContext) {
     this.mqttClient.emit('log', {source: 'alexa-connector', message: `textcommand: ${JSON.stringify(payload)}`});
-
-    // TODO: replace static name with payload.device
-    return this.commandService.execute('Philippes Echo Flex', { action: 'textcommand', param: payload.message });
+    return this.commandService.execute(payload.device, { action: 'textcommand', param: payload.message });
   }
 
   @Post('automation')
