@@ -3,7 +3,7 @@ import { DeleteResult, MongoRepository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Device } from './entity/device.entity';
 import { CreateDeviceDto, UpdateDeviceDto } from './dto';
-import { ConnectionStatus } from './enum/connection-status.enum';
+import { ConnectionStatus } from '@smart-home-conx/api/shared/data-access/models';
 
 @Injectable()
 export class DeviceService {
@@ -17,23 +17,26 @@ export class DeviceService {
   }
 
   findAll(): Promise<Device[]> {
+    // TODO: incl. Sensors?
     return this.repository.find();
   }
 
-  findOne(_id: string): Promise<Device> {
-    return this.repository.findOne(_id);
+  findOne(deviceId: string): Promise<Device> {
+    // TODO: incl. Sensors?
+    return this.repository.findOne(deviceId);
   }
 
   findByChipId(chipId: number): Promise<Device> {
+    // TODO: incl. Sensors?
     return this.repository.findOne({ chipId });
   }
 
-  update(_id: string, updateEspDto: UpdateDeviceDto): Promise<UpdateResult> {
-    return this.repository.update(_id, updateEspDto);
+  update(deviceId: string, updateEspDto: UpdateDeviceDto): Promise<UpdateResult> {
+    return this.repository.update(deviceId, updateEspDto);
   }
 
-  remove(_id: string): Promise<DeleteResult> {
-    return this.repository.delete(_id);
+  remove(deviceId: string): Promise<DeleteResult> {
+    return this.repository.delete(deviceId);
   }
 
 }

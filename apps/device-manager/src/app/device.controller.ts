@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices';
+import { ConnectionStatus } from '@smart-home-conx/api/shared/data-access/models';
 import { isDocker } from '@smart-home-conx/utils';
 import { DeviceService } from './device.service';
 import { CreateDeviceDto, UpdateDeviceDto } from './dto';
 import { Device } from './entity/device.entity';
-import { ConnectionStatus } from './enum/connection-status.enum';
 
-@Controller()
+@Controller('device')
 export class DeviceController {
 
   @Client({ transport: Transport.MQTT, options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883` } })
@@ -15,8 +15,8 @@ export class DeviceController {
   constructor(private readonly deviceService: DeviceService) {}
 
   @Post()
-  create(@Body() createEspDto: CreateDeviceDto) {
-    return this.deviceService.create(createEspDto);
+  create(@Body() createDeviceDto: CreateDeviceDto) {
+    return this.deviceService.create(createDeviceDto);
   }
 
   @Get()
@@ -26,18 +26,18 @@ export class DeviceController {
   }
 
   @Get(':id')
-  findOne(@Param('id') _id: string) {
-    return this.deviceService.findOne(_id);
+  findOne(@Param('id') deviceId: string) {
+    return this.deviceService.findOne(deviceId);
   }
 
   @Patch(':id')
-  update(@Param('id') _id: string, @Body() updateEspDto: UpdateDeviceDto) {
-    return this.deviceService.update(_id, updateEspDto);
+  update(@Param('id') deviceId: string, @Body() updateDeviceDto: UpdateDeviceDto) {
+    return this.deviceService.update(deviceId, updateDeviceDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') _id: string) {
-    return this.deviceService.remove(_id);
+  remove(@Param('id') deviceId: string) {
+    return this.deviceService.remove(deviceId);
   }
 
   @MessagePattern('$SYS/+/new/clients')

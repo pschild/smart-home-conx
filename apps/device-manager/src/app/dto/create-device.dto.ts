@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, IsNumber, IsOptional, IsBoolean } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateDeviceDto {
 
@@ -18,6 +19,7 @@ export class CreateDeviceDto {
   readonly firmware: string;
 
   @IsNotEmpty()
+  @Type(() => Number)
   @IsNumber()
   readonly chipId: number;
 

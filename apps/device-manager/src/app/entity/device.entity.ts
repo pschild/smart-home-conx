@@ -1,6 +1,5 @@
 import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
-import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
-import { ConnectionStatus } from '../enum/connection-status.enum';
+import { DeviceModel, ConnectionStatus } from '@smart-home-conx/api/shared/data-access/models';
 
 @Entity()
 export class Device implements DeviceModel {

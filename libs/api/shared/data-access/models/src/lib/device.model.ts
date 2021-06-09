@@ -1,4 +1,5 @@
 import { ObjectID } from 'typeorm';
+import { ConnectionStatus } from './enum';
 
 export interface DeviceModel {
   _id: ObjectID;
@@ -6,5 +7,10 @@ export interface DeviceModel {
   model: string;
   description: string;
   pioEnv: string;
+  firmware: string;
   chipId: number;
+  place: string;
+  batteryPowered: boolean;
+  connectionStatus: ConnectionStatus;
+  connectionStatusChangedAt: Date;
 }

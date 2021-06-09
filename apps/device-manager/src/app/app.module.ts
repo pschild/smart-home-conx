@@ -4,6 +4,12 @@ import { isDocker } from '@smart-home-conx/utils';
 import { DeviceController } from './device.controller';
 import { DeviceService } from './device.service';
 import { Device } from './entity/device.entity';
+import { Room } from './entity/room.entity';
+import { Sensor } from './entity/sensor.entity';
+import { RoomController } from './room.controller';
+import { RoomService } from './room.service';
+import { SensorController } from './sensor.controller';
+import { SensorService } from './sensor.service';
 
 @Module({
   imports: [
@@ -17,9 +23,9 @@ import { Device } from './entity/device.entity';
       synchronize: true,
       logging: 'all' // not possible in mongoDb
     }),
-    TypeOrmModule.forFeature([Device])
+    TypeOrmModule.forFeature([Device, Sensor, Room])
   ],
-  controllers: [DeviceController],
-  providers: [DeviceService],
+  controllers: [DeviceController, SensorController, RoomController],
+  providers: [DeviceService, SensorService, RoomService],
 })
 export class AppModule {}
