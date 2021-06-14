@@ -10,8 +10,7 @@ export class InitialPreferences1618563524000 implements MigrationInterface {
     if (!count) {
       log(`Creating default preferences...`);
       await repository.save([
-        { key: 'telegramEnabled', label: 'Telegram Bot aktiviert', value: true },
-        { key: 'whatsAppEnabled', label: 'WhatsApp Bot aktiviert', value: false }
+        { key: 'loggingEnabled', label: 'Logging aktiviert', value: true }
       ]);
     }
   }

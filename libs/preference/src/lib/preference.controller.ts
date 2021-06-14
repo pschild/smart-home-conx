@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { CreatePreferenceDto } from './dto/create-preference.dto';
 import { UpdatePreferenceDto } from './dto/update-preference.dto';
 import { PreferenceService } from './preference.service';
 
@@ -10,6 +11,11 @@ export class PreferenceController {
   @Get()
   findAll() {
     return this.preferenceService.findAll();
+  }
+
+  @Post()
+  create(@Body() createPreferenceDto: CreatePreferenceDto) {
+    return this.preferenceService.create(createPreferenceDto);
   }
 
   @Patch(':key')

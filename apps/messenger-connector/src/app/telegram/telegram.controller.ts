@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { TelegramService } from './telegram.service';
 import { Ctx, MessagePattern, MqttContext, Payload } from '@nestjs/microservices';
-import { PreferenceService } from '../preference/preference.service';
+import { PreferenceService } from '@smart-home-conx/preference';
 
 @Controller()
 export class TelegramController {

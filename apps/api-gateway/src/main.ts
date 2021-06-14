@@ -45,6 +45,10 @@ const routes = [
   {
     route: `/logger`,
     address: isDocker() ? `http://logger:9032` : `http://localhost:9032`
+  },
+  {
+    route: `/messenger-connector`,
+    address: isDocker() ? `http://messenger-connector:9022` : `http://localhost:9022`
   }
 ];
 

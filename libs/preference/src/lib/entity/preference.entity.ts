@@ -2,6 +2,7 @@ import { Column, Entity, ObjectID, ObjectIdColumn, PrimaryColumn } from 'typeorm
 
 export interface PreferenceModel {
   key: string;
+  label: string;
   value: any;
 }
 
@@ -13,6 +14,9 @@ export class Preference implements PreferenceModel {
 
   @PrimaryColumn({ unique: true })
   key: string;
+
+  @Column()
+  label: string;
 
   @Column()
   value: any;

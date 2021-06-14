@@ -7,6 +7,10 @@ export class CreatePreferenceDto {
   readonly key: string;
 
   @IsNotEmpty()
+  @IsString()
+  readonly label: string;
+
+  @IsNotEmpty()
   readonly value: any;
 
 }

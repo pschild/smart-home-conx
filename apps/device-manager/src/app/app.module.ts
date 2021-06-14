@@ -17,11 +17,9 @@ import { SensorService } from './sensor.service';
       type: 'mongodb',
       host: isDocker() ? `mongodb` : `localhost`,
       port: 27017,
-      database: 'device',
-      // entities: [Preference, Esp], // omitted in favor of autoLoadEntities
+      database: 'device-manager',
       autoLoadEntities: true, // with that option specified, every entity registered through the forFeature() method will be automatically added to the entities array
-      synchronize: true,
-      logging: 'all' // not possible in mongoDb
+      synchronize: true
     }),
     TypeOrmModule.forFeature([Device, Sensor, Room])
   ],

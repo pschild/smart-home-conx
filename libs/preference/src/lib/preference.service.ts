@@ -3,6 +3,7 @@ import { MongoRepository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Preference } from './entity/preference.entity';
 import { UpdatePreferenceDto } from './dto/update-preference.dto';
+import { CreatePreferenceDto } from './dto/create-preference.dto';
 
 @Injectable()
 export class PreferenceService {
@@ -10,6 +11,10 @@ export class PreferenceService {
   constructor(
     @InjectRepository(Preference) private repository: MongoRepository<Preference>
   ) {}
+
+  create(createPreferenceDto: CreatePreferenceDto): Promise<Preference> {
+    return this.repository.save(createPreferenceDto);
+  }
 
   findAll(): Promise<Preference[]> {
     return this.repository.find();
