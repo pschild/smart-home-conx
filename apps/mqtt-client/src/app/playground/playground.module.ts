@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../material/material.module';
 import { NgxsModule } from '@ngxs/store';
 import { PlaygroundState } from './state/playground.state';
+import { PreferenceModule } from '../preference/preference.module';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { PlaygroundState } from './state/playground.state';
     ReactiveFormsModule,
     PlaygroundRoutingModule,
     MaterialModule,
+    PreferenceModule,
     NgxsModule.forFeature([PlaygroundState])
   ]
 })

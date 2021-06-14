@@ -1,0 +1,13 @@
+<h2>Messenger-Anbindung</h2>
+<div *ngIf="messengerConnectorPreferenceItem$ | async as messengerConnectorPreferenceItem">
+  <div *ngFor="let preference of messengerConnectorPreferenceItem.prefs">
+    <smart-home-conx-preference-item [preference]="preference" (update)="handleChange(messengerConnectorPreferenceItem.serviceName, $event)"></smart-home-conx-preference-item>
+  </div>
+</div>
+
+<h2>Logging</h2>
+<div *ngIf="loggerPreferenceItem$ | async as loggerPreferenceItem">
+  <div *ngFor="let preference of loggerPreferenceItem.prefs">
+    <smart-home-conx-preference-item [preference]="preference" (update)="handleChange(loggerPreferenceItem.serviceName, $event)"></smart-home-conx-preference-item>
+  </div>
+</div>

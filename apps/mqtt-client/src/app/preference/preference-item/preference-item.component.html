@@ -1,0 +1,11 @@
+<form [formGroup]="form">
+  <mat-slide-toggle
+    [formControlName]="preference.key"
+    *ngIf="isBoolean(preference.value)"
+  >{{preference.label}}</mat-slide-toggle>
+
+  <mat-form-field *ngIf="!isBoolean(preference.value)">
+    <mat-label>{{preference.label}}</mat-label>
+    <input matInput [formControlName]="preference.key">
+  </mat-form-field>
+</form>

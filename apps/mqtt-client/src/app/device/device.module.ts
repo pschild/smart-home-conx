@@ -8,6 +8,7 @@ import { AlexaDetailsComponent } from './alexa-details/alexa-details.component';
 import { DeviceRoutingModule } from './device-routing.module';
 import { NgxsModule } from '@ngxs/store';
 import { DeviceState } from './state/device.state';
+import { PreferenceModule } from '../preference/preference.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { DeviceState } from './state/device.state';
     ReactiveFormsModule,
     DeviceRoutingModule,
     MaterialModule,
+    PreferenceModule,
     NgxsModule.forFeature([DeviceState])
   ]
 })

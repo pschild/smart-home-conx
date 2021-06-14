@@ -21,6 +21,11 @@ const routes: Routes = [
     path: 'devices',
     canActivate: [AuthGuard],
     loadChildren: () => import('./device/device.module').then(m => m.DeviceModule)
+  },
+  {
+    path: 'preferences',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./preference/preference.module').then(m => m.PreferenceModule)
   }
 ];
 
