@@ -26,7 +26,7 @@ export class PioBuilderService {
     );
   }
 
-  stopActive(): void {
+  stopActive(): boolean {
     if (this.activeRunner) {
       return this.activeRunner.stop();
     }

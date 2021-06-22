@@ -56,6 +56,14 @@ This project was generated using [Nx](https://nx.dev).
 
 3. During development, you can start a single service by running `npm run start:<SERVICE>` or build it by running `npm run build:<SERVICE>`.
 
+### Migrations and Updates
+
+`npm run nx migrate latest` or `./node_modules/.bin/nx migrate latest`
+
+`npm install`
+
+`npm run nx migrate --run-migrations` or `./node_modules/.bin/nx migrate --run-migrations`
+
 ### ncc
 
 [ncc](https://github.com/vercel/ncc) is a "simple CLI for compiling a Node.js module into a single file, together with all its dependencies", so that no extra `node_modules` folder is necessary.  

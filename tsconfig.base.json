@@ -18,16 +18,16 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@smart-home-conx/utils": ["libs/utils/src/index.ts"],
-      "@smart-home-conx/auth": ["libs/auth/src/index.ts"],
-      "@smart-home-conx/messenger-connector": [
-        "libs/messenger-connector/src/index.ts"
-      ],
       "@smart-home-conx/api/shared/data-access/models": [
         "libs/api/shared/data-access/models/src/index.ts"
       ],
+      "@smart-home-conx/auth": ["libs/auth/src/index.ts"],
       "@smart-home-conx/influx": ["libs/influx/src/index.ts"],
-      "@smart-home-conx/preference": ["libs/preference/src/index.ts"]
+      "@smart-home-conx/messenger-connector": [
+        "libs/messenger-connector/src/index.ts"
+      ],
+      "@smart-home-conx/preference": ["libs/preference/src/index.ts"],
+      "@smart-home-conx/utils": ["libs/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

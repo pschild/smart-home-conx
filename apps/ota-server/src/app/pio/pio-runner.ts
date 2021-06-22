@@ -57,7 +57,7 @@ export class PioRunner {
     });
   }
 
-  stop(): void {
+  stop(): boolean {
     return this.process.kill();
   }
 

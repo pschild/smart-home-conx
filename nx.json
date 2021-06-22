@@ -1,9 +1,14 @@
 {
   "npmScope": "smart-home-conx",
-  "affected": { "defaultBase": "master" },
+  "affected": {
+    "defaultBase": "master"
+  },
   "implicitDependencies": {
     "angular.json": "*",
-    "package.json": { "dependencies": "*", "devDependencies": "*" },
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
     "tsconfig.base.json": "*",
     "tslint.json": "*",
     ".eslintrc.json": "*",
@@ -12,26 +17,62 @@
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
-      "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
+      }
     }
   },
   "projects": {
-    "mqtt-client": { "tags": [] },
-    "mqtt-broker": { "tags": [] },
-    "esp-pir-manager": { "tags": [] },
-    "utils": { "tags": [] },
-    "esp-update-server": { "tags": [] },
-    "adesso-commuter-server": { "tags": [] },
-    "api-gateway": { "tags": [] },
-    "auth": { "tags": [] },
-    "messenger-connector": { "tags": [] },
-    "device-manager": { "tags": [] },
-    "sensor-connector": { "tags": [] },
-    "logger": { "tags": [] },
-    "alexa-connector": { "tags": [] },
-    "ota-server": { "tags": [] },
-    "api-shared-data-access-models": { "tags": [] },
-    "influx": { "tags": [] },
-    "preference": { "tags": [] }
+    "adesso-commuter-server": {
+      "tags": []
+    },
+    "alexa-connector": {
+      "tags": []
+    },
+    "api-gateway": {
+      "tags": []
+    },
+    "api-shared-data-access-models": {
+      "tags": []
+    },
+    "auth": {
+      "tags": []
+    },
+    "device-manager": {
+      "tags": []
+    },
+    "esp-pir-manager": {
+      "tags": []
+    },
+    "esp-update-server": {
+      "tags": []
+    },
+    "influx": {
+      "tags": []
+    },
+    "logger": {
+      "tags": []
+    },
+    "messenger-connector": {
+      "tags": []
+    },
+    "mqtt-broker": {
+      "tags": []
+    },
+    "mqtt-client": {
+      "tags": []
+    },
+    "ota-server": {
+      "tags": []
+    },
+    "preference": {
+      "tags": []
+    },
+    "sensor-connector": {
+      "tags": []
+    },
+    "utils": {
+      "tags": []
+    }
   }
 }
