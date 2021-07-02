@@ -13,6 +13,8 @@ import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatMenuModule } from '@angular/material/menu';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 const materialModules = [
   MatButtonModule,
@@ -28,12 +30,17 @@ const materialModules = [
   MatDatepickerModule,
   MatNativeDateModule,
   MatTabsModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatMenuModule
+];
+
+const cdkModules = [
+  DragDropModule
 ];
 
 @NgModule({
-  imports: [...materialModules],
-  exports: [...materialModules],
+  imports: [...materialModules, ...cdkModules],
+  exports: [...materialModules, ...cdkModules],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'de-DE' }
   ]

@@ -7,10 +7,12 @@ import { MaterialModule } from '../material/material.module';
 import { NgxsModule } from '@ngxs/store';
 import { PlaygroundState } from './state/playground.state';
 import { PreferenceModule } from '../preference/preference.module';
+import { FilterPipe } from './filter.pipe';
 
 @NgModule({
   declarations: [
-    PlaygroundComponent
+    PlaygroundComponent,
+    FilterPipe
   ],
   imports: [
     CommonModule,

@@ -9,4 +9,18 @@ export namespace PlaygroundActions {
 
     constructor(public deviceId: string, public payload: any) {}
   }
+
+  export class LoadRooms {
+    static readonly type = '[Playground] load rooms';
+  }
+
+  export class LoadSensors {
+    static readonly type = '[Playground] load sensors';
+  }
+
+  export class UpdateSensor {
+    static readonly type = '[Playground] update sensor';
+
+    constructor(public sensorId: string, public newRoomId: string, public position: { x: number; y: number }) {}
+  }
 }

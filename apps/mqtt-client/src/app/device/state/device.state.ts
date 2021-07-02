@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext, StateToken, NgxsOnInit } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { patch, updateItem, removeItem, insertItem } from '@ngxs/store/operators';
 import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
 import { of } from 'rxjs';
@@ -24,7 +24,7 @@ export interface DeviceStateModel {
   }
 })
 @Injectable()
-export class DeviceState implements NgxsOnInit {
+export class DeviceState {
 
   @Selector()
   static espList(state: DeviceStateModel) {
@@ -41,11 +41,6 @@ export class DeviceState implements NgxsOnInit {
     private deviceHttpService: DeviceHttpService,
     private eventMqttService: EventMqttService
   ) {}
-
-  ngxsOnInit(ctx?: StateContext<any>): any {
-    // ctx.dispatch(new DeviceActions.LoadEspDevices());
-    // ctx.dispatch(new DeviceActions.LoadAlexaDevices());
-  }
 
   @Action(DeviceActions.LoadEspDevices)
   loadEspDevices(ctx: StateContext<DeviceStateModel>) {

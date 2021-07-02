@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext, StateToken, NgxsOnInit } from '@ngxs/store';
+import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { forkJoin } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PreferenceHttpService } from './preference-http.service';
@@ -33,7 +33,7 @@ export interface PreferenceStateModel {
   }
 })
 @Injectable()
-export class PreferenceState implements NgxsOnInit {
+export class PreferenceState {
 
   @Selector()
   static loggerPreferences(state: PreferenceStateModel) {
@@ -45,11 +45,9 @@ export class PreferenceState implements NgxsOnInit {
     return state.preferenceList.find(item => item.serviceName === MESSENGER_CONNECTOR_SERVICE_NAME);
   }
 
-  constructor(private preferenceHttpService: PreferenceHttpService) {
-  }
-
-  ngxsOnInit(ctx?: StateContext<any>): any {
-    ctx.dispatch(new PreferenceActions.LoadPreferences());
+  constructor(
+    private preferenceHttpService: PreferenceHttpService
+  ) {
   }
 
   @Action(PreferenceActions.LoadPreferences)

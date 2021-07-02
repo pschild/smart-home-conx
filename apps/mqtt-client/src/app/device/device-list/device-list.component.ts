@@ -1,18 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { DeviceState } from '../state/device.state';
 import { Select, Store } from '@ngxs/store';
 import { DeviceCreateComponent } from '../device-create/device-create.component';
 import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
-import { DeviceActions } from '../state/device.actions';
 import { AlexaDetailsComponent } from '../alexa-details/alexa-details.component';
 
 @Component({
   selector: 'smart-home-conx-device-list',
   templateUrl: 'device-list.component.html'
 })
-export class DeviceListComponent implements OnInit {
+export class DeviceListComponent {
 
   @Select(DeviceState.espList)
   espList$: Observable<DeviceModel[]>;
@@ -24,11 +23,6 @@ export class DeviceListComponent implements OnInit {
     public dialog: MatDialog,
     private store: Store
   ) {
-  }
-
-  ngOnInit() {
-    this.store.dispatch(new DeviceActions.LoadEspDevices());
-    this.store.dispatch(new DeviceActions.LoadAlexaDevices());
   }
 
   createDevice(): void {

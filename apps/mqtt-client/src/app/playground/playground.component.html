@@ -96,12 +96,53 @@
 <br/>
 <br/>
 
-<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-  <svg x="0" y="0">
-    <rect id="svg_1" height="300" width="400" y="0" x="0" stroke="#000" fill="#fff"/>
+<div *ngIf="rooms$ | async as rooms" cdkDropListGroup class="floor" style="background-color: #ccc; position: relative; width: 550px; height: 600px;">
+  <div
+    *ngFor="let room of rooms"
+    class="room"
+    style="position: absolute; border: 2px solid #000; background-color: lightblue;"
+    [style.width.px]="room.width"
+    [style.height.px]="room.height"
+    [style.left.px]="room.position.x"
+    [style.top.px]="room.position.y"
+    cdkDropList
+    [cdkDropListData]="room"
+    cdkDropListSortingDisabled="true"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <span style="position: absolute;">{{room.name}}</span>
+    <div *ngFor="let sensor of sensors$ | async | filter:{roomId:room._id}">
+      <mat-icon
+        class="sensor"
+        [style.left.px]="sensor.position?.x"
+        [style.top.px]="sensor.position?.y"
+        [cdkDragData]="sensor"
+        cdkDrag
+        [matMenuTriggerFor]="menu"
+      >{{getIconName(sensor.type)}}</mat-icon>
+      <mat-menu #menu="matMenu">
+        <p>{{sensor._id}}</p>
+        <button mat-menu-item (click)="removeFromRoom(sensor)">Aus Raum entfernen</button>
+      </mat-menu>
+    </div>
+  </div>
 
-    <svg x="50%" y="50%">
-      <rect id="svg_2" height="50" width="100" stroke="#f00" fill="#fff"/>
-    </svg>
-  </svg>
-</svg>
+  <div
+    id="unassigned-list"
+    style="position: absolute; right: -50px; width: 50px; height: 200px; background: lightgreen; border: 2px solid #000"
+    cdkDropList
+    cdkDropListSortingDisabled="true"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <div *ngFor="let sensor of unassignedSensors$ | async">
+      <mat-icon
+        class="sensor"
+        [cdkDragData]="sensor"
+        cdkDrag
+        [matMenuTriggerFor]="menu"
+      >{{getIconName(sensor.type)}}</mat-icon>
+      <mat-menu #menu="matMenu">
+        <p>{{sensor._id}}</p>
+      </mat-menu>
+  </div>
+</div>

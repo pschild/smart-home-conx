@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, StateToken, NgxsOnInit } from '@ngxs/store';
-import { map, tap } from 'rxjs/operators';
+import { patch, updateItem } from '@ngxs/store/operators';
+import { EMPTY } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { EventMqttService } from '../../event-mqtt.service';
 import { PlaygroundActions } from './playground.actions';
 
@@ -9,12 +11,16 @@ export const PLAYGROUND_STATE_NAME = new StateToken<PlaygroundStateModel>('playg
 
 export interface PlaygroundStateModel {
   dhtValues: { deviceId: string; temperature: number; humidity: number; time: Date; }[];
+  rooms: any[];
+  sensors: any[];
 }
 
 @State<PlaygroundStateModel>({
   name: PLAYGROUND_STATE_NAME,
   defaults: {
-    dhtValues: []
+    dhtValues: [],
+    rooms: [],
+    sensors: []
   }
 })
 @Injectable()
@@ -48,6 +54,21 @@ export class PlaygroundState implements NgxsOnInit {
     return { ...latest, trend };
   }
 
+  @Selector()
+  static rooms(state: PlaygroundStateModel) {
+    return state.rooms;
+  }
+
+  @Selector()
+  static sensors(state: PlaygroundStateModel) {
+    return state.sensors.filter(s => !!s.roomId);
+  }
+
+  @Selector()
+  static unassignedSensors(state: PlaygroundStateModel) {
+    return state.sensors.filter(s => !s.roomId);
+  }
+
   ngxsOnInit(ctx?: StateContext<any>): any {
     this.eventMqttService.observe('devices/+/dht').pipe(
       map(res => ({ deviceId: res.topic.match(/(ESP_\d+)/)[0], payload: JSON.parse(res.payload.toString()) }))
@@ -63,6 +84,40 @@ export class PlaygroundState implements NgxsOnInit {
   loadDhtHistory(ctx: StateContext<PlaygroundStateModel>) {
     return this.httpClient.get<any>(`sensor-connector/dht/history`).pipe(
       tap(dhtValues => ctx.patchState({dhtValues}))
+    );
+  }
+
+  @Action(PlaygroundActions.LoadRooms)
+  loadRooms(ctx: StateContext<PlaygroundStateModel>) {
+    return this.httpClient.get(`device/room`).pipe(
+      tap((rooms: any[]) => ctx.patchState({ rooms }))
+    );
+  }
+
+  @Action(PlaygroundActions.LoadSensors)
+  loadSensors(ctx: StateContext<PlaygroundStateModel>) {
+    return this.httpClient.get(`device/sensor`).pipe(
+      tap((sensors: any[]) => ctx.patchState({ sensors }))
+    );
+  }
+
+  @Action(PlaygroundActions.UpdateSensor)
+  updateSensor(ctx: StateContext<PlaygroundStateModel>, action: PlaygroundActions.UpdateSensor) {
+    const sensor = ctx.getState().sensors.find(s => s._id === action.sensorId);
+
+    // optimistic update
+    ctx.setState(patch({
+      sensors: updateItem(item => item._id === action.sensorId, { ...sensor, roomId: action.newRoomId, position: action.position })
+    }));
+
+    return this.httpClient.patch(`device/sensor/${sensor._id}`, { roomId: action.newRoomId, position: action.position }).pipe(
+      catchError(err => {
+        // reset to old values in case of error
+        ctx.setState(patch({
+          sensors: updateItem(item => item._id === action.sensorId, { ...sensor })
+        }));
+        return EMPTY;
+      })
     );
   }
 

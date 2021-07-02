@@ -11,10 +11,34 @@ import { Select, Store } from '@ngxs/store';
 import { PlaygroundState } from './state/playground.state';
 import { DeviceState } from '../device/state/device.state';
 import { PlaygroundActions } from './state/playground.actions';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'smart-home-conx-playground',
   templateUrl: './playground.component.html',
+  styles: [
+    `
+    .sensor {
+      cursor: move;
+    }
+
+    .room .sensor {
+      position: absolute;
+    }
+
+    #unassigned-list > div {
+      text-align: center;
+    }
+
+    .cdk-drag-placeholder {
+      display: none;
+    }
+
+    .cdk-drop-list-dragging {
+      border-style: dashed !important;
+    }
+    `
+  ]
 })
 export class PlaygroundComponent implements OnInit, OnDestroy {
 
@@ -100,6 +124,59 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
 
   killPioBuild(): void {
     this.httpService.killPioBuild().subscribe(console.log);
+  }
+
+  // tslint:disable-next-line:member-ordering
+  rooms$ = this.store.select(PlaygroundState.rooms);
+  // tslint:disable-next-line:member-ordering
+  sensors$ = this.store.select(PlaygroundState.sensors);
+  // tslint:disable-next-line:member-ordering
+  unassignedSensors$ = this.store.select(PlaygroundState.unassignedSensors);
+
+  drop(event: CdkDragDrop<any>) {
+    if (event.container.id === 'unassigned-list') {
+      this.removeFromRoom(event.item.data);
+    } else {
+      this.store.dispatch(new PlaygroundActions.UpdateSensor(
+        event.item.data._id, // sensor id
+        event.container.data._id, // new room id
+        this.getNewPosition(event) // new position
+      ));
+    }
+  }
+
+  private getNewPosition(event: CdkDragDrop<any>): { x: number; y: number } {
+    if (event.container.id === event.previousContainer.id) {
+      return {
+        x: event.isPointerOverContainer ? event.item.data.position.x + event.distance.x : event.item.data.position.x,
+        y: event.isPointerOverContainer ? event.item.data.position.y + event.distance.y : event.item.data.position.y
+      };
+    }
+    const dragRect = event.item.element.nativeElement.getBoundingClientRect();
+    const dropRect = event.container.element.nativeElement.getBoundingClientRect();
+    return {
+      x: event.isPointerOverContainer ? event.dropPoint.x - dropRect.x - dragRect.width / 2 : 0,
+      y: event.isPointerOverContainer ? event.dropPoint.y - dropRect.y - dragRect.height / 2 : 0
+    };
+  }
+
+  removeFromRoom(sensor): void {
+    this.store.dispatch(new PlaygroundActions.UpdateSensor(
+      sensor._id, // sensor id
+      null, // new room id
+      null // new position
+    ));
+  }
+
+  getIconName(type: string): string {
+    switch (type) {
+      case 'dht':
+        return 'thermostat';
+      case 'battery':
+        return 'battery_charging_full';
+      default:
+        throw new Error(`Unknown sensor type "${type}"!`);
+    }
   }
 
 }

@@ -11,9 +11,11 @@ import { environment } from '../environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { NgxsModule } from '@ngxs/store';
+import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { GatewayInterceptor } from './gateway.interceptor';
+import { AuthState } from './auth/state/auth.state';
 
 @NgModule({
   declarations: [AppComponent],
@@ -33,7 +35,10 @@ import { GatewayInterceptor } from './gateway.interceptor';
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
-    NgxsModule.forRoot(),
+    NgxsModule.forRoot([AuthState]),
+    NgxsStoragePluginModule.forRoot({
+      key: AuthState
+    }),
     NgxsLoggerPluginModule.forRoot({disabled: true}),
     NgxsReduxDevtoolsPluginModule.forRoot({disabled: /* environment.production */false}),
   ],

@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { catchError } from 'rxjs/operators';
-import { AuthenticationService } from '../authentication.service';
 import { throwError } from 'rxjs';
+import { Store } from '@ngxs/store';
+import { AuthActions } from '../auth/state/auth.actions';
 
 @Component({
   selector: 'smart-home-conx-login',
@@ -19,11 +20,11 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService
+    private store: Store
   ) {
-    if (this.authenticationService.isLoggedIn()) {
-      this.router.navigate(['/playground']);
-    }
+    // if (this.authenticationService.isLoggedIn()) {
+    //   this.router.navigate(['/playground']);
+    // }
   }
 
   ngOnInit() {
@@ -36,10 +37,10 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    this.authenticationService.login(
+    this.store.dispatch(new AuthActions.Login(
       this.loginForm.get('username').value,
       this.loginForm.get('password').value
-    ).pipe(
+    )).pipe(
       catchError(err => {
         if (err.status === 401) {
           this.errorMessage = `Falscher Benutzername oder falsches Passwort.`;

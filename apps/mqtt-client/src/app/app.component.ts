@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from './authentication.service';
 import { Router } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { tap } from 'rxjs/operators';
+import { AuthActions } from './auth/state/auth.actions';
 
 @Component({
   selector: 'smart-home-conx-root',
@@ -11,7 +13,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService
+    private store: Store
   ) {
   }
 
@@ -19,8 +21,9 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.authenticationService.logout();
-    this.router.navigate(['/login']);
+    this.store.dispatch(new AuthActions.Logout()).pipe(
+      tap(() => this.router.navigate(['/login']))
+    );
   }
 
 }

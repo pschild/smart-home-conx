@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthenticationService } from './authentication.service';
+import { Store } from '@ngxs/store';
+import { AuthState } from './auth/state/auth.state';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private authenticationService: AuthenticationService) { }
+  constructor(private store: Store) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (this.authenticationService.isLoggedIn()) {
-      const token = this.authenticationService.getToken();
+    if (this.store.selectSnapshot(AuthState.isLoggedIn)) {
+      const token = this.store.selectSnapshot(AuthState.token);
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`

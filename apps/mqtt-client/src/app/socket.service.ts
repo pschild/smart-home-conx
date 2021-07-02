@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { AuthenticationService } from './authentication.service';
+import { AuthState } from './auth/state/auth.state';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,8 @@ export class SocketService {
 
   private socket: Socket;
 
-  constructor(private authenticationService: AuthenticationService) {
-    if (!this.authenticationService.isLoggedIn()) {
+  constructor(private store: Store) {
+    if (!this.store.selectSnapshot(AuthState.isLoggedIn)) {
       return;
     }
     this.socket = io(`${window.location.protocol}//${window.location.hostname}:3333`, { path: '/pio-ws' });

@@ -1,7 +1,10 @@
 
 import { Injectable } from '@angular/core';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { AuthenticationService } from './authentication.service';
+import { Store } from '@ngxs/store';
+import { mapTo, tap } from 'rxjs/operators';
+import { AuthActions } from './auth/state/auth.actions';
+import { AuthState } from './auth/state/auth.state';
 
 @Injectable({
   providedIn: 'root'
@@ -9,16 +12,17 @@ import { AuthenticationService } from './authentication.service';
 export class AuthGuard implements CanActivate {
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService
+    private store: Store
   ) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.authenticationService.isLoggedIn()) {
+    if (this.store.selectSnapshot(AuthState.isLoggedIn)) {
       return true;
     }
 
-    this.authenticationService.logout();
-    this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-    return false;
+    return this.store.dispatch(new AuthActions.Logout()).pipe(
+      tap(() => this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } })),
+      mapTo(false)
+    );
   }
 }
