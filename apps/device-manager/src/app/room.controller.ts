@@ -32,19 +32,4 @@ export class RoomController {
     return this.roomService.remove(roomId);
   }
 
-  @Post(':id/sensors')
-  addSensor(@Param('id') roomId: string, @Body() dto: { sensorId: string; position: { x: number; y: number } }) {
-    return this.roomService.addSensor(roomId, dto);
-  }
-
-  @Patch(':id/sensors/:sensorId')
-  updateSensor(@Param('id') roomId: string, @Param('sensorId') sensorId: string, @Body() dto: { position: { x: number; y: number } }) {
-    return this.roomService.updateSensor(roomId, sensorId, dto);
-  }
-
-  @Delete(':id/sensors/:sensorId')
-  removeSensor(@Param('id') roomId: string, @Param('sensorId') sensorId: string) {
-    return this.roomService.removeSensor(roomId, sensorId);
-  }
-
 }

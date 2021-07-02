@@ -6,4 +6,6 @@ export interface SensorModel {
   createdAt: Date;
   type: SensorType;
   deviceId: string;
+  roomId: string;
+  position: { x: number; y: number };
 }

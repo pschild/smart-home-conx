@@ -16,4 +16,10 @@ export class Sensor implements SensorModel {
   @Column()
   deviceId: string;
 
+  @Column()
+  roomId: string;
+
+  @Column()
+  position: { x: number; y: number };
+
 }

@@ -31,6 +31,10 @@ export class SensorService {
     return this.repository.find({ where: { deviceId } });
   }
 
+  findByRoomId(roomId: string): Promise<Sensor[]> {
+    return this.repository.find({ where: { roomId } });
+  }
+
   update(sensorId: string, updateSensorDto: UpdateSensorDto): Promise<UpdateResult> {
     return this.repository.update(sensorId, updateSensorDto);
   }

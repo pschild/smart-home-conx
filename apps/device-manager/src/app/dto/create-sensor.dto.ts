@@ -14,4 +14,7 @@ export class CreateSensorDto {
   @IsOptional()
   readonly position: { x: number; y: number };
 
+  @IsString()
+  readonly roomId: string;
+
 }

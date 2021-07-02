@@ -1,6 +1,5 @@
 import { RoomModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
-import { Sensor } from './sensor.entity';
 
 @Entity()
 export class Room implements RoomModel {
@@ -13,9 +12,6 @@ export class Room implements RoomModel {
 
   @Column()
   name: string;
-
-  @Column()
-  sensors: { sensorId: string; sensor?: Sensor; position: { x: number; y: number } }[];
 
   @Column()
   width: number;

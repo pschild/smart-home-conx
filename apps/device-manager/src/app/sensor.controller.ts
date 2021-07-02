@@ -29,6 +29,11 @@ export class SensorController {
     return this.sensorService.findByDeviceId(deviceId);
   }
 
+  @Get('/byRoom/:roomId')
+  findByRoomId(@Param('roomId') roomId: string) {
+    return this.sensorService.findByRoomId(roomId);
+  }
+
   @Patch(':id')
   update(@Param('id') sensorId: string, @Body() updateSensorDto: UpdateSensorDto) {
     return this.sensorService.update(sensorId, updateSensorDto);
