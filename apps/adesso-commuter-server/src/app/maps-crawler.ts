@@ -43,6 +43,13 @@ export class GoogleMapsCrawler {
     // await page.click('.travel-mode:nth-child(2) button');
     // log('Wait 2s ...');
     // await page.waitFor(2000);
+    log('Check if we need to accept cookies ...');
+    const acceptButton = await page.$x('.//button/span[contains(text(), "Ich stimme zu")]');
+    if (!!acceptButton && acceptButton.length) {
+      log('Accept cookies ...');
+      acceptButton[0].click();
+    }
+
     log('Wait for trips visible ...');
     await page.waitFor('.section-directions-trip');
     log('Saving screenshot ...');
