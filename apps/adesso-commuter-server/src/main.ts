@@ -70,6 +70,7 @@ app.get('/from/:latLngFrom/to/:latLngTo', async (req: Request, res: Response) =>
 
   await mqttClient.publish('adesso-commuter-server/commuting/duration/minutes-left', minutesLeft.toString());
   await mqttClient.publish('adesso-commuter-server/commuting/duration/eta', format(add(new Date(), { minutes: minutesLeft }), 'HH:mm'));
+  await mqttClient.publish('alexa/in/speak', JSON.stringify({ device: 'Philippes Echo Flex', message: `Ankunft in ca. ${minutesLeft} Minuten.` }));
 
   res.status(200).json({
     durations,
