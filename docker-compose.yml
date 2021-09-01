@@ -81,14 +81,26 @@ services:
       - 9042:9042
     restart: always
 
-  adesso-commuter-server:
-    image: localhost:5000/adesso-commuter-server:latest
-    container_name: adesso-commuter-server
+  # adesso-commuter-server:
+  #   image: localhost:5000/adesso-commuter-server:latest
+  #   container_name: adesso-commuter-server
+  #   depends_on:
+  #     - mqtt-broker
+  #     - api-gateway
+  #   volumes:
+  #     - /mnt/adesso-commuter-server/screenshots:/app/assets/screenshots
+  #   ports:
+  #     - 9062:9062
+  #   restart: always
+
+  commuting-watcher:
+    image: localhost:5000/commuting-watcher:latest
+    container_name: commuting-watcher
     depends_on:
       - mqtt-broker
       - api-gateway
     volumes:
-      - /mnt/adesso-commuter-server/screenshots:/app/assets/screenshots
+      - /mnt/commuting-watcher/screenshots:/app/assets/screenshots
     ports:
       - 9062:9062
     restart: always
