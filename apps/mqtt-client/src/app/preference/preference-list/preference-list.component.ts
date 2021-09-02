@@ -16,6 +16,9 @@ export class PreferenceListComponent implements OnInit {
   @Select(PreferenceState.messengerConnectorPreferences)
   messengerConnectorPreferenceItem$: Observable<PreferenceListItem>;
 
+  @Select(PreferenceState.commutingWatcherPreferences)
+  commutingWatcherPreferenceItem$: Observable<PreferenceListItem>;
+
   constructor(
     private store: Store
   ) {

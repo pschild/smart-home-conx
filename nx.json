@@ -38,6 +38,9 @@
     "auth": {
       "tags": []
     },
+    "commuting-watcher": {
+      "tags": []
+    },
     "device-manager": {
       "tags": []
     },

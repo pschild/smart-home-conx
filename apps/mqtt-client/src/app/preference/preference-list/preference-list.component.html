@@ -11,3 +11,10 @@
     <smart-home-conx-preference-item [preference]="preference" (update)="handleChange(loggerPreferenceItem.serviceName, $event)"></smart-home-conx-preference-item>
   </div>
 </div>
+
+<h2>Pendel-Tracker</h2>
+<div *ngIf="commutingWatcherPreferenceItem$ | async as commutingWatcherPreferenceItem">
+  <div *ngFor="let preference of commutingWatcherPreferenceItem.prefs">
+    <smart-home-conx-preference-item [preference]="preference" (update)="handleChange(commutingWatcherPreferenceItem.serviceName, $event)"></smart-home-conx-preference-item>
+  </div>
+</div>

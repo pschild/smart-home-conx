@@ -124,7 +124,10 @@ services:
   #   restart: always
 
   commuting-watcher:
-    image: localhost:5000/commuting-watcher:latest
+    image: commuting-watcher
+    build:
+      context: .
+      dockerfile: apps/commuting-watcher/Dockerfile
     container_name: commuting-watcher
     depends_on:
       - mqtt-broker

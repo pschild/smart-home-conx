@@ -10,6 +10,7 @@ export const PREFERENCE_STATE_NAME = new StateToken<PreferenceStateModel>('prefe
 
 const LOGGER_SERVICE_NAME = 'logger';
 const MESSENGER_CONNECTOR_SERVICE_NAME = 'messengerConnector';
+const COMMUTING_WATCHER_SERVICE_NAME = 'commutingWatcher';
 
 export interface PreferenceItem {
   key: string;
@@ -45,6 +46,11 @@ export class PreferenceState {
     return state.preferenceList.find(item => item.serviceName === MESSENGER_CONNECTOR_SERVICE_NAME);
   }
 
+  @Selector()
+  static commutingWatcherPreferences(state: PreferenceStateModel) {
+    return state.preferenceList.find(item => item.serviceName === COMMUTING_WATCHER_SERVICE_NAME);
+  }
+
   constructor(
     private preferenceHttpService: PreferenceHttpService
   ) {
@@ -54,13 +60,15 @@ export class PreferenceState {
   loadPreferences(ctx: StateContext<PreferenceStateModel>) {
     return forkJoin([
       this.preferenceHttpService.loadLoggerPreferences(),
-      this.preferenceHttpService.loadMessengerConnectorPreferences()
+      this.preferenceHttpService.loadMessengerConnectorPreferences(),
+      this.preferenceHttpService.loadCommutingWatcherPreferences()
     ]).pipe(
-      tap(([loggerPrefs, messengerPrefs]) => {
+      tap(([loggerPrefs, messengerPrefs, commuterPrefs]) => {
         ctx.patchState({
           preferenceList: [
             { serviceName: LOGGER_SERVICE_NAME, prefs: loggerPrefs },
-            { serviceName: MESSENGER_CONNECTOR_SERVICE_NAME, prefs: messengerPrefs }
+            { serviceName: MESSENGER_CONNECTOR_SERVICE_NAME, prefs: messengerPrefs },
+            { serviceName: COMMUTING_WATCHER_SERVICE_NAME, prefs: commuterPrefs }
           ]
         });
       })
@@ -88,6 +96,8 @@ export class PreferenceState {
         return 'messenger-connector';
       case LOGGER_SERVICE_NAME:
         return 'logger';
+      case COMMUTING_WATCHER_SERVICE_NAME:
+        return 'commuter';
       default:
         throw new Error(`Unknown serviceName ${serviceName}`);
     }

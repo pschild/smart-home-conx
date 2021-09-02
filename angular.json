@@ -14,9 +14,7 @@
             "outputPath": "dist/apps/adesso-commuter-server",
             "main": "apps/adesso-commuter-server/src/main.ts",
             "tsConfig": "apps/adesso-commuter-server/tsconfig.app.json",
-            "assets": [
-              "apps/adesso-commuter-server/src/assets"
-            ]
+            "assets": ["apps/adesso-commuter-server/src/assets"]
           },
           "configurations": {
             "production": {
@@ -31,9 +29,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -60,9 +56,7 @@
             "jestConfig": "apps/adesso-commuter-server/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/adesso-commuter-server"
-          ]
+          "outputs": ["coverage/apps/adesso-commuter-server"]
         }
       }
     },
@@ -74,16 +68,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/alexa-connector",
             "main": "apps/alexa-connector/src/main.ts",
             "tsConfig": "apps/alexa-connector/tsconfig.app.json",
-            "assets": [
-              "apps/alexa-connector/src/assets"
-            ]
+            "assets": ["apps/alexa-connector/src/assets"]
           },
           "configurations": {
             "production": {
@@ -112,17 +102,12 @@
               "apps/alexa-connector/tsconfig.app.json",
               "apps/alexa-connector/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/alexa-connector/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/alexa-connector/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/alexa-connector"
-          ],
+          "outputs": ["coverage/apps/alexa-connector"],
           "options": {
             "jestConfig": "apps/alexa-connector/jest.config.js",
             "passWithNoTests": true
@@ -143,9 +128,7 @@
             "outputPath": "dist/apps/api-gateway",
             "main": "apps/api-gateway/src/main.ts",
             "tsConfig": "apps/api-gateway/tsconfig.app.json",
-            "assets": [
-              "apps/api-gateway/src/assets"
-            ]
+            "assets": ["apps/api-gateway/src/assets"]
           },
           "configurations": {
             "production": {
@@ -160,9 +143,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -177,10 +158,7 @@
               "apps/api-gateway/tsconfig.app.json",
               "apps/api-gateway/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/api-gateway/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/api-gateway/**/*"]
           }
         },
         "test": {
@@ -189,9 +167,7 @@
             "jestConfig": "apps/api-gateway/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/api-gateway"
-          ]
+          "outputs": ["coverage/apps/api-gateway"]
         }
       }
     },
@@ -215,9 +191,7 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/shared/data-access/models"
-          ],
+          "outputs": ["coverage/libs/api/shared/data-access/models"],
           "options": {
             "jestConfig": "libs/api/shared/data-access/models/jest.config.js",
             "passWithNoTests": true
@@ -238,10 +212,7 @@
               "libs/auth/tsconfig.lib.json",
               "libs/auth/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/auth/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/auth/**/*"]
           }
         },
         "test": {
@@ -250,9 +221,61 @@
             "jestConfig": "libs/auth/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/auth"
-          ]
+          "outputs": ["coverage/libs/auth"]
+        }
+      }
+    },
+    "commuting-watcher": {
+      "root": "apps/commuting-watcher",
+      "sourceRoot": "apps/commuting-watcher/src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/commuting-watcher",
+            "main": "apps/commuting-watcher/src/main.ts",
+            "tsConfig": "apps/commuting-watcher/tsconfig.app.json",
+            "assets": ["apps/commuting-watcher/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/commuting-watcher/src/environments/environment.ts",
+                  "with": "apps/commuting-watcher/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "commuting-watcher:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/commuting-watcher/tsconfig.app.json",
+              "apps/commuting-watcher/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/commuting-watcher/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/commuting-watcher"],
+          "options": {
+            "jestConfig": "apps/commuting-watcher/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       }
     },
@@ -264,16 +287,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/device-manager",
             "main": "apps/device-manager/src/main.ts",
             "tsConfig": "apps/device-manager/tsconfig.app.json",
-            "assets": [
-              "apps/device-manager/src/assets"
-            ]
+            "assets": ["apps/device-manager/src/assets"]
           },
           "configurations": {
             "production": {
@@ -302,17 +321,12 @@
               "apps/device-manager/tsconfig.app.json",
               "apps/device-manager/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/device-manager/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/device-manager/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/device-manager"
-          ],
+          "outputs": ["coverage/apps/device-manager"],
           "options": {
             "jestConfig": "apps/device-manager/jest.config.js",
             "passWithNoTests": true
@@ -333,9 +347,7 @@
             "outputPath": "dist/apps/esp-pir-manager",
             "main": "apps/esp-pir-manager/src/main.ts",
             "tsConfig": "apps/esp-pir-manager/tsconfig.app.json",
-            "assets": [
-              "apps/esp-pir-manager/src/assets"
-            ]
+            "assets": ["apps/esp-pir-manager/src/assets"]
           },
           "configurations": {
             "production": {
@@ -350,9 +362,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -367,10 +377,7 @@
               "apps/esp-pir-manager/tsconfig.app.json",
               "apps/esp-pir-manager/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/esp-pir-manager/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/esp-pir-manager/**/*"]
           }
         },
         "test": {
@@ -379,9 +386,7 @@
             "jestConfig": "apps/esp-pir-manager/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/esp-pir-manager"
-          ]
+          "outputs": ["coverage/apps/esp-pir-manager"]
         }
       }
     },
@@ -398,9 +403,7 @@
             "outputPath": "dist/apps/esp-update-server",
             "main": "apps/esp-update-server/src/main.ts",
             "tsConfig": "apps/esp-update-server/tsconfig.app.json",
-            "assets": [
-              "apps/esp-update-server/src/assets"
-            ]
+            "assets": ["apps/esp-update-server/src/assets"]
           },
           "configurations": {
             "production": {
@@ -415,9 +418,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -432,10 +433,7 @@
               "apps/esp-update-server/tsconfig.app.json",
               "apps/esp-update-server/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/esp-update-server/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/esp-update-server/**/*"]
           }
         },
         "test": {
@@ -444,9 +442,7 @@
             "jestConfig": "apps/esp-update-server/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/esp-update-server"
-          ]
+          "outputs": ["coverage/apps/esp-update-server"]
         }
       }
     },
@@ -462,17 +458,12 @@
               "libs/influx/tsconfig.lib.json",
               "libs/influx/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/influx/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/influx/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/influx"
-          ],
+          "outputs": ["coverage/libs/influx"],
           "options": {
             "jestConfig": "libs/influx/jest.config.js",
             "passWithNoTests": true
@@ -488,16 +479,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/logger",
             "main": "apps/logger/src/main.ts",
             "tsConfig": "apps/logger/tsconfig.app.json",
-            "assets": [
-              "apps/logger/src/assets"
-            ]
+            "assets": ["apps/logger/src/assets"]
           },
           "configurations": {
             "production": {
@@ -526,17 +513,12 @@
               "apps/logger/tsconfig.app.json",
               "apps/logger/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/logger/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/logger/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/logger"
-          ],
+          "outputs": ["coverage/apps/logger"],
           "options": {
             "jestConfig": "apps/logger/jest.config.js",
             "passWithNoTests": true
@@ -552,16 +534,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/messenger-connector",
             "main": "apps/messenger-connector/src/main.ts",
             "tsConfig": "apps/messenger-connector/tsconfig.app.json",
-            "assets": [
-              "apps/messenger-connector/src/assets"
-            ]
+            "assets": ["apps/messenger-connector/src/assets"]
           },
           "configurations": {
             "production": {
@@ -590,17 +568,12 @@
               "apps/messenger-connector/tsconfig.app.json",
               "apps/messenger-connector/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/messenger-connector/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/messenger-connector/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/messenger-connector"
-          ],
+          "outputs": ["coverage/apps/messenger-connector"],
           "options": {
             "jestConfig": "apps/messenger-connector/jest.config.js",
             "passWithNoTests": true
@@ -621,9 +594,7 @@
             "outputPath": "dist/apps/mqtt-broker",
             "main": "apps/mqtt-broker/src/main.ts",
             "tsConfig": "apps/mqtt-broker/tsconfig.app.json",
-            "assets": [
-              "apps/mqtt-broker/src/assets"
-            ]
+            "assets": ["apps/mqtt-broker/src/assets"]
           },
           "configurations": {
             "production": {
@@ -638,9 +609,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -655,10 +624,7 @@
               "apps/mqtt-broker/tsconfig.app.json",
               "apps/mqtt-broker/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/mqtt-broker/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/mqtt-broker/**/*"]
           }
         },
         "test": {
@@ -667,9 +633,7 @@
             "jestConfig": "apps/mqtt-broker/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/mqtt-broker"
-          ]
+          "outputs": ["coverage/apps/mqtt-broker"]
         }
       }
     },
@@ -738,9 +702,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -768,10 +730,7 @@
               "apps/mqtt-client/tsconfig.spec.json",
               "apps/mqtt-client/tsconfig.editor.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/mqtt-client/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/mqtt-client/**/*"]
           }
         },
         "test": {
@@ -780,9 +739,7 @@
             "jestConfig": "apps/mqtt-client/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/mqtt-client"
-          ]
+          "outputs": ["coverage/apps/mqtt-client"]
         }
       }
     },
@@ -794,16 +751,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/ota-server",
             "main": "apps/ota-server/src/main.ts",
             "tsConfig": "apps/ota-server/tsconfig.app.json",
-            "assets": [
-              "apps/ota-server/src/assets"
-            ]
+            "assets": ["apps/ota-server/src/assets"]
           },
           "configurations": {
             "production": {
@@ -832,17 +785,12 @@
               "apps/ota-server/tsconfig.app.json",
               "apps/ota-server/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/ota-server/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/ota-server/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/ota-server"
-          ],
+          "outputs": ["coverage/apps/ota-server"],
           "options": {
             "jestConfig": "apps/ota-server/jest.config.js",
             "passWithNoTests": true
@@ -862,17 +810,12 @@
               "libs/preference/tsconfig.lib.json",
               "libs/preference/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/preference/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/preference/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/preference"
-          ],
+          "outputs": ["coverage/libs/preference"],
           "options": {
             "jestConfig": "libs/preference/jest.config.js",
             "passWithNoTests": true
@@ -888,16 +831,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/sensor-connector",
             "main": "apps/sensor-connector/src/main.ts",
             "tsConfig": "apps/sensor-connector/tsconfig.app.json",
-            "assets": [
-              "apps/sensor-connector/src/assets"
-            ]
+            "assets": ["apps/sensor-connector/src/assets"]
           },
           "configurations": {
             "production": {
@@ -926,17 +865,12 @@
               "apps/sensor-connector/tsconfig.app.json",
               "apps/sensor-connector/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/sensor-connector/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/sensor-connector/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/sensor-connector"
-          ],
+          "outputs": ["coverage/apps/sensor-connector"],
           "options": {
             "jestConfig": "apps/sensor-connector/jest.config.js",
             "passWithNoTests": true
@@ -957,10 +891,7 @@
               "libs/utils/tsconfig.lib.json",
               "libs/utils/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/utils/**/*"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/utils/**/*"]
           }
         },
         "test": {
@@ -969,9 +900,7 @@
             "jestConfig": "libs/utils/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/utils"
-          ]
+          "outputs": ["coverage/libs/utils"]
         }
       }
     }

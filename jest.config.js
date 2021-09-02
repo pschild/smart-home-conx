@@ -18,5 +18,6 @@ module.exports = {
     '<rootDir>/libs/api/shared/data-access/models',
     '<rootDir>/libs/influx',
     '<rootDir>/libs/preference',
+    '<rootDir>/apps/commuting-watcher',
   ],
 };

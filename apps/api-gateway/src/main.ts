@@ -24,7 +24,7 @@ const TOKEN_LIFETIME: number = 7 * 24 * 60 * 60 * 1000; // 7 days, given in ms
 const routes = [
   {
     route: `/commuter`,
-    address: isDocker() ? `http://adesso-commuter-server:9062` : `http://localhost:9062`
+    address: isDocker() ? `http://commuting-watcher:9062` : `http://localhost:9062`
   },
   {
     route: `/alexa`,

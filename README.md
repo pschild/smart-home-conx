@@ -110,6 +110,14 @@ To run a MongoDB instance on Raspberry Pi 3, the following docker image was used
 
 Because of some errors (trouble with lock file after stopping container) a custom Dockerfile based on the original one was created. It can be found in `mongodb/Dockerfile`. The only change that was made is adding `--journal` to the start command CMD.  
 
+#### Creating user
+
+Start the administration of mongodb by running  
+`docker exec -it mongodb mongo admin`  
+
+In the admin console, create a new user (adjust name and password):  
+`> db.createUser({ user: "<USERNAME>", pwd: "<PASSWORD>", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] })`
+
 ### InfluxDb
 
 To run an InfluxDb instance on Raspberry Pi 3, the following docker image was used: https://hub.docker.com/r/arm32v7/influxdb/  

@@ -19,6 +19,10 @@ export class PreferenceHttpService {
     return this.httpClient.get<PreferenceItem[]>(`messenger-connector/preference`);
   }
 
+  loadCommutingWatcherPreferences(): Observable<PreferenceItem[]> {
+    return this.httpClient.get<PreferenceItem[]>(`commuter/preference`);
+  }
+
   update(endpointUrl: string, key: string, value: any ): Observable<any> {
     return this.httpClient.patch<any>(`${endpointUrl}/preference/${key}`, { value }).pipe(
       catchError(err => {
