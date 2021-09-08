@@ -96,6 +96,7 @@ services:
   commuting-watcher:
     image: localhost:5000/commuting-watcher:latest
     container_name: commuting-watcher
+    init: true # https://stackoverflow.com/a/46057262/5276055
     depends_on:
       - mqtt-broker
       - api-gateway

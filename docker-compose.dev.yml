@@ -129,6 +129,7 @@ services:
       context: .
       dockerfile: apps/commuting-watcher/Dockerfile
     container_name: commuting-watcher
+    init: true # https://stackoverflow.com/a/46057262/5276055
     depends_on:
       - mqtt-broker
       - api-gateway
