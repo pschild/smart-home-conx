@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { InfluxModule } from '@smart-home-conx/influx';
 import { FieldType } from 'influx';
 import { isDocker } from '@smart-home-conx/utils';
@@ -9,9 +11,15 @@ import { GoogleMapsCrawler } from './maps-crawler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { InitialPreferences1630561787000 } from '../migration/1630561787000-InitialPreferences';
 import { PreferenceModule } from '@smart-home-conx/preference';
+import { ScreenshotController } from './screenshots.controller';
+import { ScreenshotService } from './screenshots.service';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, 'assets', 'screenshots'),
+      renderPath: '*'
+    }),
     InfluxModule.forRoot({
       host: isDocker() ? `influxdb` : `localhost`,
       database: 'commuting',
@@ -38,7 +46,7 @@ import { PreferenceModule } from '@smart-home-conx/preference';
     }),
     PreferenceModule
   ],
-  controllers: [CommutingController],
-  providers: [CommutingService, TravelTimeService, GoogleMapsCrawler],
+  controllers: [CommutingController, ScreenshotController],
+  providers: [CommutingService, ScreenshotService, TravelTimeService, GoogleMapsCrawler],
 })
 export class AppModule {}

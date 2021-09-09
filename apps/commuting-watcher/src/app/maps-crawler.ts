@@ -6,6 +6,7 @@ import { isDocker, log } from '@smart-home-conx/utils';
 import { format } from 'date-fns';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PreferenceService } from '@smart-home-conx/preference';
+import { ScreenshotService } from './screenshots.service';
 
 @Injectable()
 export class GoogleMapsCrawler {
@@ -28,7 +29,6 @@ export class GoogleMapsCrawler {
 
     let browser;
     try {
-      const screenshotsFolderPath = path.join(__dirname, 'assets', 'screenshots');
       browser = await puppeteer.launch(launchOptions);
       const page = await browser.newPage();
 
@@ -58,7 +58,7 @@ export class GoogleMapsCrawler {
       if (await this.preferenceService.getValueFor('saveScreenshotsEnabled')) {
         log('Saving screenshot ...');
         await page.screenshot({
-          path: path.join(screenshotsFolderPath, `maps-${format(new Date(), 'yyyy-MM-dd_HH-mm-ss-SSS')}.png`),
+          path: path.join(ScreenshotService.SCREENSHOTS_FOLDER_PATH, `maps-${format(new Date(), 'yyyy-MM-dd_HH-mm-ss-SSS')}${ScreenshotService.SCREENSHOT_FORMAT}`),
           // clip: { x: 435, y: 50, width: 1024 - 435, height: 768 - 50 * 2 }
           // clip: { x: 435, y: 0, width: 1024 - 435, height: 768 }
         });
