@@ -5,7 +5,6 @@ module.exports = {
     '<rootDir>/apps/api-gateway',
     '<rootDir>/libs/utils',
     '<rootDir>/libs/auth',
-    '<rootDir>/libs/messenger-connector',
     '<rootDir>/apps/device-manager',
     '<rootDir>/apps/sensor-connector',
     '<rootDir>/apps/logger',
