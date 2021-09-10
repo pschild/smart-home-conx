@@ -23,9 +23,6 @@
     }
   },
   "projects": {
-    "adesso-commuter-server": {
-      "tags": []
-    },
     "alexa-connector": {
       "tags": []
     },
@@ -42,12 +39,6 @@
       "tags": []
     },
     "device-manager": {
-      "tags": []
-    },
-    "esp-pir-manager": {
-      "tags": []
-    },
-    "esp-update-server": {
       "tags": []
     },
     "influx": {

@@ -122,6 +122,12 @@ In the admin console, create a new user (adjust name and password):
 
 To run an InfluxDb instance on Raspberry Pi 3, the following docker image was used: https://hub.docker.com/r/arm32v7/influxdb/  
 
+#### Query data
+
+Use HTTP: `http://192.168.178.28:8086/query?pretty=true&db=logs&q=SELECT * FROM log WHERE origin = 'commuting-watcher'`
+
+or use https://github.com/CymaticLabs/InfluxDBStudio/releases
+
 ### Helpful commands
 
 Run `nx g @nrwl/{angular,node,express,nest}:{app,lib} foo` to generate an application/lib.

@@ -65,34 +65,6 @@ services:
     #   - ./ssl:/app/ssl
     restart: always
 
-  # esp-pir-manager:
-  #   image: esp-pir-manager
-  #   build:
-  #     context: .
-  #     dockerfile: apps/esp-pir-manager/Dockerfile
-  #   container_name: esp-pir-manager
-  #   depends_on:
-  #     - mqtt-broker
-  #     - api-gateway
-  #   ports:
-  #     - 9052:9052
-  #   restart: always
-
-  # esp-update-server:
-  #   image: esp-update-server
-  #   build:
-  #     context: .
-  #     dockerfile: apps/esp-update-server/Dockerfile
-  #   container_name: esp-update-server
-  #   depends_on:
-  #     - mqtt-broker
-  #     - api-gateway
-  #   volumes:
-  #     - esp-binaries:/esp-binaries
-  #   ports:
-  #     - 9042:9042
-  #   restart: always
-
   ota-server:
     image: ota-server
     build:
@@ -107,21 +79,6 @@ services:
     ports:
       - 9042:9042
     restart: always
-
-  # adesso-commuter-server:
-  #   image: adesso-commuter-server
-  #   build:
-  #     context: .
-  #     dockerfile: apps/adesso-commuter-server/Dockerfile
-  #   container_name: adesso-commuter-server
-  #   depends_on:
-  #     - mqtt-broker
-  #     - api-gateway
-  #   volumes:
-  #     - /mnt/adesso-commuter-server/screenshots:/app/assets/screenshots
-  #   ports:
-  #     - 9062:9062
-  #   restart: always
 
   commuting-watcher:
     image: commuting-watcher

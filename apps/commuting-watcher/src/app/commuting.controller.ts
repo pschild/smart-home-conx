@@ -62,6 +62,7 @@ export class CommutingController {
     return durations$.pipe(
       tap(async (durations) => {
         const minutesLeft = Math.min(...durations);
+        // const eta = add(new Date(), { minutes: minutesLeft });
         this.mqttClient.emit('log', {source: 'commuting-watcher', message: `Duration from ${startLatLng} to ${destinationLatLng}: ${minutesLeft}`});
         this.mqttClient.emit('commuting-watcher/commuting/duration/minutes-left', minutesLeft.toString());
         this.mqttClient.emit('commuting-watcher/commuting/duration/eta', format(add(new Date(), { minutes: minutesLeft }), 'HH:mm'));
