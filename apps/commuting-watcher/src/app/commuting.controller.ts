@@ -29,14 +29,14 @@ export class CommutingController {
       case 'START':
         this.mqttClient.emit('commuting-watcher/commuting/status/start', format(new Date(), 'HH:mm'));
         if (alexaEnabled) {
-          this.mqttClient.emit('alexa/in/speak', { device: 'Philippes Echo Flex', message: `Ich fahre jetzt los.` });
+          this.mqttClient.emit('alexa/in/speak', { message: `Ich fahre jetzt los.` });
           this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'SHCNormalerVerkehr' });
         }
         break;
       case 'END':
         this.mqttClient.emit('commuting-watcher/commuting/status/end', format(new Date(), 'HH:mm'));
         if (alexaEnabled) {
-          this.mqttClient.emit('alexa/in/speak', { device: 'Philippes Echo Flex', message: `Ich bin angekommen.` });
+          this.mqttClient.emit('alexa/in/speak', { message: `Ich bin angekommen.` });
           this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'SHCReset' });
         }
         break;
@@ -71,8 +71,8 @@ export class CommutingController {
         this.mqttClient.emit('commuting-watcher/commuting/duration/minutes-left', minResult.minutes.toString());
         this.mqttClient.emit('commuting-watcher/commuting/duration/eta', eta);
         if (await this.preferenceService.getValueFor('alexaEnabled')) {
-          // this.mqttClient.emit('alexa/in/speak', { device: 'Philippes Echo Flex', message: `Ankunft in ca. ${minutesLeft} Minuten.` });
-          this.mqttClient.emit('alexa/in/speak', { device: 'Philippes Echo Flex', message: `Ankunft um ${eta}` });
+          // this.mqttClient.emit('alexa/in/speak', { message: `Ankunft in ca. ${minutesLeft} Minuten.` });
+          this.mqttClient.emit('alexa/in/speak', { message: `Ankunft um ${eta}` });
           this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: this.getTrafficRoutineName(minResult.delay) });
         }
       }),

@@ -23,9 +23,10 @@ export class AppController {
   }
 
   @MessagePattern('alexa/in/speak')
-  speak(@Payload() payload: { device: string; message: string; }, @Ctx() context: MqttContext) {
+  speak(@Payload() payload: { device?: string; message: string; }, @Ctx() context: MqttContext) {
+    const device = payload.device || 'ALL';
     this.mqttClient.emit('log', {source: 'alexa-connector', message: `speak: ${JSON.stringify(payload)}`});
-    return this.commandService.execute(payload.device, { action: 'speak', param: payload.message });
+    return this.commandService.execute(device, { action: 'speak', param: payload.message });
   }
 
   @MessagePattern('alexa/in/textcommand')
@@ -42,8 +43,8 @@ export class AppController {
   }
 
   @Post('speak')
-  speakRest(@Body() payload: { device: string; message: string; }) {
-    const device = payload.device;
+  speakRest(@Body() payload: { device?: string; message: string; }) {
+    const device = payload.device || 'ALL';
     const message = decodeURI(payload.message);
     this.mqttClient.emit('alexa/in/speak', { device, message });
   }

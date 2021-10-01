@@ -9,7 +9,8 @@ export class CommandService {
   
   execute(device: string, command: { action: 'speak' | 'automation' | 'textcommand', param: string }): Observable<string> {
     return new Observable<string>(subscriber => {
-      let commandStr = `./assets/alexa-remote-control/alexa_remote_control.sh -d '${device}'`;
+      const deviceName = device === 'ALL' ? `ALL` : `'${device}'`;
+      let commandStr = `./assets/alexa-remote-control/alexa_remote_control.sh -d ${deviceName}`;
       switch (command.action) {
         case 'speak':
           commandStr += ` -e speak:'${command.param}'`;
