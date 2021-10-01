@@ -5,6 +5,7 @@ import { isDocker } from '@smart-home-conx/utils';
 import { add, format } from 'date-fns';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { CommutingService } from './commuting.service';
+import { TrafficDelay } from './maps-crawler';
 import { TravelTimeService } from './travel-time.service';
 
 @Controller()
@@ -29,16 +30,19 @@ export class CommutingController {
         this.mqttClient.emit('commuting-watcher/commuting/status/start', format(new Date(), 'HH:mm'));
         if (alexaEnabled) {
           this.mqttClient.emit('alexa/in/speak', { device: 'Philippes Echo Flex', message: `Ich fahre jetzt los.` });
+          this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'SHCNormalerVerkehr' });
         }
         break;
       case 'END':
         this.mqttClient.emit('commuting-watcher/commuting/status/end', format(new Date(), 'HH:mm'));
         if (alexaEnabled) {
           this.mqttClient.emit('alexa/in/speak', { device: 'Philippes Echo Flex', message: `Ich bin angekommen.` });
+          this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'SHCReset' });
         }
         break;
       case 'CANCELLED':
         this.mqttClient.emit('commuting-watcher/commuting/status/cancelled', format(new Date(), 'HH:mm'));
+        this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'SHCReset' });
         break;
       default:
         throw new Error(`Unknown commuting state ${newState}`);
@@ -61,24 +65,36 @@ export class CommutingController {
     );
     return durations$.pipe(
       tap(async (durations) => {
-        const minutesLeft = Math.min(...durations);
-        // const eta = add(new Date(), { minutes: minutesLeft });
-        this.mqttClient.emit('log', {source: 'commuting-watcher', message: `Duration from ${startLatLng} to ${destinationLatLng}: ${minutesLeft}`});
-        this.mqttClient.emit('commuting-watcher/commuting/duration/minutes-left', minutesLeft.toString());
-        this.mqttClient.emit('commuting-watcher/commuting/duration/eta', format(add(new Date(), { minutes: minutesLeft }), 'HH:mm'));
+        const minResult = durations.reduce((prev, curr) => prev.minutes < curr.minutes ? prev : curr);
+        const eta = format(add(new Date(), { minutes: minResult.minutes }), 'HH:mm');
+        this.mqttClient.emit('log', {source: 'commuting-watcher', message: `Duration from ${startLatLng} to ${destinationLatLng}: ${minResult.minutes}`});
+        this.mqttClient.emit('commuting-watcher/commuting/duration/minutes-left', minResult.minutes.toString());
+        this.mqttClient.emit('commuting-watcher/commuting/duration/eta', eta);
         if (await this.preferenceService.getValueFor('alexaEnabled')) {
-          this.mqttClient.emit('alexa/in/speak', { device: 'Philippes Echo Flex', message: `Ankunft in ca. ${minutesLeft} Minuten.` });
+          // this.mqttClient.emit('alexa/in/speak', { device: 'Philippes Echo Flex', message: `Ankunft in ca. ${minutesLeft} Minuten.` });
+          this.mqttClient.emit('alexa/in/speak', { device: 'Philippes Echo Flex', message: `Ankunft um ${eta}` });
+          this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: this.getTrafficRoutineName(minResult.delay) });
         }
       }),
       switchMap(durations => this.commutingService.saveDurations(startParts, destinationParts, durations).pipe(
         map(_ => ({
           durations,
-          average: durations.reduce((prev, curr) => prev + curr) / durations.length,
-          min: Math.min(...durations),
-          max: Math.max(...durations)
+          average: durations.map(item => item.minutes).reduce((prev, curr) => prev + curr) / durations.length,
         }))
       ))
     );
+  }
+
+  private getTrafficRoutineName(delayType: TrafficDelay): string {
+    switch (delayType) {
+      case TrafficDelay.HEAVY:
+        return 'SHCVielVerkehr';
+      case TrafficDelay.MEDIUM:
+        return 'SHCMediumVerkehr';
+      case TrafficDelay.LIGHT:
+      case TrafficDelay.DEFAULT:
+        return 'SHCNormalerVerkehr';
+    }
   }
 
 }

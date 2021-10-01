@@ -8,12 +8,24 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PreferenceService } from '@smart-home-conx/preference';
 import { ScreenshotService } from './screenshots.service';
 
+export enum TrafficDelay {
+  LIGHT = 'light',
+  MEDIUM = 'medium',
+  HEAVY = 'heavy',
+  DEFAULT = 'default'
+}
+
+export interface CrawlResultItem {
+  minutes: number;
+  delay: TrafficDelay;
+}
+
 @Injectable()
 export class GoogleMapsCrawler {
 
   constructor(private readonly preferenceService: PreferenceService) {}
 
-  async crawl(origin: LatLng, destination: LatLng): Promise<number[]> {
+  async crawl(origin: LatLng, destination: LatLng): Promise<CrawlResultItem[]> {
     let launchOptions: any = {
       headless: true,
       defaultViewport: { width: 1024, height: 768 }
@@ -65,7 +77,7 @@ export class GoogleMapsCrawler {
       }
 
       log('Evaluating page ...');
-      const durationsForCar = await page.evaluate(() => {
+      const durationsForCar: { content: string; className: string }[] = await page.evaluate(() => {
         const DURATION_ROW_SELECTOR = `section-directions-trip-`;
         const DURATION_SELECTOR = `trip-duration`;
 
@@ -74,13 +86,13 @@ export class GoogleMapsCrawler {
           .filter(e => e.id.match(new RegExp(`${DURATION_ROW_SELECTOR}\\d$`)))
           .map(row => Array.from(row.querySelectorAll('div'))
             .filter(e => e.className.match(DURATION_SELECTOR))
-            .map(e => e.textContent)
+            .map(e => ({ content: e.textContent, className: e.className }))
           )
           .reduce((acc, val) => acc.concat(val), []);
       });
-      log(`raw durations: ${durationsForCar.join(',')}`);
-      log(`parsed durations: ${durationsForCar.map(time => this.parseDuration(time))}`);
-      return durationsForCar.map(time => this.parseDuration(time));
+      durationsForCar.map(item => log(`duration=${item.content}, delay=${this.parseDelayClass(item.className)}`));
+      log(`parsed durations: ${durationsForCar.map(item => this.parseDuration(item.content))}`);
+      return durationsForCar.map(item => ({ minutes: this.parseDuration(item.content), delay: this.parseDelayClass(item.className) }));
 
     } catch(error) {
       throw new HttpException(`Puppeteer parsing failed: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -88,6 +100,18 @@ export class GoogleMapsCrawler {
     } finally {
       log('Closing browser ...');
       await browser.close();
+    }
+  }
+
+  private parseDelayClass(className: string): TrafficDelay {
+    if (className.includes('delay-light')) {
+      return TrafficDelay.LIGHT;
+    } else if (className.includes('delay-medium')) {
+      return TrafficDelay.MEDIUM;
+    } else if (className.includes('delay-heavy')) {
+      return TrafficDelay.HEAVY;
+    } else {
+      return TrafficDelay.DEFAULT;
     }
   }
 

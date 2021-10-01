@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InfluxService } from '@smart-home-conx/influx';
 import { IResults } from 'influx';
 import { Observable } from 'rxjs';
+import { CrawlResultItem } from './maps-crawler';
 
 @Injectable()
 export class CommutingService {
@@ -12,13 +13,13 @@ export class CommutingService {
     return this.influx.insert({ measurement: 'states', fields: { state }});
   }
 
-  saveDurations(start: string[], destination: string[], durations: number[]): Observable<void> {
+  saveDurations(start: string[], destination: string[], durations: CrawlResultItem[]): Observable<void> {
     return this.influx.insert({ measurement: 'durations', fields: {
       startLat: +start[0],
       startLng: +start[1],
       destinationLat: +destination[0],
       destinationLng: +destination[1],
-      durations
+      durations: JSON.stringify(durations)
     }});
   }
 
