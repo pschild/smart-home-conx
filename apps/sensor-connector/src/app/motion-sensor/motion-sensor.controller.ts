@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices';
 import { forkJoin, Subject } from 'rxjs';
 import { bufferTime, filter, mergeMap, tap, throttleTime } from 'rxjs/operators';
@@ -35,7 +35,7 @@ export class MotionSensorController {
       tap(_ => log(`Throttle check: OK`)),
       mergeMap(() => forkJoin([
         // TODO: replace static device name
-        this.mqttClient.send('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'Kleines Licht' }),
+        this.mqttClient.send('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'SHC3MinLicht' }),
         this.mqttClient.send('relais/status', 'on')
       ]))
     ).subscribe(events => {
@@ -47,17 +47,17 @@ export class MotionSensorController {
   }
 
   @MessagePattern('+/movement')
-  create(@Payload() payload: any, @Ctx() context: MqttContext) {
+  create(@Payload() payload: { pin?: number }, @Ctx() context: MqttContext) {
     const topic = context.getTopic();
-    const deviceId = topic.substring(0, topic.lastIndexOf('/'));
-    this.influx.insert({ measurement: 'movements', fields: { message: `movement detected` }, tags: { deviceId } });
+    const chipId = topic.substring(0, topic.lastIndexOf('/'));
+    this.influx.insert({ measurement: 'movements', fields: { pin: payload.pin || -1 }, tags: { chipId } });
 
     this.messageStream$.next(payload);
   }
 
-  @Get('history')
-  getHistory() {
-    return this.influx.find(`select * from movements WHERE time > now() - 1d`);
+  @Get(':chipId/history')
+  getHistory(@Param('chipId') chipId: string) {
+    return this.influx.find(`select * from movements WHERE time > now() - 1d AND chipId = '${chipId}'`);
   }
 
 }

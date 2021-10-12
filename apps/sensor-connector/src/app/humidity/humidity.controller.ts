@@ -2,14 +2,14 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { Ctx, MessagePattern, MqttContext, Payload } from '@nestjs/microservices';
 import { InfluxService } from '@smart-home-conx/influx';
 
-@Controller('voltage')
-export class VoltageController {
+@Controller('humidity')
+export class HumiditySensorController {
 
   constructor(
     private readonly influx: InfluxService
   ) {}
 
-  @MessagePattern('devices/+/voltage')
+  @MessagePattern('devices/+/humidity')
   create(@Payload() payload: { value: number; pin?: number }, @Ctx() context: MqttContext) {
     const chipIdMatch = context.getTopic().match(/devices\/(\d+)/);
     if (!chipIdMatch) {
@@ -17,17 +17,17 @@ export class VoltageController {
     }
     const chipId = chipIdMatch[1];
 
-    this.influx.insert({ measurement: 'voltage', fields: { value: payload.value, pin: payload.pin }, tags: { chipId } });
+    this.influx.insert({ measurement: 'humidity', fields: { value: payload.value, pin: payload.pin }, tags: { chipId } });
   }
 
   @Get(':chipId/history')
   getHistory(@Param('chipId') chipId: string) {
-    return this.influx.find(`select * from voltage WHERE time > now() - 1d AND chipId = '${chipId}'`);
+    return this.influx.find(`select * from humidity WHERE time > now() - 1d AND chipId = '${chipId}'`);
   }
 
   @Get(':chipId/latest')
   getLatest(@Param('chipId') chipId: string) {
-    return this.influx.findOne(`select * from voltage where chipId = '${chipId}' order by time desc limit 1`);
+    return this.influx.findOne(`select * from humidity where chipId = '${chipId}' order by time desc limit 1`);
   }
 
 }
