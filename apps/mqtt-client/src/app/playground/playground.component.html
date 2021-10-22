@@ -1,18 +1,17 @@
 <ul>
-  <li>ESP_12974077/movement</li>
-  <li>devices/ESP_12974077/temp, 18.90</li>
-  <li>devices/ESP_12974077/hum, 56.6</li>
-  <li>devices/ESP_12974077/dht, {{'{'}}"temperature":18.9,"humidity":56.6}</li>
-  <li>devices/ESP_12974077/voltage, 3.18</li>
+  <li>devices/3357047/temperature, {{'{'}}"value":18.9, "pin":2}<button mat-button color="primary" (click)="applyAndSend(3357047, 'temperature', 18.9, 2)"><mat-icon>check</mat-icon></button></li>
+  <li>devices/7888034/humidity, {{'{'}}"value":56.6, "pin":8}<button mat-button color="primary" (click)="applyAndSend(7888034, 'humidity', 56.6, 8)"><mat-icon>check</mat-icon></button></li>
+  <li>devices/7888034/humidity, {{'{'}}"value":56.6, "pin":9}<button mat-button color="primary" (click)="applyAndSend(7888034, 'humidity', 56.6, 9)"><mat-icon>check</mat-icon></button></li>
+  <li>devices/9876543/voltage, {{'{'}}"value":3.18}<button mat-button color="primary" (click)="applyAndSend(9876543, 'voltage', 3.18)"><mat-icon>check</mat-icon></button></li>
 </ul>
 <mat-form-field>
   <mat-label>MQTT Topic</mat-label>
-  <input matInput placeholder="devices/ESP_12974077/dht" [formControl]="topic">
+  <input matInput placeholder="devices/7888034/temperature" [formControl]="topic">
 </mat-form-field>
 <br/>
 <mat-form-field>
   <mat-label>MQTT Payload (e.g. JSON)</mat-label>
-  <input matInput placeholder="{temperature: 33.1, humidity: 58.2}" [formControl]="payload">
+  <input matInput placeholder="{value: 33.1}" [formControl]="payload">
 </mat-form-field>
 <br/>
 <button mat-raised-button color="primary" (click)="sendMessage()">
@@ -22,7 +21,7 @@
 <br/>
 <br/>
 
-<h2>ESP_12974077</h2>
+<!-- <h2>ESP 7888034</h2>
 <div>
   Batterie: {{latestVoltage$ | async}}V
 </div>
@@ -35,7 +34,7 @@
   <div *ngFor="let x of dhtLog">
     {{x.time | date:'dd.MM.yyyy HH:mm:ss'}}: {{x.temperature}} °C, {{x.humidity}}%
   </div>
-</div>
+</div> -->
 
 <h2>Logs</h2>
 <div *ngIf="systemLog$ | async as systemLog" style="width: 100%; height: 200px; overflow-y: auto;">
@@ -96,53 +95,4 @@
 <br/>
 <br/>
 
-<div *ngIf="rooms$ | async as rooms" cdkDropListGroup class="floor" style="background-color: #ccc; position: relative; width: 550px; height: 600px;">
-  <div
-    *ngFor="let room of rooms"
-    class="room"
-    style="position: absolute; border: 2px solid #000; background-color: lightblue;"
-    [style.width.px]="room.width"
-    [style.height.px]="room.height"
-    [style.left.px]="room.position.x"
-    [style.top.px]="room.position.y"
-    cdkDropList
-    [cdkDropListData]="room"
-    cdkDropListSortingDisabled="true"
-    (cdkDropListDropped)="drop($event)"
-  >
-    <span style="position: absolute;">{{room.name}}</span>
-    <div *ngFor="let sensor of sensors$ | async | filter:{roomId:room._id}">
-      <mat-icon
-        class="sensor"
-        [style.left.px]="sensor.position?.x"
-        [style.top.px]="sensor.position?.y"
-        [cdkDragData]="sensor"
-        cdkDrag
-        [matMenuTriggerFor]="menu"
-      >{{getIconName(sensor.type)}}</mat-icon>
-      <mat-menu #menu="matMenu">
-        <p>{{sensor._id}}</p>
-        <button mat-menu-item (click)="removeFromRoom(sensor)">Aus Raum entfernen</button>
-      </mat-menu>
-    </div>
-  </div>
-
-  <div
-    id="unassigned-list"
-    style="position: absolute; right: -50px; width: 50px; height: 200px; background: lightgreen; border: 2px solid #000"
-    cdkDropList
-    cdkDropListSortingDisabled="true"
-    (cdkDropListDropped)="drop($event)"
-  >
-    <div *ngFor="let sensor of unassignedSensors$ | async">
-      <mat-icon
-        class="sensor"
-        [cdkDragData]="sensor"
-        cdkDrag
-        [matMenuTriggerFor]="menu"
-      >{{getIconName(sensor.type)}}</mat-icon>
-      <mat-menu #menu="matMenu">
-        <p>{{sensor._id}}</p>
-      </mat-menu>
-  </div>
-</div>
+<smart-home-conx-floor></smart-home-conx-floor>

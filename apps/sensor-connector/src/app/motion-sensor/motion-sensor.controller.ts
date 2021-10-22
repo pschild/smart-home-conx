@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices';
 import { forkJoin, Subject } from 'rxjs';
 import { bufferTime, filter, mergeMap, tap, throttleTime } from 'rxjs/operators';
@@ -50,14 +50,14 @@ export class MotionSensorController {
   create(@Payload() payload: { pin?: number }, @Ctx() context: MqttContext) {
     const topic = context.getTopic();
     const chipId = topic.substring(0, topic.lastIndexOf('/'));
-    this.influx.insert({ measurement: 'movements', fields: { pin: payload.pin || -1 }, tags: { chipId } });
+    this.influx.insert({ measurement: 'movements', fields: { pin: payload.pin }, tags: { chipId } });
 
     this.messageStream$.next(payload);
   }
 
   @Get(':chipId/history')
-  getHistory(@Param('chipId') chipId: string) {
-    return this.influx.find(`select * from movements WHERE time > now() - 1d AND chipId = '${chipId}'`);
+  getHistory(@Param('chipId') chipId: string, @Query('pin') pin: number) {
+    return this.influx.find(`select * from movements where time > now() - 1d AND chipId = '${chipId}' AND pin = ${pin}`);
   }
 
 }

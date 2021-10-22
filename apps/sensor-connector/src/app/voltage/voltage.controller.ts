@@ -10,19 +10,19 @@ export class VoltageController {
   ) {}
 
   @MessagePattern('devices/+/voltage')
-  create(@Payload() payload: { value: number; pin?: number }, @Ctx() context: MqttContext) {
+  create(@Payload() payload: { value: number }, @Ctx() context: MqttContext) {
     const chipIdMatch = context.getTopic().match(/devices\/(\d+)/);
     if (!chipIdMatch) {
       throw new Error(`Could not find a chipId. Topic=${context.getTopic()}`);
     }
     const chipId = chipIdMatch[1];
 
-    this.influx.insert({ measurement: 'voltage', fields: { value: payload.value, pin: payload.pin }, tags: { chipId } });
+    this.influx.insert({ measurement: 'voltage', fields: { value: payload.value }, tags: { chipId } });
   }
 
   @Get(':chipId/history')
   getHistory(@Param('chipId') chipId: string) {
-    return this.influx.find(`select * from voltage WHERE time > now() - 1d AND chipId = '${chipId}'`);
+    return this.influx.find(`select * from voltage where time > now() - 1d AND chipId = '${chipId}'`);
   }
 
   @Get(':chipId/latest')

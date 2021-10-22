@@ -27,8 +27,8 @@ export class SensorService {
     return this.repository.findOne(sensorId);
   }
 
-  findByDeviceId(deviceId: string): Promise<Sensor[]> {
-    return this.repository.find({ where: { deviceId } });
+  findByChipId(chipId: string): Promise<Sensor[]> {
+    return this.repository.find({ where: { chipId } });
   }
 
   findByRoomId(roomId: string): Promise<Sensor[]> {

@@ -1,13 +1,12 @@
+import { CdkDragDrop } from "@angular/cdk/drag-drop";
+import { SensorType } from "@smart-home-conx/api/shared/data-access/models";
+
 export namespace PlaygroundActions {
 
-  export class LoadDhtHistory {
-    static readonly type = '[Playground] load dht history';
-  }
+  export class LoadHistory {
+    static readonly type = '[Playground] load history';
 
-  export class AddDhtValue {
-    static readonly type = '[Playground] add dht value';
-
-    constructor(public deviceId: string, public payload: any) {}
+    constructor(public sensorId: string, public chipId: string, public type: SensorType, public pin?: number) {}
   }
 
   export class LoadRooms {
@@ -22,5 +21,11 @@ export namespace PlaygroundActions {
     static readonly type = '[Playground] update sensor';
 
     constructor(public sensorId: string, public newRoomId: string, public position: { x: number; y: number }) {}
+  }
+
+  export class SensorDropped {
+    static readonly type = '[Playground] sensor dropped';
+
+    constructor(public dropEvent: CdkDragDrop<any>) {}
   }
 }

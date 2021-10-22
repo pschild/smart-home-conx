@@ -1,0 +1,20 @@
+<div class="sensor" [style.left.px]="sensor.position?.x" [style.top.px]="sensor.position?.y">
+  <mat-icon [matMenuTriggerFor]="menu">{{getIconName(sensor.type)}}</mat-icon>
+  <div *ngIf="latest$ | async as latestItem">
+    {{latestItem.value}}{{getSuffix(sensor.type)}}
+  </div>
+  <div *ngIf="isLoading$ | async">lade...</div>
+  <mat-menu #menu="matMenu">
+    <p>{{sensor._id}}</p>
+    <p>{{sensor.chipId}} #{{sensor.pin || '- -'}}</p>
+    <div *ngIf="history$ | async as historyItems">
+      <ul *ngIf="historyItems.length > 0; else noItems">
+        <li *ngFor="let item of historyItems">
+          {{item.time | date:'dd.MM. HH:mm:ss'}} {{item.value}}{{getSuffix(sensor.type)}}
+        </li>
+      </ul>
+      <ng-template #noItems>Keine Einträge vorhanden</ng-template>
+    </div>
+    <button mat-menu-item (click)="reloadHistory()">Historie laden</button>
+  </mat-menu>
+</div>

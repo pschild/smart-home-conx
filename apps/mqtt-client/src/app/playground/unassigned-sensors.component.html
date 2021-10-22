@@ -1,0 +1,13 @@
+<div
+  id="unassigned-list"
+  cdkDropList
+  cdkDropListSortingDisabled="true"
+  (cdkDropListDropped)="drop($event)"
+>
+  <smart-home-conx-sensor
+    *ngFor="let sensor of sensors$ | async"
+    [sensor]="sensor"
+    [cdkDragData]="sensor"
+    cdkDrag
+  ></smart-home-conx-sensor>
+</div>

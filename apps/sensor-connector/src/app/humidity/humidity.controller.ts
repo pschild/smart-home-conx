@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Ctx, MessagePattern, MqttContext, Payload } from '@nestjs/microservices';
 import { InfluxService } from '@smart-home-conx/influx';
 
@@ -21,13 +21,13 @@ export class HumiditySensorController {
   }
 
   @Get(':chipId/history')
-  getHistory(@Param('chipId') chipId: string) {
-    return this.influx.find(`select * from humidity WHERE time > now() - 1d AND chipId = '${chipId}'`);
+  getHistory(@Param('chipId') chipId: string, @Query('pin') pin: number) {
+    return this.influx.find(`select * from humidity where time > now() - 1d AND chipId = '${chipId}' AND pin = ${pin}`);
   }
 
   @Get(':chipId/latest')
-  getLatest(@Param('chipId') chipId: string) {
-    return this.influx.findOne(`select * from humidity where chipId = '${chipId}' order by time desc limit 1`);
+  getLatest(@Param('chipId') chipId: string, @Query('pin') pin: number) {
+    return this.influx.findOne(`select * from humidity where chipId = '${chipId}' AND pin = ${pin} order by time desc limit 1`);
   }
 
 }

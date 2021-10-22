@@ -14,10 +14,13 @@ export class Sensor implements SensorModel {
   type: SensorType;
 
   @Column()
-  deviceId: string;
+  chipId: number;
 
   @Column()
   roomId: string;
+
+  @Column()
+  pin: number;
 
   @Column()
   position: { x: number; y: number };

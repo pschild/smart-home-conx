@@ -1,5 +1,5 @@
 import { SensorType } from '@smart-home-conx/api/shared/data-access/models';
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateSensorDto {
 
@@ -8,13 +8,18 @@ export class CreateSensorDto {
   readonly type: SensorType;
 
   // @IsNotEmpty()
-  @IsString()
-  readonly deviceId: string;
+  @IsNumber()
+  readonly chipId: number;
 
   @IsOptional()
   readonly position: { x: number; y: number };
 
   @IsString()
+  @IsOptional()
   readonly roomId: string;
+
+  @IsNumber()
+  @IsOptional()
+  readonly pin: number;
 
 }

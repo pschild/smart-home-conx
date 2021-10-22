@@ -24,9 +24,9 @@ export class SensorController {
     return this.sensorService.findOne(sensorId);
   }
 
-  @Get('/byDevice/:deviceId')
-  findByDeviceId(@Param('deviceId') deviceId: string) {
-    return this.sensorService.findByDeviceId(deviceId);
+  @Get('/byDevice/:chipId')
+  findByChipId(@Param('chipId') chipId: string) {
+    return this.sensorService.findByChipId(chipId);
   }
 
   @Get('/byRoom/:roomId')

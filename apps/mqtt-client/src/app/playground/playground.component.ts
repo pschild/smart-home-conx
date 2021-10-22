@@ -1,44 +1,19 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IMqttMessage } from 'ngx-mqtt';
 import { FormControl } from '@angular/forms';
+import { Select, Store } from '@ngxs/store';
+import { EspConfig } from '@smart-home-conx/utils';
+import { IMqttMessage } from 'ngx-mqtt';
+import { merge, Observable, ReplaySubject } from 'rxjs';
+import { map, scan, takeUntil } from 'rxjs/operators';
+import { DeviceState } from '../device/state/device.state';
+import { EventMqttService } from '../event-mqtt.service';
 import { HttpService } from '../http.service';
 import { SocketService } from '../socket.service';
-import { EventMqttService } from '../event-mqtt.service';
-import { map, scan, takeUntil } from 'rxjs/operators';
-import { merge, Observable, ReplaySubject } from 'rxjs';
-import { EspConfig } from '@smart-home-conx/utils';
-import { Select, Store } from '@ngxs/store';
-import { PlaygroundState } from './state/playground.state';
-import { DeviceState } from '../device/state/device.state';
-import { PlaygroundActions } from './state/playground.actions';
-import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'smart-home-conx-playground',
   templateUrl: './playground.component.html',
-  styles: [
-    `
-    .sensor {
-      cursor: move;
-    }
-
-    .room .sensor {
-      position: absolute;
-    }
-
-    #unassigned-list > div {
-      text-align: center;
-    }
-
-    .cdk-drag-placeholder {
-      display: none;
-    }
-
-    .cdk-drop-list-dragging {
-      border-style: dashed !important;
-    }
-    `
-  ]
+  styles: []
 })
 export class PlaygroundComponent implements OnInit, OnDestroy {
 
@@ -54,16 +29,16 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   systemLog$: Observable<string[]>;
   movementLog$: Observable<string[]>;
 
-  @Select(PlaygroundState.dhtValues)
+  /* @Select(PlaygroundState.dhtValues)
   dhtLog$: Observable<string[]>;
 
   @Select(PlaygroundState.latestTemperature)
-  latestTemperature$: Observable<any>;
+  latestTemperature$: Observable<any>; */
 
   latestVoltage$: Observable<string>;
 
-  topic = new FormControl('devices/ESP_12974077/dht');
-  payload = new FormControl('{"temperature":18.9,"humidity":56.6}');
+  topic = new FormControl('devices/3357047/temperature');
+  payload = new FormControl('{"value":21.5, "pin":2}');
 
   libName = new FormControl('');
   releaseType = new FormControl('');
@@ -78,12 +53,12 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.store.dispatch(new PlaygroundActions.LoadDhtHistory());
+    // this.store.dispatch(new PlaygroundActions.LoadDhtHistory());
 
     this.eventMqttService.observe('devices/+/version')
       .subscribe((data: IMqttMessage) => console.log('esp ping', data.payload.toString()));
 
-    this.eventMqttService.observe('adesso-commuter-server/commuting/#')
+    this.eventMqttService.observe('commuting-watcher/commuting/#')
       .subscribe((data: IMqttMessage) => console.log('commuting', data.payload.toString()));
 
     this.espRepos$ = this.httpService.getEspRepos();
@@ -114,6 +89,10 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
     this.eventMqttService.publish(this.topic.value, this.payload.value).subscribe();
   }
 
+  applyAndSend(chipId, type, value, pin?: number) {
+    this.eventMqttService.publish(`devices/${chipId}/${type}`, `{"value":${value}${!!pin ? ',"pin":' + pin : ''}}`).subscribe();
+  }
+
   getCommutingHistory(): void {
     this.httpService.commutingHistory().subscribe(console.log);
   }
@@ -124,59 +103,6 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
 
   killPioBuild(): void {
     this.httpService.killPioBuild().subscribe(console.log);
-  }
-
-  // tslint:disable-next-line:member-ordering
-  rooms$ = this.store.select(PlaygroundState.rooms);
-  // tslint:disable-next-line:member-ordering
-  sensors$ = this.store.select(PlaygroundState.sensors);
-  // tslint:disable-next-line:member-ordering
-  unassignedSensors$ = this.store.select(PlaygroundState.unassignedSensors);
-
-  drop(event: CdkDragDrop<any>) {
-    if (event.container.id === 'unassigned-list') {
-      this.removeFromRoom(event.item.data);
-    } else {
-      this.store.dispatch(new PlaygroundActions.UpdateSensor(
-        event.item.data._id, // sensor id
-        event.container.data._id, // new room id
-        this.getNewPosition(event) // new position
-      ));
-    }
-  }
-
-  private getNewPosition(event: CdkDragDrop<any>): { x: number; y: number } {
-    if (event.container.id === event.previousContainer.id) {
-      return {
-        x: event.isPointerOverContainer ? event.item.data.position.x + event.distance.x : event.item.data.position.x,
-        y: event.isPointerOverContainer ? event.item.data.position.y + event.distance.y : event.item.data.position.y
-      };
-    }
-    const dragRect = event.item.element.nativeElement.getBoundingClientRect();
-    const dropRect = event.container.element.nativeElement.getBoundingClientRect();
-    return {
-      x: event.isPointerOverContainer ? event.dropPoint.x - dropRect.x - dragRect.width / 2 : 0,
-      y: event.isPointerOverContainer ? event.dropPoint.y - dropRect.y - dragRect.height / 2 : 0
-    };
-  }
-
-  removeFromRoom(sensor): void {
-    this.store.dispatch(new PlaygroundActions.UpdateSensor(
-      sensor._id, // sensor id
-      null, // new room id
-      null // new position
-    ));
-  }
-
-  getIconName(type: string): string {
-    switch (type) {
-      case 'dht':
-        return 'thermostat';
-      case 'battery':
-        return 'battery_charging_full';
-      default:
-        throw new Error(`Unknown sensor type "${type}"!`);
-    }
   }
 
 }

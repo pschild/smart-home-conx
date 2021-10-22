@@ -1,5 +1,6 @@
 export enum SensorType {
-  DHT = "dht",
-  BATTERY = "battery",
-  PIR = "pir"
+  TEMPERATURE = 'temperature',
+  HUMIDITY = 'humidity',
+  VOLTAGE = 'voltage',
+  PIR = 'pir'
 }

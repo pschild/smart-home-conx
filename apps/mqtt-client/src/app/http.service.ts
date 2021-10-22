@@ -27,7 +27,7 @@ export class HttpService {
   }
 
   getMovementLog(): Observable<any> {
-    return this.httpClient.get<any>(`sensor-connector/movement/history`);
+    return this.httpClient.get<any>(`sensor-connector/movement/7888034/history`);
   }
 
   getLog(): Observable<any> {
