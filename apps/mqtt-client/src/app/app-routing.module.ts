@@ -23,6 +23,11 @@ const routes: Routes = [
     loadChildren: () => import('./device/device.module').then(m => m.DeviceModule)
   },
   {
+    path: 'sensors',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./sensor/sensor.module').then(m => m.SensorModule)
+  },
+  {
     path: 'preferences',
     canActivate: [AuthGuard],
     loadChildren: () => import('./preference/preference.module').then(m => m.PreferenceModule)
@@ -31,7 +36,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-    preloadingStrategy: PreloadAllModules,
+    // preloadingStrategy: PreloadAllModules,
     relativeLinkResolution: 'legacy'
 })],
   exports: [RouterModule]

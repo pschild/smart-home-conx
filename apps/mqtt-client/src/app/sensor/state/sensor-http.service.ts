@@ -1,22 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
+import { SensorModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class DeviceHttpService {
+export class SensorHttpService {
 
   constructor(private httpClient: HttpClient) { }
 
-  loadAll(): Observable<DeviceModel[]> {
-    return this.httpClient.get<DeviceModel[]>(`device/device`);
+  loadAll(): Observable<SensorModel[]> {
+    return this.httpClient.get<SensorModel[]>(`xxx`);
   }
 
-  create(dto: DeviceModel): Observable<DeviceModel> {
-    return this.httpClient.post<DeviceModel>(`device/device`, dto).pipe(
+  create(dto: SensorModel): Observable<SensorModel> {
+    return this.httpClient.post<SensorModel>(`xxx`, dto).pipe(
       catchError(err => {
         console.error(err);
         return throwError(err);
@@ -24,8 +24,8 @@ export class DeviceHttpService {
     );
   }
 
-  update(id: string, dto: Partial<DeviceModel>): Observable<any> {
-    return this.httpClient.patch<any>(`device/device/${id}`, dto).pipe(
+  update(id: string, dto: SensorModel): Observable<any> {
+    return this.httpClient.patch<any>(`xxx/${id}`, dto).pipe(
       catchError(err => {
         console.error(err);
         return throwError(err);

@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 import { Observable } from 'rxjs';
-import { PlaygroundActions } from './state/playground.actions';
-import { PlaygroundState } from './state/playground.state';
+import { SensorActions } from '../state/sensor.actions';
+import { SensorState } from '../state/sensor.state';
 
 @Component({
   selector: 'smart-home-conx-sensor',
@@ -21,10 +22,10 @@ import { PlaygroundState } from './state/playground.state';
 })
 export class SensorComponent implements OnInit {
 
-  @Input() sensor: any;
+  @Input() sensor: SensorModel;
 
-  history$: Observable<any>;
-  latest$: Observable<any>;
+  history$: Observable<{ time: string; value: number; chipId: string; pin: number; type: SensorType }[]>;
+  latest$: Observable<{ time: string; value: number; chipId: string; pin: number; type: SensorType }>;
   isLoading$: Observable<boolean>;
 
   constructor(
@@ -33,16 +34,16 @@ export class SensorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.history$ = this.store.select(PlaygroundState.history(this.sensor._id, this.sensor.type));
-    this.latest$ = this.store.select(PlaygroundState.latest(this.sensor._id, this.sensor.type));
-    this.isLoading$ = this.store.select(PlaygroundState.isLoading(this.sensor._id));
+    this.history$ = this.store.select(SensorState.history(this.sensor._id.toString(), this.sensor.type));
+    this.latest$ = this.store.select(SensorState.latest(this.sensor._id.toString(), this.sensor.type));
+    this.isLoading$ = this.store.select(SensorState.isLoading(this.sensor._id.toString()));
 
     // TODO: wird zu oft geladen (bspw. wenn Sensor verschoben wird)
-    this.store.dispatch(new PlaygroundActions.LoadHistory(this.sensor._id, this.sensor.chipId, this.sensor.type, this.sensor.pin));
+    this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
   }
 
   reloadHistory(): void {
-    this.store.dispatch(new PlaygroundActions.LoadHistory(this.sensor._id, this.sensor.chipId, this.sensor.type, this.sensor.pin));
+    this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
   }
 
   getIconName(type: string): string {
@@ -53,6 +54,8 @@ export class SensorComponent implements OnInit {
         return 'water_damage';
       case 'voltage':
         return 'battery_charging_full';
+      case 'pir':
+        return 'settings_input_antenna';
       default:
         throw new Error(`Unknown sensor type "${type}"!`);
     }
@@ -66,6 +69,8 @@ export class SensorComponent implements OnInit {
         return '%';
       case 'voltage':
         return 'V';
+      case 'pir':
+        return null;
       default:
         throw new Error(`Unknown sensor type "${type}"!`);
     }

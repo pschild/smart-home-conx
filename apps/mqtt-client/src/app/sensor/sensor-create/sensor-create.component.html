@@ -1,5 +1,5 @@
-<h1 mat-dialog-title *ngIf="data?.esp">{{data.esp.model}} (#{{data.esp.chipId}})</h1>
-<h1 mat-dialog-title *ngIf="!data?.esp">Neuer ESP</h1>
+<h1 mat-dialog-title *ngIf="data?.sensor">{{data.sensor.chipId}} (#{{data.sensor.pin}})</h1>
+<h1 mat-dialog-title *ngIf="!data?.sensor">Neuer Sensor</h1>
 <div mat-dialog-content>
   <form [formGroup]="form" class="form-container">
     <mat-form-field>
@@ -9,26 +9,22 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
     <mat-form-field>
-      <mat-label>Modell</mat-label>
-      <input matInput placeholder="Modell" formControlName="model" required>
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>Beschreibung</mat-label>
-      <input matInput placeholder="Beschreibung" formControlName="description">
-    </mat-form-field>
-    <mat-form-field>
-      <mat-label>PIO-Env</mat-label>
-      <mat-select formControlName="pioEnv" required>
-        <mat-option value="esp01_1m">esp01_1m</mat-option>
-        <mat-option value="esp12e">esp12e</mat-option>
-        <mat-option value="nodemcuv2">nodemcuv2</mat-option>
+      <mat-label>Typ</mat-label>
+      <mat-select formControlName="type" required>
+        <mat-select-trigger>
+          <mat-icon>{{findIcon(form.get('type').value)}}</mat-icon>{{findLabel(form.get('type').value)}}
+        </mat-select-trigger>
+        <mat-option *ngFor="let option of typeOptions" [value]="option.value"><mat-icon>{{option.icon}}</mat-icon>{{option.label}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Chip-ID</mat-label>
       <input matInput type="number" placeholder="Chip-ID" formControlName="chipId" required>
     </mat-form-field>
-    <mat-checkbox formControlName="batteryPowered">Batteriebetrieb</mat-checkbox>
+    <mat-form-field>
+      <mat-label>Pin</mat-label>
+      <input matInput type="number" placeholder="Pin" formControlName="pin">
+    </mat-form-field>
   </form>
 </div>
 <div mat-dialog-actions align="end">

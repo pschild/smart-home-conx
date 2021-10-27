@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext, StateToken } from '@ngxs/store';
+import { Action, NgxsOnInit, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { AuthActions } from './auth.actions';
 import { AuthHttpService } from './auth-http.service';
 import { tap } from 'rxjs/operators';
@@ -20,7 +20,7 @@ export interface AuthStateModel {
   }
 })
 @Injectable()
-export class AuthState {
+export class AuthState implements NgxsOnInit {
 
   @Selector()
   static isLoggedIn(state: AuthStateModel) {
@@ -40,6 +40,10 @@ export class AuthState {
   constructor(
     private authService: AuthHttpService
   ) {}
+
+  ngxsOnInit(ctx?: StateContext<any>): void {
+    console.log('ngxsOnInit auth.state');
+  }
 
   @Action(AuthActions.Login)
   login(ctx: StateContext<AuthStateModel>, action: AuthActions.Login) {

@@ -15,7 +15,7 @@ export namespace DeviceActions {
   export class UpdateEspDevice {
     static readonly type = '[Device] update esp device';
 
-    constructor(public id: string, public dto: DeviceModel) {}
+    constructor(public id: string, public dto: Partial<DeviceModel>) {}
   }
 
   export class RemoveEspDevice {

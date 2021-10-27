@@ -1,0 +1,14 @@
+<ng-container *ngIf="sensors$ | async as sensors">
+  <div *ngFor="let sensor of sensors">
+    {{sensor._id}} {{sensor.chipId}} {{sensor.type}} {{sensor.pin}}
+    <button mat-icon-button (click)="edit(sensor)">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </div>
+</ng-container>
+<button mat-raised-button color="primary" (click)="create()">
+  <mat-icon>add</mat-icon>
+  Erstellen
+</button>
+
+<smart-home-conx-floor></smart-home-conx-floor>

@@ -1,9 +1,10 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { SensorModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Observable } from 'rxjs';
-import { PlaygroundActions } from './state/playground.actions';
-import { PlaygroundState } from './state/playground.state';
+import { SensorActions } from '../state/sensor.actions';
+import { SensorState } from '../state/sensor.state';
 
 @Component({
   selector: 'smart-home-conx-unassigned-sensors',
@@ -35,7 +36,7 @@ import { PlaygroundState } from './state/playground.state';
 })
 export class UnassignedSensorsComponent implements OnInit {
 
-  sensors$: Observable<any[]>;
+  sensors$: Observable<SensorModel[]>;
 
   constructor(
     private store: Store
@@ -43,11 +44,11 @@ export class UnassignedSensorsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.sensors$ = this.store.select(PlaygroundState.unassignedSensors);
+    this.sensors$ = this.store.select(SensorState.unassignedSensors);
   }
 
   drop(event: CdkDragDrop<any>) {
-    this.store.dispatch(new PlaygroundActions.SensorDropped(event));
+    this.store.dispatch(new SensorActions.SensorDropped(event));
   }
 
 }

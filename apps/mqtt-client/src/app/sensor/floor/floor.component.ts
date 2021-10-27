@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
+import { RoomModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Observable } from 'rxjs';
-import { PlaygroundState } from './state/playground.state';
+import { SensorState } from '../state/sensor.state';
 
 @Component({
   selector: 'smart-home-conx-floor',
@@ -19,7 +20,7 @@ import { PlaygroundState } from './state/playground.state';
 })
 export class FloorComponent implements OnInit {
 
-  rooms$: Observable<any[]>;
+  rooms$: Observable<RoomModel[]>;
 
   constructor(
     private store: Store
@@ -27,7 +28,7 @@ export class FloorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.rooms$ = this.store.select(PlaygroundState.rooms);
+    this.rooms$ = this.store.select(SensorState.rooms);
   }
 
 }
