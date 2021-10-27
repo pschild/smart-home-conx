@@ -12,14 +12,16 @@
       <mat-label>Typ</mat-label>
       <mat-select formControlName="type" required>
         <mat-select-trigger>
-          <mat-icon>{{findIcon(form.get('type').value)}}</mat-icon>{{findLabel(form.get('type').value)}}
+          <mat-icon>{{getIconName(form.get('type').value)}}</mat-icon>{{getLabel(form.get('type').value)}}
         </mat-select-trigger>
-        <mat-option *ngFor="let option of typeOptions" [value]="option.value"><mat-icon>{{option.icon}}</mat-icon>{{option.label}}</mat-option>
+        <mat-option *ngFor="let type of typeOptions" [value]="type"><mat-icon>{{getIconName(type)}}</mat-icon>{{getLabel(type)}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Chip-ID</mat-label>
-      <input matInput type="number" placeholder="Chip-ID" formControlName="chipId" required>
+      <mat-select formControlName="chipId" required>
+        <mat-option *ngFor="let option of espOptions$ | async" [value]="option.chipId">{{option.chipId}} ({{option.model}}, {{option.description}})</mat-option>
+      </mat-select>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Pin</mat-label>

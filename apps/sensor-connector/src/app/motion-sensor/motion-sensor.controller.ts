@@ -46,10 +46,14 @@ export class MotionSensorController {
     });
   }
 
-  @MessagePattern('+/movement')
+  @MessagePattern('devices/+/movement')
   create(@Payload() payload: { pin?: number }, @Ctx() context: MqttContext) {
-    const topic = context.getTopic();
-    const chipId = topic.substring(0, topic.lastIndexOf('/'));
+    const chipIdMatch = context.getTopic().match(/devices\/(\d+)/);
+    if (!chipIdMatch) {
+      throw new Error(`Could not find a chipId. Topic=${context.getTopic()}`);
+    }
+    const chipId = chipIdMatch[1];
+
     this.influx.insert({ measurement: 'movements', fields: { pin: payload.pin }, tags: { chipId } });
 
     this.messageStream$.next(payload);

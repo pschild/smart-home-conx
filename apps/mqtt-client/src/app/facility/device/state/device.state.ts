@@ -5,7 +5,7 @@ import { patch, updateItem, removeItem, insertItem } from '@ngxs/store/operators
 import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
 import { of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { EventMqttService } from '../../event-mqtt.service';
+import { EventMqttService } from '../../../event-mqtt.service';
 import { DeviceActions } from './device.actions';
 import { DeviceHttpService } from './device-http.service';
 
@@ -44,6 +44,10 @@ export class DeviceState implements NgxsOnInit {
 
   ngxsOnInit(ctx?: StateContext<any>): void {
     console.log('ngxsOnInit device.state');
+    ctx.dispatch([
+      new DeviceActions.LoadEspDevices(),
+      new DeviceActions.LoadAlexaDevices()
+    ]);
   }
 
   @Action(DeviceActions.LoadEspDevices)

@@ -1,7 +1,7 @@
 <div class="sensor" [style.left.px]="sensor.position?.x" [style.top.px]="sensor.position?.y">
   <mat-icon [matMenuTriggerFor]="menu">{{getIconName(sensor.type)}}</mat-icon>
   <div *ngIf="latest$ | async as latestItem">
-    {{latestItem.value}}{{getSuffix(sensor.type)}}
+    {{latestItem.value}}{{getSuffix(sensor.type)}} <small>({{timeAgoLabel$ | async}})</small>
   </div>
   <div *ngIf="isLoading$ | async">lade...</div>
   <mat-menu #menu="matMenu">

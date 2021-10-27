@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../material/material.module';
+import { MaterialModule } from '../../material/material.module';
 import { SensorListComponent } from './sensor-list/sensor-list.component';
 import { SensorCreateComponent } from './sensor-create/sensor-create.component';
-import { SensorRoutingModule } from './sensor-routing.module';
 import { NgxsModule } from '@ngxs/store';
 import { SensorState } from './state/sensor.state';
 import { SensorComponent } from './sensor/sensor.component';
@@ -25,7 +24,6 @@ import { FloorComponent } from './floor/floor.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    SensorRoutingModule,
     MaterialModule,
     NgxsModule.forFeature([SensorState])
   ]

@@ -1,8 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Store } from '@ngxs/store';
-import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { Select, Store } from '@ngxs/store';
+import { DeviceModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { Observable } from 'rxjs';
+import { DeviceState } from '../../device/state/device.state';
+import { SensorUtil } from '../sensor.util';
 import { SensorActions } from '../state/sensor.actions';
 
 @Component({
@@ -16,12 +19,10 @@ export class SensorCreateComponent implements OnInit {
 
   form: FormGroup;
 
-  typeOptions: { value: SensorType; label: string; icon: string }[] = [
-    { value: SensorType.HUMIDITY, label: 'Luftfeuchtigkeit', icon: 'water_damage' },
-    { value: SensorType.TEMPERATURE, label: 'Temperatur', icon: 'thermostat' },
-    { value: SensorType.VOLTAGE, label: 'Batterie', icon: 'battery_charging_full' },
-    { value: SensorType.PIR, label: 'Bewegungsmelder', icon: 'settings_input_antenna' },
-  ];
+  typeOptions: SensorType[] = Object.values(SensorType);
+
+  @Select(DeviceState.espList)
+  espOptions$: Observable<DeviceModel[]>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -66,12 +67,12 @@ export class SensorCreateComponent implements OnInit {
     action$.subscribe(() => this.dialogRef.close());
   }
 
-  findLabel(value: string): string {
-    return this.typeOptions.find(i => i.value === value)?.label;
+  getLabel(type: SensorType): string {
+    return !!type ? SensorUtil.getLabelByType(type) : null;
   }
 
-  findIcon(value: string): string {
-    return this.typeOptions.find(i => i.value === value)?.icon;
+  getIconName(type: SensorType): string {
+    return !!type ? SensorUtil.getIconNameByType(type) : null;
   }
 
 }

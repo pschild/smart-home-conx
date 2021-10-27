@@ -1,12 +1,12 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Action, createSelector, Selector, State, StateContext, StateToken, Store } from '@ngxs/store';
 import { insertItem, patch, removeItem, updateItem } from '@ngxs/store/operators';
 import { RoomModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 import { EMPTY, merge } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import { EventMqttService } from '../../event-mqtt.service';
+import { EventMqttService } from '../../../event-mqtt.service';
+import { RoomHttpService } from './room-http.service';
 import { SensorHttpService } from './sensor-http.service';
 import { SensorActions } from './sensor.actions';
 
@@ -33,7 +33,7 @@ export class SensorState {
 
   constructor(
     private sensorHttpService: SensorHttpService,
-    private httpClient: HttpClient,
+    private roomHttpService: RoomHttpService,
     private eventMqttService: EventMqttService,
     private store: Store
   ) {}
@@ -90,6 +90,10 @@ export class SensorState {
 
   ngxsOnInit(ctx?: StateContext<any>): void {
     console.log('ngxsOnInit sensor.state');
+    ctx.dispatch([
+      new SensorActions.LoadRooms(),
+      new SensorActions.LoadSensors()
+    ]);
 
     const obsList$ = [SensorType.TEMPERATURE, SensorType.HUMIDITY, SensorType.VOLTAGE]
       .map(type => this.eventMqttService.observe(`devices/+/${type}`).pipe(
@@ -121,11 +125,7 @@ export class SensorState {
     //   return;
     // }
 
-    let params;
-    if (!!action.pin) {
-      params = new HttpParams().set('pin', action.pin);
-    }
-    return this.httpClient.get<{ time: string; value: number; chipId: string; pin: number; type: SensorType }[]>(`sensor-connector/${action.type}/${action.chipId}/history`, { params }).pipe(
+    return this.sensorHttpService.loadHistory(action.chipId, action.type, action.pin).pipe(
       map(items => items.map(i => ({ ...i, type: action.type }))),
       tap(items => {
         ctx.setState(patch({
@@ -139,15 +139,24 @@ export class SensorState {
 
   @Action(SensorActions.LoadRooms)
   loadRooms(ctx: StateContext<SensorStateModel>) {
-    return this.httpClient.get(`device/room`).pipe(
+    return this.roomHttpService.loadAll().pipe(
       tap((rooms: RoomModel[]) => ctx.patchState({ rooms }))
     );
   }
 
   @Action(SensorActions.LoadSensors)
   loadSensors(ctx: StateContext<SensorStateModel>) {
-    return this.httpClient.get(`device/sensor`).pipe(
+    return this.sensorHttpService.loadAll().pipe(
       tap((sensors: SensorModel[]) => ctx.patchState({ sensors }))
+    );
+  }
+
+  @Action(SensorActions.CreateSensor)
+  createSensor(ctx: StateContext<SensorStateModel>, action: SensorActions.CreateSensor) {
+    return this.sensorHttpService.create(action.dto).pipe(
+      tap(createdSensor => {
+        ctx.setState(patch({ sensors: insertItem<SensorModel>(createdSensor) }));
+      })
     );
   }
 
@@ -160,7 +169,7 @@ export class SensorState {
       sensors: updateItem(item => item._id.toString() === action.id, { ...sensor, ...action.dto })
     }));
 
-    return this.httpClient.patch(`device/sensor/${sensor._id}`, action.dto).pipe(
+    return this.sensorHttpService.update(sensor._id.toString(), action.dto).pipe(
       catchError(err => {
         // reset to old values in case of error
         ctx.setState(patch({
@@ -171,18 +180,9 @@ export class SensorState {
     );
   }
 
-  @Action(SensorActions.CreateSensor)
-  createSensor(ctx: StateContext<SensorStateModel>, action: SensorActions.CreateSensor) {
-    return this.httpClient.post<SensorModel>('device/sensor', action.dto).pipe(
-      tap(createdSensor => {
-        ctx.setState(patch({ sensors: insertItem<SensorModel>(createdSensor) }));
-      })
-    );
-  }
-
   @Action(SensorActions.RemoveSensor)
   removeSensor(ctx: StateContext<SensorStateModel>, action: SensorActions.RemoveSensor) {
-    return this.httpClient.delete(`device/sensor/${action.id}`).pipe(
+    return this.sensorHttpService.remove(action.id).pipe(
       tap(_ => ctx.setState(patch({ sensors: removeItem<SensorModel>(item => item._id.toString() === action.id) })))
     );
   }
@@ -222,32 +222,5 @@ export class SensorState {
       }));
     }
   }
-
-  /* @Action(SensorActions.Create)
-  create(ctx: StateContext<SensorStateModel>, action: SensorActions.Create) {
-    return this.sensorHttpService.create(action.dto).pipe(
-      tap(createdSensor => {
-        ctx.setState(patch({ sensors: insertItem<SensorModel>(createdSensor) }));
-      })
-    );
-  }
-
-  @Action(SensorActions.Update)
-  update(ctx: StateContext<SensorStateModel>, action: SensorActions.Update) {
-    return this.sensorHttpService.update(action.id, action.dto).pipe(
-      tap(_ => {
-        const currentSensor = ctx.getState().sensors.find(item => item._id.toString() === action.id);
-        const patchedSensor = { ...currentSensor, ...action.dto };
-        ctx.setState(patch({ sensors: updateItem<SensorModel>(item => item._id.toString() === action.id, patchedSensor) }));
-      })
-    );
-  }
-
-  @Action(SensorActions.Remove)
-  remove(ctx: StateContext<SensorStateModel>, action: SensorActions.Remove) {
-    return this.sensorHttpService.remove(action.id).pipe(
-      tap(_ => ctx.setState(patch({ sensors: removeItem<SensorModel>(item => item._id.toString() === action.id) })))
-    );
-  } */
 
 }

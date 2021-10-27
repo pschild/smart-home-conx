@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../material/material.module';
+import { MaterialModule } from '../../material/material.module';
 import { DeviceListComponent } from './device-list/device-list.component';
 import { DeviceCreateComponent } from './device-create/device-create.component';
 import { AlexaDetailsComponent } from './alexa-details/alexa-details.component';
-import { DeviceRoutingModule } from './device-routing.module';
 import { NgxsModule } from '@ngxs/store';
 import { DeviceState } from './state/device.state';
-import { PreferenceModule } from '../preference/preference.module';
 
 @NgModule({
   declarations: [
@@ -20,9 +18,7 @@ import { PreferenceModule } from '../preference/preference.module';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    DeviceRoutingModule,
     MaterialModule,
-    PreferenceModule,
     NgxsModule.forFeature([DeviceState])
   ]
 })

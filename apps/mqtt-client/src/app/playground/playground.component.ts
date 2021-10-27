@@ -5,7 +5,7 @@ import { EspConfig } from '@smart-home-conx/utils';
 import { IMqttMessage } from 'ngx-mqtt';
 import { merge, Observable, ReplaySubject } from 'rxjs';
 import { map, scan, takeUntil } from 'rxjs/operators';
-import { DeviceState } from '../device/state/device.state';
+import { DeviceState } from '../facility/device/state/device.state';
 import { EventMqttService } from '../event-mqtt.service';
 import { HttpService } from '../http.service';
 import { SocketService } from '../socket.service';

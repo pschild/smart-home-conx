@@ -1,7 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
-import { Observable } from 'rxjs';
+import { differenceInMinutes } from 'date-fns';
+import { combineLatest, interval, Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { SensorUtil } from '../sensor.util';
 import { SensorActions } from '../state/sensor.actions';
 import { SensorState } from '../state/sensor.state';
 
@@ -26,7 +29,10 @@ export class SensorComponent implements OnInit {
 
   history$: Observable<{ time: string; value: number; chipId: string; pin: number; type: SensorType }[]>;
   latest$: Observable<{ time: string; value: number; chipId: string; pin: number; type: SensorType }>;
+  timeAgoLabel$: Observable<string>;
   isLoading$: Observable<boolean>;
+
+  now$: Observable<Date>;
 
   constructor(
     private store: Store
@@ -34,8 +40,11 @@ export class SensorComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.now$ = interval(1000).pipe(startWith(new Date()), map(_ => new Date()));
+
     this.history$ = this.store.select(SensorState.history(this.sensor._id.toString(), this.sensor.type));
     this.latest$ = this.store.select(SensorState.latest(this.sensor._id.toString(), this.sensor.type));
+    this.timeAgoLabel$ = combineLatest([this.latest$, this.now$]).pipe(map(([latest, now]) => `${differenceInMinutes(now, new Date(latest.time))}m`));
     this.isLoading$ = this.store.select(SensorState.isLoading(this.sensor._id.toString()));
 
     // TODO: wird zu oft geladen (bspw. wenn Sensor verschoben wird)
@@ -46,34 +55,12 @@ export class SensorComponent implements OnInit {
     this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
   }
 
-  getIconName(type: string): string {
-    switch (type) {
-      case 'temperature':
-        return 'thermostat';
-      case 'humidity':
-        return 'water_damage';
-      case 'voltage':
-        return 'battery_charging_full';
-      case 'pir':
-        return 'settings_input_antenna';
-      default:
-        throw new Error(`Unknown sensor type "${type}"!`);
-    }
+  getIconName(type: SensorType): string {
+    return SensorUtil.getIconNameByType(type);
   }
 
-  getSuffix(type: string): string {
-    switch (type) {
-      case 'temperature':
-        return '°C';
-      case 'humidity':
-        return '%';
-      case 'voltage':
-        return 'V';
-      case 'pir':
-        return null;
-      default:
-        throw new Error(`Unknown sensor type "${type}"!`);
-    }
+  getSuffix(type: SensorType): string {
+    return SensorUtil.getSuffixByType(type);
   }
 
 }

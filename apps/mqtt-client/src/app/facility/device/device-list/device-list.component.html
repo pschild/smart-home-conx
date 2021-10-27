@@ -1,5 +1,9 @@
 <mat-tab-group>
-  <mat-tab label="ESP-Geräte">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>developer_board</mat-icon>
+      ESP-Geräte
+    </ng-template>
     <ng-container *ngIf="espList$ | async as espList">
       <div *ngFor="let esp of espList">
         {{esp.model}} - {{esp.description}} - {{esp.chipId}}
@@ -14,7 +18,11 @@
     </button>
   </mat-tab>
 
-  <mat-tab label="Alexa-Geräte">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>home_mini</mat-icon>
+      Alexa-Geräte
+    </ng-template>
     <ng-container *ngIf="alexaDevices$ | async as alexaDeviceList">
       <div *ngFor="let alexaDevice of alexaDeviceList">
         {{alexaDevice.accountName}}
