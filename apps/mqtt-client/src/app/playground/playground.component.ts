@@ -27,15 +27,6 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   espRepos$: Observable<string[]>;
 
   systemLog$: Observable<string[]>;
-  movementLog$: Observable<string[]>;
-
-  /* @Select(PlaygroundState.dhtValues)
-  dhtLog$: Observable<string[]>;
-
-  @Select(PlaygroundState.latestTemperature)
-  latestTemperature$: Observable<any>; */
-
-  latestVoltage$: Observable<string>;
 
   topic = new FormControl('devices/3357047/temperature');
   payload = new FormControl('{"value":21.5, "pin":2}');
@@ -53,8 +44,6 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.store.dispatch(new PlaygroundActions.LoadDhtHistory());
-
     this.eventMqttService.observe('devices/+/version')
       .subscribe((data: IMqttMessage) => console.log('esp ping', data.payload.toString()));
 
@@ -72,12 +61,6 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
     );
 
     this.systemLog$ = this.httpService.getLog();
-    this.movementLog$ = this.httpService.getMovementLog();
-
-    this.latestVoltage$ = merge(
-      this.httpService.getLatestVoltage('ESP_12974077'),
-      this.eventMqttService.observe('devices/ESP_12974077/voltage').pipe(map(res => res.payload.toString()))
-    );
   }
 
   ngOnDestroy(): void {

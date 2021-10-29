@@ -60,9 +60,11 @@ export class SensorState {
   static sensorId(chipId: string, type: SensorType, pin?: number) {
     return createSelector([SensorState], (state: SensorStateModel) => {
       // TODO: Typen von chipId => string vs. number
-      const sensorsByChipIdAndType = state.sensors.filter(s => s.chipId === +chipId && s.type === type);
-      const result = !!pin ? sensorsByChipIdAndType.find(s => s.pin === pin) : sensorsByChipIdAndType[0];
-      return result._id.toString();
+      if (typeof pin === 'undefined') {
+        pin = null;
+      }
+      const sensor = state.sensors.find(s => s.chipId === +chipId && s.type === type && s.pin === pin);
+      return sensor._id.toString();
     });
   }
 
@@ -95,9 +97,9 @@ export class SensorState {
       new SensorActions.LoadSensors()
     ]);
 
-    const obsList$ = [SensorType.TEMPERATURE, SensorType.HUMIDITY, SensorType.VOLTAGE]
+    const obsList$ = [SensorType.TEMPERATURE, SensorType.HUMIDITY, SensorType.VOLTAGE, SensorType.MOVEMENT]
       .map(type => this.eventMqttService.observe(`devices/+/${type}`).pipe(
-        map(res => ({ type, chipId: res.topic.match(/devices\/(\d+)/)[1], payload: JSON.parse(res.payload.toString()) }))
+        map(res => ({ type, chipId: res.topic.match(/devices\/(\d+)/)[1], payload: this.parsePayload(res.payload.toString()) }))
       ));
     merge(...obsList$).subscribe(result => {
       const sensorId = this.store.selectSnapshot(SensorState.sensorId(result.chipId, result.type as SensorType, result.payload.pin));
@@ -116,6 +118,17 @@ export class SensorState {
         })
       }));
     });
+  }
+
+  private parsePayload(rawPayload: string): { value?: number; pin?: number } {
+    let result;
+    try {
+      result = JSON.parse(rawPayload)
+    } catch (error) {
+      console.error(`Could not parse JSON payload "${rawPayload}"`);
+      result = {};
+    }
+    return result;
   }
 
   @Action(SensorActions.LoadHistory)

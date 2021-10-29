@@ -17,11 +17,14 @@ export class TemperatureSensorController {
     }
     const chipId = chipIdMatch[1];
 
-    this.influx.insert({ measurement: 'temperature', fields: { value: payload.value, pin: payload.pin }, tags: { chipId } });
+    this.influx.insert({ measurement: 'temperature', fields: { value: payload.value, pin: payload.pin || -1 }, tags: { chipId } });
   }
 
   @Get(':chipId/history')
   getHistory(@Param('chipId') chipId: string, @Query('pin') pin: number) {
+    if (!pin) {
+      pin = -1;
+    }
     return this.influx.find(`select * from temperature where time > now() - 1d AND chipId = '${chipId}' AND pin = ${pin}`);
     // return this.influx.find(`select * from (select * from temperature fill(-1)) where pin = -1`);
   }

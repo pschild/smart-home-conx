@@ -1,4 +1,4 @@
-import { RoomModel } from '@smart-home-conx/api/shared/data-access/models';
+import { FloorType, RoomModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
 
 @Entity()
@@ -18,6 +18,9 @@ export class Room implements RoomModel {
 
   @Column()
   height: number;
+
+  @Column()
+  floor: FloorType;
 
   @Column()
   position: { x: number; y: number };

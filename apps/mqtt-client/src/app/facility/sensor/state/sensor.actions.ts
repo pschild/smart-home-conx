@@ -4,21 +4,21 @@ import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access
 export namespace SensorActions {
 
   export class LoadHistory {
-    static readonly type = '[Playground] load history';
+    static readonly type = '[Sensor] load history';
 
     constructor(public sensorId: string, public chipId: number, public type: SensorType, public pin?: number) {}
   }
 
   export class LoadRooms {
-    static readonly type = '[Playground] load rooms';
+    static readonly type = '[Sensor] load rooms';
   }
 
   export class LoadSensors {
-    static readonly type = '[Playground] load sensors';
+    static readonly type = '[Sensor] load sensors';
   }
 
   export class UpdateSensor {
-    static readonly type = '[Playground] update sensor';
+    static readonly type = '[Sensor] update sensor';
 
     constructor(public id: string, public dto: Partial<SensorModel>) {}
   }
@@ -36,7 +36,7 @@ export namespace SensorActions {
   }
 
   export class SensorDropped {
-    static readonly type = '[Playground] sensor dropped';
+    static readonly type = '[Sensor] sensor dropped';
 
     constructor(public dropEvent: CdkDragDrop<any>) {}
   }

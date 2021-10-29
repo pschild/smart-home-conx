@@ -8,5 +8,5 @@
       <input matInput type="password" placeholder="Passwort" formControlName="password">
     </mat-form-field>
   </div>
-  <button mat-raised-button color="primary">Login</button>
+  <button mat-raised-button color="primary" [disabled]="loginForm.invalid">Login</button>
 </form>

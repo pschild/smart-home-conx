@@ -10,6 +10,7 @@ import { SensorComponent } from './sensor/sensor.component';
 import { RoomComponent } from './room/room.component';
 import { UnassignedSensorsComponent } from './unassigned-sensors/unassigned-sensors.component';
 import { FloorComponent } from './floor/floor.component';
+import { TimeAgoPipe } from '../../time-ago.pipe';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { FloorComponent } from './floor/floor.component';
     SensorComponent,
     RoomComponent,
     UnassignedSensorsComponent,
-    FloorComponent
+    FloorComponent,
+    TimeAgoPipe
   ],
   imports: [
     CommonModule,

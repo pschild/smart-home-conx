@@ -4,6 +4,7 @@ import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access
 import { differenceInMinutes } from 'date-fns';
 import { combineLatest, interval, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { EventMqttService } from '../../../event-mqtt.service';
 import { SensorUtil } from '../sensor.util';
 import { SensorActions } from '../state/sensor.actions';
 import { SensorState } from '../state/sensor.state';
@@ -29,13 +30,13 @@ export class SensorComponent implements OnInit {
 
   history$: Observable<{ time: string; value: number; chipId: string; pin: number; type: SensorType }[]>;
   latest$: Observable<{ time: string; value: number; chipId: string; pin: number; type: SensorType }>;
-  timeAgoLabel$: Observable<string>;
   isLoading$: Observable<boolean>;
 
   now$: Observable<Date>;
 
   constructor(
-    private store: Store
+    private store: Store,
+    private eventMqttService: EventMqttService,
   ) {
   }
 
@@ -44,7 +45,6 @@ export class SensorComponent implements OnInit {
 
     this.history$ = this.store.select(SensorState.history(this.sensor._id.toString(), this.sensor.type));
     this.latest$ = this.store.select(SensorState.latest(this.sensor._id.toString(), this.sensor.type));
-    this.timeAgoLabel$ = combineLatest([this.latest$, this.now$]).pipe(map(([latest, now]) => `${differenceInMinutes(now, new Date(latest.time))}m`));
     this.isLoading$ = this.store.select(SensorState.isLoading(this.sensor._id.toString()));
 
     // TODO: wird zu oft geladen (bspw. wenn Sensor verschoben wird)
@@ -53,6 +53,11 @@ export class SensorComponent implements OnInit {
 
   reloadHistory(): void {
     this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
+  }
+
+  // TODO: remove this method!
+  sendMqttMessage(): void {
+    this.eventMqttService.publish(`devices/${this.sensor.chipId}/${this.sensor.type}`, `{"value":42.3${!!this.sensor.pin ? ',"pin":' + this.sensor.pin : ''}}`).subscribe();
   }
 
   getIconName(type: SensorType): string {

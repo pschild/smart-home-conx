@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -26,18 +25,8 @@ export class HttpService {
     return this.httpClient.get<string[]>(`ota/github/repos`);
   }
 
-  getMovementLog(): Observable<any> {
-    return this.httpClient.get<any>(`sensor-connector/movement/7888034/history`);
-  }
-
   getLog(): Observable<any> {
     return this.httpClient.get<any>(`logger`);
-  }
-
-  getLatestVoltage(chipId: string): Observable<string> {
-    return this.httpClient.get<any>(`sensor-connector/voltage/${chipId}/latest`).pipe(
-      map(result => result?.value)
-    );
   }
 
 }

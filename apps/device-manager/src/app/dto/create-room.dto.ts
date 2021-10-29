@@ -1,5 +1,6 @@
+import { FloorType } from '@smart-home-conx/api/shared/data-access/models';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateRoomDto {
 
@@ -16,6 +17,9 @@ export class CreateRoomDto {
   @Type(() => Number)
   @IsNumber()
   readonly height: number;
+
+  @IsEnum(FloorType)
+  floor: FloorType;
 
   @IsOptional()
   readonly position: { x: number; y: number };

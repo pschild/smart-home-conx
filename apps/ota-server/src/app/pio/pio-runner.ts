@@ -22,6 +22,7 @@ export class PioRunner {
         throw new HttpException(`Directory '${espLibPath}' does not exist`, HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
+      // Example: $ pio run -e esp12e
       const spawnArgs = this.targets.size ? [].concat.apply([], ['run', ...Array.from(this.targets).map(target => ['-e', target])]) : ['run'];
       log(`Calling spawn: pio ${spawnArgs.join(' ')}`);
       this.process = spawn('pio', spawnArgs, {

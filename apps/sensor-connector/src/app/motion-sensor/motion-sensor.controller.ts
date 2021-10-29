@@ -54,13 +54,16 @@ export class MotionSensorController {
     }
     const chipId = chipIdMatch[1];
 
-    this.influx.insert({ measurement: 'movements', fields: { pin: payload.pin }, tags: { chipId } });
+    this.influx.insert({ measurement: 'movements', fields: { pin: payload.pin || -1 }, tags: { chipId } });
 
     this.messageStream$.next(payload);
   }
 
   @Get(':chipId/history')
   getHistory(@Param('chipId') chipId: string, @Query('pin') pin: number) {
+    if (!pin) {
+      pin = -1;
+    }
     return this.influx.find(`select * from movements where time > now() - 1d AND chipId = '${chipId}' AND pin = ${pin}`);
   }
 
