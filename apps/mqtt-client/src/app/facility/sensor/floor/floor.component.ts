@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { RoomModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Observable } from 'rxjs';
@@ -19,6 +19,8 @@ import { SensorState } from '../state/sensor.state';
   ]
 })
 export class FloorComponent implements OnInit {
+
+  @Input() enabled: boolean;
 
   rooms$: Observable<RoomModel[]>;
 

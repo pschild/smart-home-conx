@@ -10,12 +10,19 @@
         <button mat-icon-button (click)="editDevice(esp)">
           <mat-icon>edit</mat-icon>
         </button>
+        <button mat-icon-button (click)="startOtaUpdate(esp.chipId)">
+          <mat-icon>system_update</mat-icon>
+        </button>
       </div>
     </ng-container>
     <button mat-raised-button color="primary" (click)="createDevice()">
       <mat-icon>add</mat-icon>
       Erstellen
     </button>
+    <button mat-icon-button (click)="startOtaUpdate()">
+        <mat-icon>system_update</mat-icon>
+        alle auf Updates prüfen
+      </button>
   </mat-tab>
 
   <mat-tab>

@@ -13,4 +13,5 @@ export interface DeviceModel {
   batteryPowered: boolean;
   connectionStatus: ConnectionStatus;
   connectionStatusChangedAt: Date;
+  lastPing: Date;
 }

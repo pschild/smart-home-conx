@@ -1,23 +1,29 @@
 <div class="sensor" [style.left.px]="sensor.position?.x" [style.top.px]="sensor.position?.y">
   <mat-icon [matMenuTriggerFor]="menu">{{getIconName(sensor.type)}}</mat-icon>
   <ng-container *ngIf="sensor.roomId">
-    <div *ngIf="latest$ | async as latestItem">
-      {{latestItem.value}}{{getSuffix(sensor.type)}} <small>({{latestItem.time | timeAgo | async}})</small>
+    <div class="latest-info-container" *ngIf="latest$ | async as latestItem">
+      <small *ngIf="latestItem.value">{{latestItem.value | number:'1.1-2'}}{{getSuffix(sensor.type)}}</small>
+      <small>{{latestItem.time | timeAgo:'vor' | async}}</small>
     </div>
-</ng-container>
+  </ng-container>
   <div *ngIf="isLoading$ | async">lade...</div>
   <mat-menu #menu="matMenu">
-    <p>{{sensor._id}}</p>
     <p>{{sensor.chipId}} #{{sensor.pin || '- -'}}</p>
-    <div *ngIf="history$ | async as historyItems">
+
+    <button mat-menu-item (click)="reloadHistory()"><mat-icon>update</mat-icon> Historie laden</button>
+    <!-- TODO: remove this buttons! -->
+    <button mat-menu-item (click)="sendMqttMessage()"><mat-icon>send</mat-icon> Fake MQTT</button>
+    <button mat-menu-item (click)="heaterOn()"><mat-icon>send</mat-icon> Heater on</button>
+    <button mat-menu-item (click)="heaterOff()"><mat-icon>send</mat-icon> Heater off</button>
+    <button mat-menu-item (click)="readnow()"><mat-icon>send</mat-icon> readnow</button>
+
+    <div *ngIf="history$ | async as historyItems" style="max-height: 200px; overflow-y: auto;">
       <ul *ngIf="historyItems.length > 0; else noItems">
         <li *ngFor="let item of historyItems">
-          {{item.time | date:'dd.MM. HH:mm:ss'}} {{item.value}}{{getSuffix(sensor.type)}}
+          {{item.time | date:'dd.MM. HH:mm:ss'}} <span *ngIf="item.value">{{item.value | number:'1.1-2'}}{{getSuffix(sensor.type)}}</span>
         </li>
       </ul>
       <ng-template #noItems>Keine Einträge vorhanden</ng-template>
     </div>
-    <button mat-menu-item (click)="reloadHistory()">Historie laden</button>
-    <button mat-menu-item (click)="sendMqttMessage()">Fake MQTT</button>
   </mat-menu>
 </div>

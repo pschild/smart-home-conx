@@ -35,6 +35,8 @@ export class RoomComponent implements OnInit {
 
   @Input() room: RoomModel;
 
+  @Input() enabled: boolean;
+
   sensors$: Observable<SensorModel[]>;
 
   constructor(

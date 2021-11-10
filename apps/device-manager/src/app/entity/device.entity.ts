@@ -37,4 +37,7 @@ export class Device implements DeviceModel {
   @Column({ type: 'timestamp' })
   connectionStatusChangedAt: Date;
 
+  @Column({ type: 'timestamp' })
+  lastPing: Date;
+
 }

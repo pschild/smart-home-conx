@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Action, NgxsOnInit, Selector, State, StateContext, StateToken } from '@ngxs/store';
+import { Action, createSelector, NgxsOnInit, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { patch, updateItem, removeItem, insertItem } from '@ngxs/store/operators';
 import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
 import { of } from 'rxjs';
@@ -36,6 +36,10 @@ export class DeviceState implements NgxsOnInit {
     return state.alexaList;
   }
 
+  static lastPing(deviceId: string) {
+    return createSelector([DeviceState], (state: DeviceStateModel) => state.espList.find(i => i._id.toString() === deviceId)?.lastPing);
+  }
+
   constructor(
     private httpClient: HttpClient,
     private deviceHttpService: DeviceHttpService,
@@ -48,6 +52,17 @@ export class DeviceState implements NgxsOnInit {
       new DeviceActions.LoadEspDevices(),
       new DeviceActions.LoadAlexaDevices()
     ]);
+
+    this.eventMqttService.observe(`devices/+/ping`).pipe(
+      map(res => {
+        const chipId = +res.topic.match(/devices\/(\d+)/)[1];
+        const firmware = res.payload.toString();
+        console.log(`[PING] ESP ${chipId} is using Firmware ${firmware}`);
+        ctx.setState(patch({
+          espList: updateItem<DeviceModel>(item => item.chipId === chipId, patch({ lastPing: new Date() }))
+        }));
+      })
+    ).subscribe();
   }
 
   @Action(DeviceActions.LoadEspDevices)
@@ -82,6 +97,12 @@ export class DeviceState implements NgxsOnInit {
     return this.deviceHttpService.remove(action.id).pipe(
       tap(_ => ctx.setState(patch({ espList: removeItem<DeviceModel>(item => item._id.toString() === action.id) })))
     );
+  }
+
+  @Action(DeviceActions.StartOtaUpdate)
+  startOtaUpdate(ctx: StateContext<DeviceStateModel>, action: DeviceActions.StartOtaUpdate) {
+    const target = action.chipId || 'all';
+    return this.eventMqttService.publish(`ota/${target}`, null);
   }
 
   @Action(DeviceActions.LoadAlexaDevices)

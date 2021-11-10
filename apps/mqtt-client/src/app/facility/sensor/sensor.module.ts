@@ -10,7 +10,7 @@ import { SensorComponent } from './sensor/sensor.component';
 import { RoomComponent } from './room/room.component';
 import { UnassignedSensorsComponent } from './unassigned-sensors/unassigned-sensors.component';
 import { FloorComponent } from './floor/floor.component';
-import { TimeAgoPipe } from '../../time-ago.pipe';
+import { CoreModule } from '../../core/core.module';
 
 @NgModule({
   declarations: [
@@ -19,14 +19,14 @@ import { TimeAgoPipe } from '../../time-ago.pipe';
     SensorComponent,
     RoomComponent,
     UnassignedSensorsComponent,
-    FloorComponent,
-    TimeAgoPipe
+    FloorComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    CoreModule,
     NgxsModule.forFeature([SensorState])
   ]
 })

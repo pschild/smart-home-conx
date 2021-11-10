@@ -21,6 +21,17 @@ import { SensorState } from '../state/sensor.state';
       align-items: center;
       cursor: move;
     }
+
+    :host.cdk-drag-preview {
+      width: 100% !important;
+      opacity: 0.5;
+    }
+
+    .latest-info-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
     `
   ]
 })
@@ -58,6 +69,21 @@ export class SensorComponent implements OnInit {
   // TODO: remove this method!
   sendMqttMessage(): void {
     this.eventMqttService.publish(`devices/${this.sensor.chipId}/${this.sensor.type}`, `{"value":42.3${!!this.sensor.pin ? ',"pin":' + this.sensor.pin : ''}}`).subscribe();
+  }
+
+  // TODO: remove this method!
+  heaterOn(): void {
+    this.eventMqttService.publish(`devices/${this.sensor.chipId}/heater`, `on`).subscribe();
+  }
+
+  // TODO: remove this method!
+  heaterOff(): void {
+    this.eventMqttService.publish(`devices/${this.sensor.chipId}/heater`, `off`).subscribe();
+  }
+
+  // TODO: remove this method!
+  readnow(): void {
+    this.eventMqttService.publish(`devices/${this.sensor.chipId}/readnow`, `readnow`).subscribe();
   }
 
   getIconName(type: SensorType): string {

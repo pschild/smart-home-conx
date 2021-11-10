@@ -6,6 +6,7 @@ import { Select, Store } from '@ngxs/store';
 import { DeviceCreateComponent } from '../device-create/device-create.component';
 import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
 import { AlexaDetailsComponent } from '../alexa-details/alexa-details.component';
+import { DeviceActions } from '../state/device.actions';
 
 @Component({
   selector: 'smart-home-conx-device-list',
@@ -31,6 +32,10 @@ export class DeviceListComponent {
 
   editDevice(esp: DeviceModel): void {
     this.showEspDialog(esp);
+  }
+
+  startOtaUpdate(chipId?: number): void {
+    this.store.dispatch(new DeviceActions.StartOtaUpdate(chipId));
   }
 
   showAlexaDetails(device: { accountName: string }): void {

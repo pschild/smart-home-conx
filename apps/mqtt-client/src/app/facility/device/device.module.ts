@@ -7,6 +7,7 @@ import { DeviceCreateComponent } from './device-create/device-create.component';
 import { AlexaDetailsComponent } from './alexa-details/alexa-details.component';
 import { NgxsModule } from '@ngxs/store';
 import { DeviceState } from './state/device.state';
+import { CoreModule } from '../../core/core.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { DeviceState } from './state/device.state';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    CoreModule,
     NgxsModule.forFeature([DeviceState])
   ]
 })

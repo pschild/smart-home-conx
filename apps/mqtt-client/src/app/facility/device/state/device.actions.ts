@@ -39,4 +39,10 @@ export namespace DeviceActions {
 
     constructor(public alexaDeviceName: string, public command: string) {}
   }
+  
+  export class StartOtaUpdate {
+    static readonly type = '[Device] start ota update';
+
+    constructor(public chipId?: number) {}
+  }
 }

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { DeviceListComponent } from './device/device-list/device-list.component';
 import { SensorListComponent } from './sensor/sensor-list/sensor-list.component';
 

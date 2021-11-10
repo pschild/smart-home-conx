@@ -1,4 +1,17 @@
-<h1 mat-dialog-title *ngIf="data?.esp">{{data.esp.model}} (#{{data.esp.chipId}})</h1>
+<ng-container *ngIf="data?.esp">
+  <h1 mat-dialog-title>{{data.esp.model}} (#{{data.esp.chipId}})</h1>
+  <div class="short-info-container">
+    <small *ngIf="data.esp.connectionStatus">
+      Status:
+      <div class="blob pulsating" *ngIf="data.esp.connectionStatus === 'online'"></div>
+      <div class="blob" *ngIf="data.esp.connectionStatus === 'offline'"></div>
+      {{data.esp.connectionStatus}}
+      <span *ngIf="data.esp.connectionStatusChangedAt">({{data.esp.connectionStatusChangedAt | timeAgo:'seit' | async}})</span>
+    </small>
+    <small *ngIf="data.esp.lastPing">Letzter Ping: {{lastPing$ | async | timeAgo:'vor' | async}}</small>
+    <small *ngIf="data.esp.firmware">Firmware: {{data.esp.firmware}}</small>
+  </div>
+</ng-container>
 <h1 mat-dialog-title *ngIf="!data?.esp">Neuer ESP</h1>
 <div mat-dialog-content>
   <form [formGroup]="form" class="form-container">

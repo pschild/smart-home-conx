@@ -1,5 +1,5 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { SensorModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Observable } from 'rxjs';
@@ -35,6 +35,8 @@ import { SensorState } from '../state/sensor.state';
   ]
 })
 export class UnassignedSensorsComponent implements OnInit {
+
+  @Input() enabled: boolean;
 
   sensors$: Observable<SensorModel[]>;
 

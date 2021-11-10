@@ -4,6 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { DeviceActions } from '../state/device.actions';
 import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
+import { DeviceState } from '../state/device.state';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'smart-home-conx-device-create',
@@ -15,6 +17,8 @@ export class DeviceCreateComponent implements OnInit {
   createMode: boolean;
 
   form: FormGroup;
+
+  lastPing$: Observable<Date>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -41,6 +45,8 @@ export class DeviceCreateComponent implements OnInit {
     } else {
       this.form.patchValue(this.data.esp);
     }
+
+    this.lastPing$ = this.store.select(DeviceState.lastPing(this.data.esp._id.toString()));
   }
 
   onCancelClick(): void {

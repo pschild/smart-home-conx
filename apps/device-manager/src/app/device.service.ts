@@ -13,7 +13,7 @@ export class DeviceService {
   ) {}
 
   create(createEspDto: CreateDeviceDto): Promise<Device> {
-    return this.repository.save({ ...createEspDto, connectionStatus: ConnectionStatus.UNKNOWN, connectionStatusChangedAt: null });
+    return this.repository.save({ ...createEspDto, connectionStatus: ConnectionStatus.UNKNOWN, connectionStatusChangedAt: null, lastPing: null });
   }
 
   findAll(): Promise<Device[]> {

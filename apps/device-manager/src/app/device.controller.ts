@@ -45,7 +45,7 @@ export class DeviceController {
     if (payload.startsWith('ESP_')) {
       const chipId = +payload.replace('ESP_', '');
       const device = await this.deviceService.findByChipId(chipId);
-      this.updateConnectionStatus(device, ConnectionStatus.ONLINE);
+      this.updateDevice(device, { connectionStatus: ConnectionStatus.ONLINE, connectionStatusChangedAt: new Date() });
 
       if (!device.batteryPowered) {
         this.mqttClient.emit('telegram/message', `✔️ "${payload}"`);
@@ -59,7 +59,7 @@ export class DeviceController {
     if (payload.startsWith('ESP_')) {
       const chipId = +payload.replace('ESP_', '');
       const device = await this.deviceService.findByChipId(chipId);
-      this.updateConnectionStatus(device, ConnectionStatus.OFFLINE);
+      this.updateDevice(device, { connectionStatus: ConnectionStatus.OFFLINE, connectionStatusChangedAt: new Date() });
 
       if (!device.batteryPowered) {
         this.mqttClient.emit('telegram/message', `❌ "${payload}"`);
@@ -68,7 +68,29 @@ export class DeviceController {
     }
   }
 
-  private updateConnectionStatus(device: Device, newStatus: ConnectionStatus): void {
-    this.deviceService.update(device._id.toString(), { connectionStatus: newStatus, connectionStatusChangedAt: new Date() });
+  @MessagePattern('devices/+/updated')
+  async onFirmwareUpdated(@Payload() payload: { oldFirmware: string; newFirmware: string }, @Ctx() context: MqttContext) {
+    const chipId = this.parseChipId(context.getTopic());
+    const device = await this.deviceService.findByChipId(chipId);
+    this.updateDevice(device, { firmware: payload.newFirmware });
+  }
+
+  @MessagePattern('devices/+/ping')
+  async onPing(@Payload() payload: string, @Ctx() context: MqttContext) {
+    const chipId = this.parseChipId(context.getTopic());
+    const device = await this.deviceService.findByChipId(chipId);
+    this.updateDevice(device, { lastPing: new Date() });
+  }
+
+  private updateDevice(device: Device, dto: Partial<UpdateDeviceDto>): void {
+    this.deviceService.update(device._id.toString(), dto);
+  }
+
+  private parseChipId(topic: string): number {
+    const chipIdMatch = topic.match(/devices\/(\d+)/);
+    if (!chipIdMatch) {
+      throw new Error(`Could not find a chipId. Topic=${topic}`);
+    }
+    return +chipIdMatch[1];
   }
 }

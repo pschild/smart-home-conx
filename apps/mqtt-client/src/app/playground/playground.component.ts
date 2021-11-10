@@ -44,9 +44,6 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.eventMqttService.observe('devices/+/version')
-      .subscribe((data: IMqttMessage) => console.log('esp ping', data.payload.toString()));
-
     this.eventMqttService.observe('commuting-watcher/commuting/#')
       .subscribe((data: IMqttMessage) => console.log('commuting', data.payload.toString()));
 

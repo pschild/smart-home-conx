@@ -11,4 +11,5 @@
   Erstellen
 </button>
 
-<smart-home-conx-floor></smart-home-conx-floor>
+<smart-home-conx-floor [enabled]="editModeEnabled"></smart-home-conx-floor>
+<mat-slide-toggle (change)="onEditModeChange($event)">Bearbeitungsmodus aktiv</mat-slide-toggle>

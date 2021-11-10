@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { Select, Store } from '@ngxs/store';
 import { SensorModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Observable } from 'rxjs';
@@ -15,6 +16,8 @@ export class SensorListComponent {
   @Select(SensorState.sensors)
   sensors$: Observable<SensorModel[]>;
 
+  editModeEnabled: boolean;
+
   constructor(
     public dialog: MatDialog,
     private store: Store
@@ -27,6 +30,10 @@ export class SensorListComponent {
 
   edit(sensor: SensorModel): void {
     this.showDialog(sensor);
+  }
+
+  onEditModeChange(event: MatSlideToggleChange): void {
+    this.editModeEnabled = event.checked;
   }
 
   private showDialog(sensor?: SensorModel): void {

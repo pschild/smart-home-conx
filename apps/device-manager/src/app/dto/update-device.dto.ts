@@ -13,4 +13,8 @@ export class UpdateDeviceDto extends PartialType(CreateDeviceDto) {
   @IsDate()
   readonly connectionStatusChangedAt?: Date;
 
+  @IsOptional()
+  @IsDate()
+  readonly lastPing?: Date;
+
 }
