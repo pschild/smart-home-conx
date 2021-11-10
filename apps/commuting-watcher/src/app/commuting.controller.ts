@@ -67,7 +67,7 @@ export class CommutingController {
       tap(async (durations) => {
         const minResult = durations.reduce((prev, curr) => prev.minutes < curr.minutes ? prev : curr);
         const eta = format(add(new Date(), { minutes: minResult.minutes }), 'HH:mm');
-        this.mqttClient.emit('log', {source: 'commuting-watcher', message: `Duration from ${startLatLng} to ${destinationLatLng}: ${minResult.minutes}`});
+        this.mqttClient.emit('log', {source: 'commuting-watcher', message: `${startLatLng} -> ${destinationLatLng}: duration=${minResult.minutes}, distance=${minResult.distance}`});
         this.mqttClient.emit('commuting-watcher/commuting/duration/minutes-left', minResult.minutes.toString());
         this.mqttClient.emit('commuting-watcher/commuting/duration/eta', eta);
         if (await this.preferenceService.getValueFor('alexaEnabled')) {

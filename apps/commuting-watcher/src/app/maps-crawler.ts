@@ -17,6 +17,7 @@ export enum TrafficDelay {
 
 export interface CrawlResultItem {
   minutes: number;
+  distance: number;
   delay: TrafficDelay;
 }
 
@@ -77,22 +78,35 @@ export class GoogleMapsCrawler {
       }
 
       log('Evaluating page ...');
-      const durationsForCar: { content: string; className: string }[] = await page.evaluate(() => {
+      const tripInformation: { durationContent: string; distanceContent: string; className: string }[] = await page.evaluate(() => {
         const DURATION_ROW_SELECTOR = `section-directions-trip-`;
-        const DURATION_SELECTOR = `trip-duration`;
+        const DURATION_SELECTOR = `-duration`;
 
         // loop over all trips and collect raw duration string for each
         return Array.from(document.querySelectorAll(`[id^="${DURATION_ROW_SELECTOR}"]`))
           .filter(e => e.id.match(new RegExp(`${DURATION_ROW_SELECTOR}\\d$`)))
-          .map(row => Array.from(row.querySelectorAll('div'))
-            .filter(e => e.className.match(DURATION_SELECTOR))
-            .map(e => ({ content: e.textContent, className: e.className }))
-          )
+          .map(row => {
+            return Array.from(row.querySelectorAll('div'))
+              .filter(e => e.className.match(DURATION_SELECTOR))
+              .map(durationEl => {
+                const distanceEl = durationEl.nextElementSibling;
+                return {
+                  durationContent: durationEl.textContent,
+                  distanceContent: distanceEl.textContent,
+                  className: durationEl.className
+                };
+              });
+          })
           .reduce((acc, val) => acc.concat(val), []);
       });
-      durationsForCar.map(item => log(`duration=${item.content}, delay=${this.parseDelayClass(item.className)}`));
-      log(`parsed durations: ${durationsForCar.map(item => this.parseDuration(item.content))}`);
-      return durationsForCar.map(item => ({ minutes: this.parseDuration(item.content), delay: this.parseDelayClass(item.className) }));
+      tripInformation.map(item => log(`duration=${item.durationContent}, distance=${item.distanceContent}, delay=${this.parseDelayClass(item.className)}`));
+      log(`parsed durations: ${tripInformation.map(item => this.parseDuration(item.durationContent))}`);
+      log(`parsed distances: ${tripInformation.map(item => this.parseDistance(item.distanceContent))}`);
+      return tripInformation.map(item => ({
+        minutes: this.parseDuration(item.durationContent),
+        distance: this.parseDistance(item.distanceContent),
+        delay: this.parseDelayClass(item.className)
+      }));
 
     } catch(error) {
       throw new HttpException(`Puppeteer parsing failed: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -129,6 +143,13 @@ export class GoogleMapsCrawler {
       duration += +mins[0];
     }
     return duration;
+  }
+
+  private parseDistance(rawDistance: string): number {
+    const distancePart = rawDistance.match(/\d+,\d+(?=.(km))/g);
+    if (Array.isArray(distancePart) && distancePart.length) {
+      return +distancePart[0].replace(',', '.')
+    }
   }
 
 }
