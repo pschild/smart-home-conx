@@ -76,10 +76,6 @@ export class PlaygroundComponent implements OnInit, OnDestroy {
     this.eventMqttService.publish(`devices/${chipId}/${type}`, `{"value":${value}${!!pin ? ',"pin":' + pin : ''}}`).subscribe();
   }
 
-  getCommutingHistory(): void {
-    this.httpService.commutingHistory().subscribe(console.log);
-  }
-
   triggerPioBuild(): void {
     this.httpService.triggerPioBuild(this.libName.value, this.releaseType.value, this.chipIds.value).subscribe(console.log);
   }

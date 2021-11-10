@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Action, NgxsOnInit, Selector, State, StateContext, StateToken } from '@ngxs/store';
-import { AuthActions } from './auth.actions';
-import { AuthHttpService } from './auth-http.service';
-import { tap } from 'rxjs/operators';
 import { isBefore } from 'date-fns';
+import { from } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { AuthHttpService } from './auth-http.service';
+import { AuthActions } from './auth.actions';
 
 export const AUTH_STATE_NAME = new StateToken<AuthStateModel>('auth');
 
@@ -38,7 +40,8 @@ export class AuthState implements NgxsOnInit {
   }
 
   constructor(
-    private authService: AuthHttpService
+    private authService: AuthHttpService,
+    private router: Router
   ) {}
 
   ngxsOnInit(ctx?: StateContext<any>): void {
@@ -58,7 +61,8 @@ export class AuthState implements NgxsOnInit {
   }
 
   @Action(AuthActions.Logout)
-  logout(ctx: StateContext<AuthStateModel>) {
+  logout(ctx: StateContext<AuthStateModel>, action: AuthActions.Logout) {
     ctx.patchState({ token: null, expiresAt: null });
+    return from(this.router.navigate(['/login'], { queryParams: { returnUrl: action.returnUrl } }));
   }
 }

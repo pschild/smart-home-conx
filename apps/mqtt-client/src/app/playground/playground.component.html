@@ -4,6 +4,8 @@
   <li>devices/7888034/humidity, {{'{'}}"value":56.6, "pin":9}<button mat-button color="primary" (click)="applyAndSend(7888034, 'humidity', 56.6, 9)"><mat-icon>check</mat-icon></button></li>
   <li>devices/7888034/humidity, {{'{'}}"value":56.6}<button mat-button color="primary" (click)="applyAndSend(7888034, 'humidity', 56.6)"><mat-icon>check</mat-icon></button></li>
   <li>devices/9876543/voltage, {{'{'}}"value":3.18}<button mat-button color="primary" (click)="applyAndSend(9876543, 'voltage', 3.18)"><mat-icon>check</mat-icon></button></li>
+  <li>ota/all, -<button mat-button color="primary" (click)="sendOta()"><mat-icon>check</mat-icon></button></li>
+  <li>ota/7888034, -<button mat-button color="primary" (click)="sendOta(7888034)"><mat-icon>check</mat-icon></button></li>
 </ul>
 <mat-form-field>
   <mat-label>MQTT Topic</mat-label>
@@ -65,8 +67,3 @@
 <textarea *ngIf="logMessages$ | async as logMessages" style="width: 100%; height: 400px;">
   {{ logMessages }}
 </textarea>
-
-<br/>
-<br/>
-
-<button mat-raised-button color="primary" (click)="getCommutingHistory()">Get Commuting History</button>

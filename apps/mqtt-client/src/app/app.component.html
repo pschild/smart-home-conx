@@ -1,10 +1,10 @@
-<nav>
+<nav *ngIf="isLoggedIn$ | async">
   <div>
     <a routerLink="/playground">Playground</a>
     <a routerLink="/facility/devices">Geräte</a>
     <a routerLink="/facility/sensors">Sensoren</a>
     <a routerLink="/preferences">Einstellungen</a>
-    <a href="#" (click)="logout()">Logout</a>
+    <a href="#" (click)="logout($event)">Logout</a>
   </div>
 </nav>
 

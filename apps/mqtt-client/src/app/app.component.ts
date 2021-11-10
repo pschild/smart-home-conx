@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { Store } from '@ngxs/store';
-import { tap } from 'rxjs/operators';
+import { Select, Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
 import { AuthActions } from './auth/state/auth.actions';
+import { AuthState } from './auth/state/auth.state';
 
 @Component({
   selector: 'smart-home-conx-root',
@@ -11,8 +11,10 @@ import { AuthActions } from './auth/state/auth.actions';
 })
 export class AppComponent implements OnInit {
 
+  @Select(AuthState.isLoggedIn)
+  isLoggedIn$: Observable<boolean>;
+
   constructor(
-    private router: Router,
     private store: Store
   ) {
   }
@@ -20,10 +22,9 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  logout() {
-    this.store.dispatch(new AuthActions.Logout()).pipe(
-      tap(() => this.router.navigate(['/login']))
-    );
+  logout(event: MouseEvent) {
+    event.preventDefault();
+    this.store.dispatch(new AuthActions.Logout());
   }
 
 }

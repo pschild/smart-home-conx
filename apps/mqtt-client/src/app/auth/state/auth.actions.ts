@@ -8,6 +8,8 @@ export namespace AuthActions {
 
   export class Logout {
     static readonly type = '[Auth] logout';
+
+    constructor(public returnUrl?: string) {}
   }
 
 }

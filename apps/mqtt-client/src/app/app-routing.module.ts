@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
-import { AuthGuard } from './auth.guard';
+import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   {
@@ -15,16 +15,19 @@ const routes: Routes = [
   {
     path: 'playground',
     canActivate: [AuthGuard],
+    canLoad: [AuthGuard],
     loadChildren: () => import('./playground/playground.module').then(m => m.PlaygroundModule)
   },
   {
     path: 'facility',
     canActivate: [AuthGuard],
+    canLoad: [AuthGuard],
     loadChildren: () => import('./facility/facility.module').then(m => m.FacilityModule)
   },
   {
     path: 'preferences',
     canActivate: [AuthGuard],
+    canLoad: [AuthGuard],
     loadChildren: () => import('./preference/preference.module').then(m => m.PreferenceModule)
   }
 ];

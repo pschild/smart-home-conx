@@ -45,6 +45,7 @@ export class AppController {
     if (findBinaryResult) {
       log(`\tSending new binary ${findBinaryResult.path}...`);
       this.mqttClient.emit('telegram/message', `🔄 ESP ${chipId} geupdated: ${currentVersion} => ${findBinaryResult.fileName}`);
+      this.mqttClient.emit('log', {source: 'ota-server', message: `Firmware of ESP ${chipId} updated: ${currentVersion} => ${findBinaryResult.fileName}`});
       return res.sendFile(findBinaryResult.path, err => {
         if (err) {
           log(`\t\tThere was an error sending the binary at ${findBinaryResult.path}:`);

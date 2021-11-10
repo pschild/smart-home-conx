@@ -9,10 +9,6 @@ export class HttpService {
 
   constructor(private httpClient: HttpClient) { }
 
-  commutingHistory(): Observable<any> {
-    return this.httpClient.get(`commuter/history`);
-  }
-
   triggerPioBuild(libName: string, releaseType: string, chipIds: number[]): Observable<any> {
     return this.httpClient.post(`ota/build/run`, { libName, releaseType, chipIds });
   }
