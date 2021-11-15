@@ -17,7 +17,8 @@ RUN if [ "$PRODUCTION" = "true" ]; then npm run build:$SERVICE_NAME -- --prod; e
 RUN npm run ncc:$SERVICE_NAME
 
 ######################################################################
-FROM node:14-alpine
+# Changed from node:14-alpine to node:16 as alpine image does not contain chromium since Oct./Nov. 2021
+FROM node:16
 ######################################################################
 WORKDIR /app
 
@@ -27,6 +28,7 @@ COPY .env /app/.env
 ARG SERVICE_NAME
 COPY --from=build /app/dist/apps/$SERVICE_NAME/vendor /app
 
-RUN apk update && apk add chromium tzdata
+RUN apt-get update && apt-get install -y chromium tzdata
+
 ENV TZ=Europe/Berlin
 CMD ["node", "./index.js"]

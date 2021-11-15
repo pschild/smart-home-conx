@@ -35,7 +35,7 @@ export class GoogleMapsCrawler {
     if (isPi() || isDocker()) {
       launchOptions = {
         ...launchOptions,
-        executablePath: '/usr/bin/chromium-browser',
+        executablePath: '/usr/bin/chromium',
         args: ['--no-sandbox']
       };
     }
@@ -109,6 +109,7 @@ export class GoogleMapsCrawler {
       }));
 
     } catch(error) {
+      console.error(error);
       throw new HttpException(`Puppeteer parsing failed: ${error}`, HttpStatus.INTERNAL_SERVER_ERROR);
 
     } finally {
