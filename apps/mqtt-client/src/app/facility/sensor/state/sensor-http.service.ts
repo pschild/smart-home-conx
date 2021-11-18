@@ -15,7 +15,7 @@ export class SensorHttpService {
     return this.httpClient.get<SensorModel[]>(`device/sensor`);
   }
 
-  create(dto: SensorModel): Observable<SensorModel> {
+  create(dto: Partial<SensorModel>): Observable<SensorModel> {
     return this.httpClient.post<SensorModel>(`device/sensor`, dto).pipe(
       catchError(err => {
         console.error(err);

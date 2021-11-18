@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
-import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { SensorDetailModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 
 @Entity()
 export class Sensor implements SensorModel {
@@ -24,5 +24,8 @@ export class Sensor implements SensorModel {
 
   @Column()
   position: { x: number; y: number };
+
+  @Column()
+  details: SensorDetailModel;
 
 }

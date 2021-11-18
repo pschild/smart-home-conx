@@ -133,6 +133,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.5",
     "ngx-mqtt": "^9.0.5",
+    "ngx-sub-form": "^5.1.2",
     "node-telegram-bot-api": "^0.51.0",
     "octonode": "^0.10.0",
     "puppeteer": "8.0.0",

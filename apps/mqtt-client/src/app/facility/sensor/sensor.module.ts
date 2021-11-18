@@ -11,11 +11,17 @@ import { RoomComponent } from './room/room.component';
 import { UnassignedSensorsComponent } from './unassigned-sensors/unassigned-sensors.component';
 import { FloorComponent } from './floor/floor.component';
 import { CoreModule } from '../../core/core.module';
+import { TemperatureDetailCreateComponent } from './sensor-create/temperature-detail-create/temperature-detail-create.component';
+import { HumidityDetailCreateComponent } from './sensor-create/humidity-detail-create/humidity-detail-create.component';
+import { MovementDetailCreateComponent } from './sensor-create/movement-detail-create/movement-detail-create.component';
 
 @NgModule({
   declarations: [
     SensorListComponent,
     SensorCreateComponent,
+    TemperatureDetailCreateComponent,
+    HumidityDetailCreateComponent,
+    MovementDetailCreateComponent,
     SensorComponent,
     RoomComponent,
     UnassignedSensorsComponent,

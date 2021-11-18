@@ -26,7 +26,7 @@ export namespace SensorActions {
   export class CreateSensor {
     static readonly type = '[Sensor] create';
 
-    constructor(public dto: SensorModel) {}
+    constructor(public dto: Partial<SensorModel>) {}
   }
 
   export class RemoveSensor {

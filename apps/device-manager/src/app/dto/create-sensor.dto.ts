@@ -1,4 +1,4 @@
-import { SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { SensorDetailModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateSensorDto {
@@ -21,5 +21,8 @@ export class CreateSensorDto {
   @IsNumber()
   @IsOptional()
   readonly pin: number;
+
+  @IsOptional()
+  readonly details: SensorDetailModel;
 
 }

@@ -1,36 +1,41 @@
-<h1 mat-dialog-title *ngIf="data?.sensor">{{data.sensor.chipId}} (#{{data.sensor.pin}})</h1>
+<h1 mat-dialog-title *ngIf="data?.sensor">{{data.sensor.chipId}}</h1>
 <h1 mat-dialog-title *ngIf="!data?.sensor">Neuer Sensor</h1>
 <div mat-dialog-content>
-  <form [formGroup]="form" class="form-container">
+  <form [formGroup]="formGroup" class="form-container">
     <mat-form-field>
       <mat-label>Erstelldatum</mat-label>
-      <input matInput placeholder="Erstelldatum" formControlName="createdAt" [matDatepicker]="picker">
+      <input matInput placeholder="Erstelldatum" [formControlName]="formControlNames.createdAt" [matDatepicker]="picker">
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Typ</mat-label>
-      <mat-select formControlName="type" required>
-        <mat-select-trigger>
-          <mat-icon>{{getIconName(form.get('type').value)}}</mat-icon>{{getLabel(form.get('type').value)}}
+      <mat-select [formControlName]="formControlNames.type" required>
+        <mat-select-trigger class="type-select-trigger">
+          <mat-icon>{{getIconName(formGroupValues.type)}}</mat-icon>{{getLabel(formGroupValues.type)}}
         </mat-select-trigger>
         <mat-option *ngFor="let type of typeOptions" [value]="type"><mat-icon>{{getIconName(type)}}</mat-icon>{{getLabel(type)}}</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Chip-ID</mat-label>
-      <mat-select formControlName="chipId" required>
+      <mat-select [formControlName]="formControlNames.chipId" required>
         <mat-option *ngFor="let option of espOptions$ | async" [value]="option.chipId">{{option.chipId}} ({{option.model}}, {{option.description}})</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field>
       <mat-label>Pin</mat-label>
-      <input matInput type="number" placeholder="Pin" formControlName="pin">
+      <input matInput type="number" placeholder="Pin" [formControlName]="formControlNames.pin">
     </mat-form-field>
+    <div [ngSwitch]="formGroupValues.type">
+      <smart-home-conx-temperature-detail-create *ngSwitchCase="SensorType.TEMPERATURE" [formControlName]="formControlNames.details"></smart-home-conx-temperature-detail-create>
+      <smart-home-conx-humidity-detail-create *ngSwitchCase="SensorType.HUMIDITY" [formControlName]="formControlNames.details"></smart-home-conx-humidity-detail-create>
+      <smart-home-conx-movement-detail-create *ngSwitchCase="SensorType.MOVEMENT" [formControlName]="formControlNames.details"></smart-home-conx-movement-detail-create>
+    </div>
   </form>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button (click)="onCancelClick()">Abbrechen</button>
   <button mat-button color="warn" *ngIf="!createMode" (click)="onRemoveClick()">Löschen</button>
-  <button mat-raised-button color="primary" (click)="onSaveClick()" cdkFocusInitial [disabled]="form.invalid">Speichern</button>
+  <button mat-raised-button color="primary" (click)="onSaveClick()" cdkFocusInitial [disabled]="formGroup.invalid">Speichern</button>
 </div>
