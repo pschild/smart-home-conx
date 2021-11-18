@@ -13,12 +13,14 @@ import { SensorState } from '../state/sensor.state';
     `
     .room {
       position: absolute;
-      border: 2px solid #000;
       background-color: lightblue;
+      padding: 0;
     }
     
     .room-name {
       position: absolute;
+      top: 10px;
+      left: 10px;
     }
 
     .cdk-drag-placeholder {
@@ -26,7 +28,7 @@ import { SensorState } from '../state/sensor.state';
     }
 
     .cdk-drop-list-dragging {
-      border-style: dashed !important;
+      box-shadow: 0px 6px 6px -3px rgb(0 0 0 / 20%), 0px 10px 14px 1px rgb(0 0 0 / 14%), 0px 4px 18px 3px rgb(0 0 0 / 12%);
     }
     `
   ]

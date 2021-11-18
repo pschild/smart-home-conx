@@ -1,8 +1,6 @@
-<div
-  *ngIf="rooms$ | async as rooms"
-  cdkDropListGroup
-  class="floor"
->
-  <smart-home-conx-room *ngFor="let room of rooms" [room]="room" [enabled]="enabled"></smart-home-conx-room>
+<div *ngIf="rooms$ | async as rooms" cdkDropListGroup>
   <smart-home-conx-unassigned-sensors [enabled]="enabled"></smart-home-conx-unassigned-sensors>
+  <div class="room-container">
+    <smart-home-conx-room *ngFor="let room of rooms" [room]="room" [enabled]="enabled"></smart-home-conx-room>
+  </div>
 </div>

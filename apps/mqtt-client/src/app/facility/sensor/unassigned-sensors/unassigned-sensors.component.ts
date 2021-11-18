@@ -12,12 +12,8 @@ import { SensorState } from '../state/sensor.state';
   styles: [
     `
     #unassigned-list {
-      position: absolute;
-      right: -50px;
-      width: 50px;
-      height: 200px;
-      background: lightgreen;
-      border: 2px solid #000;
+      display: flex;
+      margin: 10px;
     }
 
     #unassigned-list ::ng-deep .sensor {
@@ -29,7 +25,7 @@ import { SensorState } from '../state/sensor.state';
     }
 
     .cdk-drop-list-dragging {
-      border-style: dashed !important;
+      box-shadow: 0px 6px 6px -3px rgb(0 0 0 / 20%), 0px 10px 14px 1px rgb(0 0 0 / 14%), 0px 4px 18px 3px rgb(0 0 0 / 12%);
     }
     `
   ]

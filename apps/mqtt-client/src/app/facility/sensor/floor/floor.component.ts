@@ -9,11 +9,13 @@ import { SensorState } from '../state/sensor.state';
   templateUrl: './floor.component.html',
   styles: [
     `
-    .floor {
+    .room-container {
       background-color: #ccc;
       position: relative;
-      width: 550px;
       height: 600px;
+
+      max-width: 100vw;
+      overflow-x: auto;
     }
     `
   ]
