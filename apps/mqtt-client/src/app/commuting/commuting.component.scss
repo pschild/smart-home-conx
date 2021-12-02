@@ -1,0 +1,52 @@
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow-x: hidden;
+  height: 120px;
+
+  .origin, .destination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    img {
+      width: 100px;
+    }
+  }
+
+  .wrapper {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+
+    position: relative;
+    width: 100%;
+
+    .car {
+      position: absolute;
+      transform: translateX(-50%);
+      width: 100px;
+
+      &.moving {
+        animation: moving 2s infinite;
+      }
+    }
+  }
+}
+
+@keyframes moving {
+  0% {
+    transform: translateX(-50%) scale(0.99);
+  }
+  
+  50% {
+    transform: translateX(-50%) scale(1.03);
+  }
+
+  100% {
+    transform: translateX(-50%) scale(0.99);
+  }
+}

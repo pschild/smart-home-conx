@@ -1,0 +1,37 @@
+<ng-container *ngIf="commutingInfosVisible$ | async; else noCommutingActive">
+  <div class="container">
+    <div class="origin">
+      <img src="./assets/home.png"/>
+      <div *ngIf="startedAt$ | async as startedAt">AB: {{startedAt | date: 'HH:mm'}} Uhr</div>
+    </div>
+    <div #wrapper class="wrapper">
+      <img #car class="car" [ngClass]="{'moving': isCommuting$ | async}" src="./assets/skoda-ltr.png"/>
+    </div>
+    <div class="destination">
+      <img src="./assets/adesso.png"/>
+      <div *ngIf="arriveAt$ | async as arriveAt">AN: ca. {{arriveAt | date: 'HH:mm'}} Uhr</div>
+    </div>
+  </div>
+
+  <!-- <button (click)="updateAnimation(50, 5)">ab 50% 5s</button>
+  <button (click)="updateAnimation(0, 3)">ab 0% 3s</button>
+  <button (click)="updateAnimation(75, 60)">ab 75% 1min</button> -->
+
+  <div *ngIf="commutingEntries$ | async as ces">
+    <ul>
+      <li *ngFor="let e of ces">um {{e.time | date:'HH:mm:ss'}} noch vsl. {{e.durations[0].minutes}}min</li>
+    </ul>
+  </div>
+</ng-container>
+
+<ng-template #noCommutingActive>
+  Zur Zeit keine Fahrt aktiv.
+</ng-template>
+
+<div>
+  <input type="number" placeholder="minutes" [(ngModel)]="fakeMinutes"/>
+  <button (click)="start()">start</button>
+  <button (click)="update()">update</button>
+  <button (click)="stop()">stop</button>
+  <button (click)="cancel()">cancel</button>
+</div>

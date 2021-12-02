@@ -25,6 +25,12 @@ const routes: Routes = [
     loadChildren: () => import('./facility/facility.module').then(m => m.FacilityModule)
   },
   {
+    path: 'commuting',
+    canActivate: [AuthGuard],
+    canLoad: [AuthGuard],
+    loadChildren: () => import('./commuting/commuting.module').then(m => m.CommutingModule)
+  },
+  {
     path: 'preferences',
     canActivate: [AuthGuard],
     canLoad: [AuthGuard],
