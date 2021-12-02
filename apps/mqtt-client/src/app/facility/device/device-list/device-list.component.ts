@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { DeviceState } from '../state/device.state';
 import { Select, Store } from '@ngxs/store';
 import { DeviceCreateComponent } from '../device-create/device-create.component';
-import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
+import { ConnectionStatus, DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
 import { AlexaDetailsComponent } from '../alexa-details/alexa-details.component';
 import { DeviceActions } from '../state/device.actions';
 
@@ -19,6 +19,8 @@ export class DeviceListComponent {
 
   @Select(DeviceState.alexaList)
   alexaDevices$: Observable<{ accountName: string }[]>;
+
+  ConnectionStatus = ConnectionStatus;
 
   constructor(
     public dialog: MatDialog,

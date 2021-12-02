@@ -41,4 +41,10 @@ export namespace SensorActions {
     constructor(public dropEvent: CdkDragDrop<any>) {}
   }
 
+  export class OpenEditDialog {
+    static readonly type = '[Sensor] open edit dialog';
+
+    constructor(public sensor?: SensorModel) {}
+  }
+
 }

@@ -1,11 +1,13 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Action, createSelector, Selector, State, StateContext, StateToken, Store } from '@ngxs/store';
 import { insertItem, patch, removeItem, updateItem } from '@ngxs/store/operators';
 import { RoomModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 import { EMPTY, merge } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { EventMqttService } from '../../../event-mqtt.service';
+import { SensorCreateComponent } from '../sensor-create/sensor-create.component';
 import { RoomHttpService } from './room-http.service';
 import { SensorHttpService } from './sensor-http.service';
 import { SensorActions } from './sensor.actions';
@@ -35,7 +37,9 @@ export class SensorState {
     private sensorHttpService: SensorHttpService,
     private roomHttpService: RoomHttpService,
     private eventMqttService: EventMqttService,
-    private store: Store
+    private store: Store,
+    private ngZone: NgZone,
+    private dialog: MatDialog
   ) {}
 
   @Selector()
@@ -207,6 +211,17 @@ export class SensorState {
     const newRoomId = event.container.id === 'unassigned-list' ? null : event.container.data._id;
     const newPosition = event.container.id === 'unassigned-list' ? null : this.getNewPosition(event);
     return ctx.dispatch(new SensorActions.UpdateSensor(sensorId, { roomId: newRoomId, position: newPosition }));
+  }
+
+  @Action(SensorActions.OpenEditDialog)
+  openEditDialog(ctx: StateContext<SensorStateModel>, action: SensorActions.OpenEditDialog) {
+    // see https://stackoverflow.com/a/57141327/5276055
+    return this.ngZone.run(() => {
+      const dialogRef = this.dialog.open(SensorCreateComponent, { data: action.sensor ? { sensor: action.sensor } : null });
+      dialogRef.afterClosed().subscribe(result => {
+        console.log('The dialog was closed', result);
+      });
+    });
   }
 
   private getNewPosition(event: CdkDragDrop<any>): { x: number; y: number } {

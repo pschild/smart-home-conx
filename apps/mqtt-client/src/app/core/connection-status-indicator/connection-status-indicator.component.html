@@ -1,0 +1,6 @@
+<div class="blob" [ngClass]="{
+  'online': status === ConnectionStatus.ONLINE,
+  'offline': status === ConnectionStatus.OFFLINE,
+  'unknown': status === ConnectionStatus.UNKNOWN,
+  'pulsating': status === ConnectionStatus.ONLINE
+}"></div>

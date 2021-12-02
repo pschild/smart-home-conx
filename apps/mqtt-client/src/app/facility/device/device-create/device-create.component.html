@@ -3,8 +3,7 @@
   <div class="short-info-container">
     <small *ngIf="data.esp.connectionStatus">
       Status:
-      <div class="blob pulsating" *ngIf="data.esp.connectionStatus === 'online'"></div>
-      <div class="blob" *ngIf="data.esp.connectionStatus === 'offline'"></div>
+      <smart-home-conx-connection-status-indicator [status]="data.esp.connectionStatus"></smart-home-conx-connection-status-indicator>
       {{data.esp.connectionStatus}}
       <span *ngIf="data.esp.connectionStatusChangedAt">({{data.esp.connectionStatusChangedAt | timeAgo:'seit' | async}})</span>
     </small>

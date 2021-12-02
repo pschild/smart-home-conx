@@ -8,8 +8,13 @@
   </ng-container>
   <div *ngIf="isLoading$ | async">lade...</div>
   <mat-menu #menu="matMenu">
-    <p>{{sensor.chipId}} #{{sensor.pin || '- -'}}</p>
+    <p>{{sensor.chipId}}</p>
+    <div><small>Pin: {{sensor.pin || 'keiner'}}</small></div>
+    <div><small *ngIf="sensor.type === SensorType.TEMPERATURE && sensor.details">Abweichung: {{sensor.details.aberrance}}°C</small></div>
+    <div><small *ngIf="sensor.type === SensorType.HUMIDITY && sensor.details">Abweichung: {{sensor.details.aberrance}}%</small></div>
+    <div><small *ngIf="sensor.type === SensorType.MOVEMENT && sensor.details">Sperrzeit: {{sensor.details.lockTime || 0}}s</small></div>
 
+    <button mat-menu-item (click)="edit()"><mat-icon>edit</mat-icon> bearbeiten</button>
     <button mat-menu-item (click)="reloadHistory()"><mat-icon>update</mat-icon> Historie laden</button>
     <!-- TODO: remove this buttons! -->
     <button mat-menu-item (click)="sendMqttMessage()"><mat-icon>send</mat-icon> Fake MQTT</button>

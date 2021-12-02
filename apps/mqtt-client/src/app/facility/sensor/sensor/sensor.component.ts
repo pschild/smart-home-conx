@@ -45,6 +45,8 @@ export class SensorComponent implements OnInit {
 
   now$: Observable<Date>;
 
+  SensorType = SensorType;
+
   constructor(
     private store: Store,
     private eventMqttService: EventMqttService,
@@ -60,6 +62,10 @@ export class SensorComponent implements OnInit {
 
     // TODO: wird zu oft geladen (bspw. wenn Sensor verschoben wird)
     this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
+  }
+
+  edit(): void {
+    this.store.dispatch(new SensorActions.OpenEditDialog(this.sensor));
   }
 
   reloadHistory(): void {
