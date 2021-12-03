@@ -5,6 +5,8 @@ FROM node:14-alpine as build
 ######################################################################
 WORKDIR /app
 
+# python and alpine-sdk needed since nrwl/workspace v13 for building @parcel/watcher
+RUN apk update && apk add python3 alpine-sdk
 COPY package.json decorate-angular-cli.js ./
 RUN export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true && npm install
 COPY . .

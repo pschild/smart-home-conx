@@ -9,12 +9,16 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/alexa-connector",
             "main": "apps/alexa-connector/src/main.ts",
             "tsConfig": "apps/alexa-connector/tsconfig.app.json",
-            "assets": ["apps/alexa-connector/src/assets"]
+            "assets": [
+              "apps/alexa-connector/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -36,25 +40,18 @@
             "buildTarget": "alexa-connector:build"
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/alexa-connector/tsconfig.app.json",
-              "apps/alexa-connector/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/alexa-connector/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/alexa-connector"],
+          "outputs": [
+            "coverage/apps/alexa-connector"
+          ],
           "options": {
             "jestConfig": "apps/alexa-connector/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "api-gateway": {
       "root": "apps/api-gateway",
@@ -69,7 +66,9 @@
             "outputPath": "dist/apps/api-gateway",
             "main": "apps/api-gateway/src/main.ts",
             "tsConfig": "apps/api-gateway/tsconfig.app.json",
-            "assets": ["apps/api-gateway/src/assets"]
+            "assets": [
+              "apps/api-gateway/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -84,22 +83,14 @@
               ]
             }
           },
-          "outputs": ["{options.outputPath}"]
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
             "buildTarget": "api-gateway:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/api-gateway/tsconfig.app.json",
-              "apps/api-gateway/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/api-gateway/**/*"]
           }
         },
         "test": {
@@ -108,37 +99,30 @@
             "jestConfig": "apps/api-gateway/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/apps/api-gateway"]
+          "outputs": [
+            "coverage/apps/api-gateway"
+          ]
         }
-      }
+      },
+      "tags": []
     },
     "api-shared-data-access-models": {
       "root": "libs/api/shared/data-access/models",
       "sourceRoot": "libs/api/shared/data-access/models/src",
       "projectType": "library",
       "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/api/shared/data-access/models/tsconfig.lib.json",
-              "libs/api/shared/data-access/models/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/shared/data-access/models/**/*"
-            ]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/api/shared/data-access/models"],
+          "outputs": [
+            "coverage/libs/api/shared/data-access/models"
+          ],
           "options": {
             "jestConfig": "libs/api/shared/data-access/models/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "auth": {
       "root": "libs/auth",
@@ -146,25 +130,18 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/auth/tsconfig.lib.json",
-              "libs/auth/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/auth/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/auth/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/libs/auth"]
+          "outputs": [
+            "coverage/libs/auth"
+          ]
         }
-      }
+      },
+      "tags": []
     },
     "commuting-watcher": {
       "root": "apps/commuting-watcher",
@@ -173,12 +150,16 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/commuting-watcher",
             "main": "apps/commuting-watcher/src/main.ts",
             "tsConfig": "apps/commuting-watcher/tsconfig.app.json",
-            "assets": ["apps/commuting-watcher/src/assets"]
+            "assets": [
+              "apps/commuting-watcher/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -200,25 +181,18 @@
             "buildTarget": "commuting-watcher:build"
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/commuting-watcher/tsconfig.app.json",
-              "apps/commuting-watcher/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/commuting-watcher/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/commuting-watcher"],
+          "outputs": [
+            "coverage/apps/commuting-watcher"
+          ],
           "options": {
             "jestConfig": "apps/commuting-watcher/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "device-manager": {
       "root": "apps/device-manager",
@@ -228,12 +202,16 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/device-manager",
             "main": "apps/device-manager/src/main.ts",
             "tsConfig": "apps/device-manager/tsconfig.app.json",
-            "assets": ["apps/device-manager/src/assets"]
+            "assets": [
+              "apps/device-manager/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -255,50 +233,36 @@
             "buildTarget": "device-manager:build"
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/device-manager/tsconfig.app.json",
-              "apps/device-manager/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/device-manager/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/device-manager"],
+          "outputs": [
+            "coverage/apps/device-manager"
+          ],
           "options": {
             "jestConfig": "apps/device-manager/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "influx": {
       "root": "libs/influx",
       "sourceRoot": "libs/influx/src",
       "projectType": "library",
       "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/influx/tsconfig.lib.json",
-              "libs/influx/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/influx/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/influx"],
+          "outputs": [
+            "coverage/libs/influx"
+          ],
           "options": {
             "jestConfig": "libs/influx/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "logger": {
       "root": "apps/logger",
@@ -308,12 +272,16 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/logger",
             "main": "apps/logger/src/main.ts",
             "tsConfig": "apps/logger/tsconfig.app.json",
-            "assets": ["apps/logger/src/assets"]
+            "assets": [
+              "apps/logger/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -335,25 +303,18 @@
             "buildTarget": "logger:build"
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/logger/tsconfig.app.json",
-              "apps/logger/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/logger/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/logger"],
+          "outputs": [
+            "coverage/apps/logger"
+          ],
           "options": {
             "jestConfig": "apps/logger/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "messenger-connector": {
       "root": "apps/messenger-connector",
@@ -363,12 +324,16 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/messenger-connector",
             "main": "apps/messenger-connector/src/main.ts",
             "tsConfig": "apps/messenger-connector/tsconfig.app.json",
-            "assets": ["apps/messenger-connector/src/assets"]
+            "assets": [
+              "apps/messenger-connector/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -390,25 +355,18 @@
             "buildTarget": "messenger-connector:build"
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/messenger-connector/tsconfig.app.json",
-              "apps/messenger-connector/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/messenger-connector/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/messenger-connector"],
+          "outputs": [
+            "coverage/apps/messenger-connector"
+          ],
           "options": {
             "jestConfig": "apps/messenger-connector/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "mqtt-broker": {
       "root": "apps/mqtt-broker",
@@ -423,7 +381,9 @@
             "outputPath": "dist/apps/mqtt-broker",
             "main": "apps/mqtt-broker/src/main.ts",
             "tsConfig": "apps/mqtt-broker/tsconfig.app.json",
-            "assets": ["apps/mqtt-broker/src/assets"]
+            "assets": [
+              "apps/mqtt-broker/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -438,22 +398,14 @@
               ]
             }
           },
-          "outputs": ["{options.outputPath}"]
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
             "buildTarget": "mqtt-broker:build"
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/mqtt-broker/tsconfig.app.json",
-              "apps/mqtt-broker/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/mqtt-broker/**/*"]
           }
         },
         "test": {
@@ -462,9 +414,12 @@
             "jestConfig": "apps/mqtt-broker/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/apps/mqtt-broker"]
+          "outputs": [
+            "coverage/apps/mqtt-broker"
+          ]
         }
-      }
+      },
+      "tags": []
     },
     "mqtt-client": {
       "projectType": "application",
@@ -531,7 +486,9 @@
               ]
             }
           },
-          "outputs": ["{options.outputPath}"]
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -551,26 +508,18 @@
             "browserTarget": "mqtt-client:build"
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/mqtt-client/tsconfig.app.json",
-              "apps/mqtt-client/tsconfig.spec.json",
-              "apps/mqtt-client/tsconfig.editor.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/mqtt-client/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "apps/mqtt-client/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/apps/mqtt-client"]
+          "outputs": [
+            "coverage/apps/mqtt-client"
+          ]
         }
-      }
+      },
+      "tags": []
     },
     "ota-server": {
       "root": "apps/ota-server",
@@ -580,12 +529,16 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/ota-server",
             "main": "apps/ota-server/src/main.ts",
             "tsConfig": "apps/ota-server/tsconfig.app.json",
-            "assets": ["apps/ota-server/src/assets"]
+            "assets": [
+              "apps/ota-server/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -607,50 +560,36 @@
             "buildTarget": "ota-server:build"
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/ota-server/tsconfig.app.json",
-              "apps/ota-server/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/ota-server/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/ota-server"],
+          "outputs": [
+            "coverage/apps/ota-server"
+          ],
           "options": {
             "jestConfig": "apps/ota-server/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "preference": {
       "root": "libs/preference",
       "sourceRoot": "libs/preference/src",
       "projectType": "library",
       "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/preference/tsconfig.lib.json",
-              "libs/preference/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/preference/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/preference"],
+          "outputs": [
+            "coverage/libs/preference"
+          ],
           "options": {
             "jestConfig": "libs/preference/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "sensor-connector": {
       "root": "apps/sensor-connector",
@@ -660,12 +599,16 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/sensor-connector",
             "main": "apps/sensor-connector/src/main.ts",
             "tsConfig": "apps/sensor-connector/tsconfig.app.json",
-            "assets": ["apps/sensor-connector/src/assets"]
+            "assets": [
+              "apps/sensor-connector/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -687,25 +630,18 @@
             "buildTarget": "sensor-connector:build"
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "apps/sensor-connector/tsconfig.app.json",
-              "apps/sensor-connector/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!apps/sensor-connector/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/sensor-connector"],
+          "outputs": [
+            "coverage/apps/sensor-connector"
+          ],
           "options": {
             "jestConfig": "apps/sensor-connector/jest.config.js",
             "passWithNoTests": true
           }
         }
-      }
+      },
+      "tags": []
     },
     "utils": {
       "root": "libs/utils",
@@ -713,66 +649,18 @@
       "projectType": "library",
       "schematics": {},
       "architect": {
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "libs/utils/tsconfig.lib.json",
-              "libs/utils/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/utils/**/*"]
-          }
-        },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
             "jestConfig": "libs/utils/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": ["coverage/libs/utils"]
+          "outputs": [
+            "coverage/libs/utils"
+          ]
         }
-      }
+      },
+      "tags": []
     }
-  },
-  "cli": {
-    "defaultCollection": "@nrwl/angular"
-  },
-  "schematics": {
-    "@nrwl/workspace": {
-      "library": {
-        "linter": "tslint"
-      }
-    },
-    "@nrwl/node": {
-      "application": {
-        "linter": "tslint"
-      },
-      "library": {
-        "linter": "tslint"
-      }
-    },
-    "@nrwl/nest": {
-      "application": {
-        "linter": "tslint"
-      },
-      "library": {
-        "linter": "tslint"
-      }
-    },
-    "@nrwl/express": {
-      "application": {
-        "linter": "tslint"
-      },
-      "library": {
-        "linter": "tslint"
-      }
-    },
-    "@nrwl/angular:application": {
-      "unitTestRunner": "jest"
-    },
-    "@nrwl/angular:library": {
-      "unitTestRunner": "jest"
-    }
-  },
-  "defaultProject": "mqtt-client"
+  }
 }

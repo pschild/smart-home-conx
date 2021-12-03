@@ -18,55 +18,63 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "lint", "test", "e2e"]
+        "cacheableOperations": [
+          "build",
+          "lint",
+          "test",
+          "e2e"
+        ],
+        "parallel": 1
       }
     }
   },
-  "projects": {
-    "alexa-connector": {
-      "tags": []
+  "targetDependencies": {
+    "build": [
+      {
+        "target": "build",
+        "projects": "dependencies"
+      }
+    ]
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular"
+  },
+  "defaultProject": "mqtt-client",
+  "generators": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "tslint"
+      }
     },
-    "api-gateway": {
-      "tags": []
+    "@nrwl/node": {
+      "application": {
+        "linter": "tslint"
+      },
+      "library": {
+        "linter": "tslint"
+      }
     },
-    "api-shared-data-access-models": {
-      "tags": []
+    "@nrwl/nest": {
+      "application": {
+        "linter": "tslint"
+      },
+      "library": {
+        "linter": "tslint"
+      }
     },
-    "auth": {
-      "tags": []
+    "@nrwl/express": {
+      "application": {
+        "linter": "tslint"
+      },
+      "library": {
+        "linter": "tslint"
+      }
     },
-    "commuting-watcher": {
-      "tags": []
+    "@nrwl/angular:application": {
+      "unitTestRunner": "jest"
     },
-    "device-manager": {
-      "tags": []
-    },
-    "influx": {
-      "tags": []
-    },
-    "logger": {
-      "tags": []
-    },
-    "messenger-connector": {
-      "tags": []
-    },
-    "mqtt-broker": {
-      "tags": []
-    },
-    "mqtt-client": {
-      "tags": []
-    },
-    "ota-server": {
-      "tags": []
-    },
-    "preference": {
-      "tags": []
-    },
-    "sensor-connector": {
-      "tags": []
-    },
-    "utils": {
-      "tags": []
+    "@nrwl/angular:library": {
+      "unitTestRunner": "jest"
     }
   }
 }
