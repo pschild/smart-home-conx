@@ -9,16 +9,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/alexa-connector",
             "main": "apps/alexa-connector/src/main.ts",
             "tsConfig": "apps/alexa-connector/tsconfig.app.json",
-            "assets": [
-              "apps/alexa-connector/src/assets"
-            ]
+            "assets": ["apps/alexa-connector/src/assets"]
           },
           "configurations": {
             "production": {
@@ -42,12 +38,17 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/alexa-connector"
-          ],
+          "outputs": ["coverage/apps/alexa-connector"],
           "options": {
             "jestConfig": "apps/alexa-connector/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/alexa-connector/**/*.ts"]
           }
         }
       },
@@ -66,9 +67,7 @@
             "outputPath": "dist/apps/api-gateway",
             "main": "apps/api-gateway/src/main.ts",
             "tsConfig": "apps/api-gateway/tsconfig.app.json",
-            "assets": [
-              "apps/api-gateway/src/assets"
-            ]
+            "assets": ["apps/api-gateway/src/assets"]
           },
           "configurations": {
             "production": {
@@ -83,9 +82,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -99,9 +96,14 @@
             "jestConfig": "apps/api-gateway/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/api-gateway"
-          ]
+          "outputs": ["coverage/apps/api-gateway"]
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/api-gateway/**/*.ts"]
+          }
         }
       },
       "tags": []
@@ -113,12 +115,19 @@
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/api/shared/data-access/models"
-          ],
+          "outputs": ["coverage/libs/api/shared/data-access/models"],
           "options": {
             "jestConfig": "libs/api/shared/data-access/models/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/api/shared/data-access/models/src/**/*.ts",
+              "libs/api/shared/data-access/models/src/**/*.html"
+            ]
           }
         }
       },
@@ -136,9 +145,16 @@
             "jestConfig": "libs/auth/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/auth"
-          ]
+          "outputs": ["coverage/libs/auth"]
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/auth/src/**/*.ts",
+              "libs/auth/src/**/*.html"
+            ]
+          }
         }
       },
       "tags": []
@@ -150,16 +166,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/commuting-watcher",
             "main": "apps/commuting-watcher/src/main.ts",
             "tsConfig": "apps/commuting-watcher/tsconfig.app.json",
-            "assets": [
-              "apps/commuting-watcher/src/assets"
-            ]
+            "assets": ["apps/commuting-watcher/src/assets"]
           },
           "configurations": {
             "production": {
@@ -183,12 +195,17 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/commuting-watcher"
-          ],
+          "outputs": ["coverage/apps/commuting-watcher"],
           "options": {
             "jestConfig": "apps/commuting-watcher/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/commuting-watcher/**/*.ts"]
           }
         }
       },
@@ -202,16 +219,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/device-manager",
             "main": "apps/device-manager/src/main.ts",
             "tsConfig": "apps/device-manager/tsconfig.app.json",
-            "assets": [
-              "apps/device-manager/src/assets"
-            ]
+            "assets": ["apps/device-manager/src/assets"]
           },
           "configurations": {
             "production": {
@@ -235,12 +248,17 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/device-manager"
-          ],
+          "outputs": ["coverage/apps/device-manager"],
           "options": {
             "jestConfig": "apps/device-manager/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/device-manager/**/*.ts"]
           }
         }
       },
@@ -253,12 +271,19 @@
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/influx"
-          ],
+          "outputs": ["coverage/libs/influx"],
           "options": {
             "jestConfig": "libs/influx/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/influx/src/**/*.ts",
+              "libs/influx/src/**/*.html"
+            ]
           }
         }
       },
@@ -272,16 +297,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/logger",
             "main": "apps/logger/src/main.ts",
             "tsConfig": "apps/logger/tsconfig.app.json",
-            "assets": [
-              "apps/logger/src/assets"
-            ]
+            "assets": ["apps/logger/src/assets"]
           },
           "configurations": {
             "production": {
@@ -305,12 +326,17 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/logger"
-          ],
+          "outputs": ["coverage/apps/logger"],
           "options": {
             "jestConfig": "apps/logger/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/logger/**/*.ts"]
           }
         }
       },
@@ -324,16 +350,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/messenger-connector",
             "main": "apps/messenger-connector/src/main.ts",
             "tsConfig": "apps/messenger-connector/tsconfig.app.json",
-            "assets": [
-              "apps/messenger-connector/src/assets"
-            ]
+            "assets": ["apps/messenger-connector/src/assets"]
           },
           "configurations": {
             "production": {
@@ -357,12 +379,17 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/messenger-connector"
-          ],
+          "outputs": ["coverage/apps/messenger-connector"],
           "options": {
             "jestConfig": "apps/messenger-connector/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/messenger-connector/**/*.ts"]
           }
         }
       },
@@ -381,9 +408,7 @@
             "outputPath": "dist/apps/mqtt-broker",
             "main": "apps/mqtt-broker/src/main.ts",
             "tsConfig": "apps/mqtt-broker/tsconfig.app.json",
-            "assets": [
-              "apps/mqtt-broker/src/assets"
-            ]
+            "assets": ["apps/mqtt-broker/src/assets"]
           },
           "configurations": {
             "production": {
@@ -398,9 +423,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@nrwl/node:execute",
@@ -414,9 +437,14 @@
             "jestConfig": "apps/mqtt-broker/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/mqtt-broker"
-          ]
+          "outputs": ["coverage/apps/mqtt-broker"]
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/mqtt-broker/**/*.ts"]
+          }
         }
       },
       "tags": []
@@ -486,9 +514,7 @@
               ]
             }
           },
-          "outputs": [
-            "{options.outputPath}"
-          ]
+          "outputs": ["{options.outputPath}"]
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -514,9 +540,16 @@
             "jestConfig": "apps/mqtt-client/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/apps/mqtt-client"
-          ]
+          "outputs": ["coverage/apps/mqtt-client"]
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/mqtt-client/src/**/*.ts",
+              "apps/mqtt-client/src/**/*.html"
+            ]
+          }
         }
       },
       "tags": []
@@ -529,16 +562,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/ota-server",
             "main": "apps/ota-server/src/main.ts",
             "tsConfig": "apps/ota-server/tsconfig.app.json",
-            "assets": [
-              "apps/ota-server/src/assets"
-            ]
+            "assets": ["apps/ota-server/src/assets"]
           },
           "configurations": {
             "production": {
@@ -562,12 +591,17 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/ota-server"
-          ],
+          "outputs": ["coverage/apps/ota-server"],
           "options": {
             "jestConfig": "apps/ota-server/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/ota-server/**/*.ts"]
           }
         }
       },
@@ -580,12 +614,19 @@
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/libs/preference"
-          ],
+          "outputs": ["coverage/libs/preference"],
           "options": {
             "jestConfig": "libs/preference/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/preference/src/**/*.ts",
+              "libs/preference/src/**/*.html"
+            ]
           }
         }
       },
@@ -599,16 +640,12 @@
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
-          "outputs": [
-            "{options.outputPath}"
-          ],
+          "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/sensor-connector",
             "main": "apps/sensor-connector/src/main.ts",
             "tsConfig": "apps/sensor-connector/tsconfig.app.json",
-            "assets": [
-              "apps/sensor-connector/src/assets"
-            ]
+            "assets": ["apps/sensor-connector/src/assets"]
           },
           "configurations": {
             "production": {
@@ -632,12 +669,17 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/sensor-connector"
-          ],
+          "outputs": ["coverage/apps/sensor-connector"],
           "options": {
             "jestConfig": "apps/sensor-connector/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/sensor-connector/**/*.ts"]
           }
         }
       },
@@ -655,9 +697,16 @@
             "jestConfig": "libs/utils/jest.config.js",
             "passWithNoTests": true
           },
-          "outputs": [
-            "coverage/libs/utils"
-          ]
+          "outputs": ["coverage/libs/utils"]
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/utils/src/**/*.ts",
+              "libs/utils/src/**/*.html"
+            ]
+          }
         }
       },
       "tags": []

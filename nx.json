@@ -18,12 +18,7 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e"
-        ],
+        "cacheableOperations": ["build", "lint", "test", "e2e"],
         "parallel": 1
       }
     }
@@ -41,40 +36,25 @@
   },
   "defaultProject": "mqtt-client",
   "generators": {
-    "@nrwl/workspace": {
-      "library": {
-        "linter": "tslint"
-      }
-    },
-    "@nrwl/node": {
-      "application": {
-        "linter": "tslint"
-      },
-      "library": {
-        "linter": "tslint"
-      }
-    },
-    "@nrwl/nest": {
-      "application": {
-        "linter": "tslint"
-      },
-      "library": {
-        "linter": "tslint"
-      }
-    },
-    "@nrwl/express": {
-      "application": {
-        "linter": "tslint"
-      },
-      "library": {
-        "linter": "tslint"
-      }
-    },
     "@nrwl/angular:application": {
       "unitTestRunner": "jest"
     },
     "@nrwl/angular:library": {
       "unitTestRunner": "jest"
+    },
+    "@nrwl/nest": {
+      "convert-tslint-to-eslint": {
+        "ignoreExistingTslintConfig": true,
+        "removeTSLintIfNoMoreTSLintTargets": false,
+        "skipFormat": false
+      }
+    },
+    "@nrwl/angular": {
+      "convert-tslint-to-eslint": {
+        "ignoreExistingTslintConfig": true,
+        "removeTSLintIfNoMoreTSLintTargets": false,
+        "skipFormat": false
+      }
     }
   }
 }
