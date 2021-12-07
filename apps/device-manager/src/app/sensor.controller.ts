@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { SensorService } from './sensor.service';
 import { CreateSensorDto, UpdateSensorDto } from './dto';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { SensorType } from '@smart-home-conx/api/shared/data-access/models';
 
 @Controller('sensor')
 export class SensorController {
@@ -22,6 +24,12 @@ export class SensorController {
   @Get(':id')
   findOne(@Param('id') sensorId: string) {
     return this.sensorService.findOne(sensorId);
+  }
+
+  @Get()
+  @MessagePattern('findSensor')
+  findByCriteria(@Payload() payload: { chipId: number; type: SensorType; pin?: number }) {
+    return this.sensorService.findByCriteria({ chipId: payload.chipId, type: payload.type, pin: payload.pin });
   }
 
   @Get('/byDevice/:chipId')

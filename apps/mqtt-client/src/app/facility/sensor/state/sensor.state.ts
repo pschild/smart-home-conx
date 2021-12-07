@@ -101,11 +101,15 @@ export class SensorState {
       new SensorActions.LoadSensors()
     ]);
 
-    const obsList$ = [SensorType.TEMPERATURE, SensorType.HUMIDITY, SensorType.VOLTAGE, SensorType.MOVEMENT]
+    const obsList$ = [SensorType.VOLTAGE, SensorType.MOVEMENT]
       .map(type => this.eventMqttService.observe(`devices/+/${type}`).pipe(
         map(res => ({ type, chipId: res.topic.match(/devices\/(\d+)/)[1], payload: this.parsePayload(res.payload.toString()) }))
       ));
-    merge(...obsList$).subscribe(result => {
+    const obsList2$ = [SensorType.TEMPERATURE, SensorType.HUMIDITY]
+      .map(type => this.eventMqttService.observe(`sensor-connector/devices/+/${type}/corrected`).pipe(
+        map(res => ({ type, chipId: res.topic.match(/devices\/(\d+)/)[1], payload: this.parseDataPayload(res.payload.toString()) }))
+      ));
+    merge(...obsList$, ...obsList2$).subscribe(result => {
       const sensorId = this.store.selectSnapshot(SensorState.sensorId(result.chipId, result.type as SensorType, result.payload.pin));
       if (!sensorId) {
         throw new Error(`Could not find a sensor by criteria chipId=${result.chipId}, pin=${result.payload.pin}, type=${result.type}`);
@@ -122,6 +126,17 @@ export class SensorState {
         })
       }));
     });
+  }
+
+  private parseDataPayload(rawPayload: string): { value?: number; pin?: number } {
+    let result;
+    try {
+      result = JSON.parse(rawPayload)
+    } catch (error) {
+      console.error(`Could not parse JSON payload "${rawPayload}"`);
+      result = {};
+    }
+    return result.data;
   }
 
   private parsePayload(rawPayload: string): { value?: number; pin?: number } {

@@ -15,8 +15,8 @@ import { VoltageController } from './voltage/voltage.controller';
       database: 'sensors',
       schema: [
         { measurement: 'movements', fields: { pin: FieldType.INTEGER }, tags: ['chipId'] },
-        { measurement: 'temperature', fields: { value: FieldType.FLOAT, pin: FieldType.INTEGER }, tags: ['chipId'] },
-        { measurement: 'humidity', fields: { value: FieldType.FLOAT, pin: FieldType.INTEGER }, tags: ['chipId'] },
+        { measurement: 'temperature', fields: { value: FieldType.FLOAT, raw: FieldType.FLOAT, pin: FieldType.INTEGER }, tags: ['chipId'] },
+        { measurement: 'humidity', fields: { value: FieldType.FLOAT, raw: FieldType.FLOAT, pin: FieldType.INTEGER }, tags: ['chipId'] },
         { measurement: 'voltage', fields: { value: FieldType.FLOAT }, tags: ['chipId'] }
       ]
     })
