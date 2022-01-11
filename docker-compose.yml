@@ -85,6 +85,13 @@ services:
       - 9072:9072
     restart: always
 
+  third-party-api:
+    image: localhost:5000/third-party-api:latest
+    container_name: third-party-api
+    ports:
+      - 9102:9102
+    restart: always
+
   mqtt-client:
     image: localhost:5000/mqtt-client:latest
     container_name: mqtt-client

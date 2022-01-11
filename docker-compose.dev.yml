@@ -112,6 +112,20 @@ services:
       - 9072:9072
     restart: always
 
+  third-party-api:
+    image: third-party-api
+    build:
+      context: .
+      dockerfile: apps/third-party-api/Dockerfile
+    container_name: third-party-api
+    depends_on:
+      - registry
+      - mqtt-broker
+      - api-gateway
+    ports:
+      - 9102:9102
+    restart: always
+
   mqtt-client:
     image: mqtt-client
     build:

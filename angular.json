@@ -685,6 +685,58 @@
       },
       "tags": []
     },
+    "third-party-api": {
+      "root": "apps/third-party-api",
+      "sourceRoot": "apps/third-party-api/src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/third-party-api",
+            "main": "apps/third-party-api/src/main.ts",
+            "tsConfig": "apps/third-party-api/tsconfig.app.json",
+            "assets": ["apps/third-party-api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/third-party-api/src/environments/environment.ts",
+                  "with": "apps/third-party-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "third-party-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/third-party-api/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/third-party-api"],
+          "options": {
+            "jestConfig": "apps/third-party-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "utils": {
       "root": "libs/utils",
       "sourceRoot": "libs/utils/src",
