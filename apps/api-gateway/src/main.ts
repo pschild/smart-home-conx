@@ -49,6 +49,10 @@ const routes = [
   {
     route: `/messenger-connector`,
     address: isDocker() ? `http://messenger-connector:9022` : `http://localhost:9022`
+  },
+  {
+    route: `/third-party-api`,
+    address: isDocker() ? `http://third-party-api:9102` : `http://localhost:9102`
   }
 ];
 

@@ -14,6 +14,9 @@ This project was generated using [Nx](https://nx.dev).
        SERVICE_PASSWORD:        password for authentication in api-gateway  
        SERVICE_SECRET:          secret (any string) used to generate and verify JWTs  
        PUBLIC_DOMAIN:           the public domain the services are available at, e.g. xyz.myfritz.net, used for generating SSL certs  
+       FRITZ_BOX_IP:            IP of your FritzBox  
+       FRITZ_BOX_USER:          User to login to your FritzBox  
+       FRITZ_BOX_PASSWORD:      Password of your FritzBox  
        GIT_USER:                username for git (needed just for checkout/installation)  
        GIT_EMAIL:               email for git (needed just for checkout/installation)  
        AMAZON_EMAIL:            email address used for Amazon log-in (see README in alexa-connector)  
@@ -27,6 +30,7 @@ This project was generated using [Nx](https://nx.dev).
        HOME_POSITION_LON:       Longitude of your home's position  
        TELEGRAM_API_TOKEN:      Token for accessing Telegram API  
        TELEGRAM_RECEIVER_IDS:   Telegram Chat IDs to send messages to (comma-separated list)  
+       TANKERKOENIG_API_KEY:    Key to use Tankerkoenig API (request fuel prices)  
 2. ~~Run `docker-compose up -d` to build and start all services. Run `docker-compose up -d --build <APP>` to run and rebuild a specific service.~~  
    Run
 

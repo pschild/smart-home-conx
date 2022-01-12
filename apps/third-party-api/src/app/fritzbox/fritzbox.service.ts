@@ -1,14 +1,21 @@
-import { HttpService, Injectable } from '@nestjs/common';
-import { Timeout, Cron } from '@nestjs/schedule';
-import { filter, map, mergeAll, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { Injectable, Logger } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { Timeout, Cron, CronExpression } from '@nestjs/schedule';
+import { filter, map, mergeAll, mergeMap, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { createHash } from 'crypto';
 import { Observable } from 'rxjs';
-import { isToday } from 'date-fns';
+import { isAfter } from 'date-fns';
 import { InfluxService } from '@smart-home-conx/influx';
 
-interface LogItem {
+interface FritzboxLogItem {
   date: Date;
   description: string;
+}
+
+interface LogItem {
+  time: Date;
+  device: string;
+  message: string;
 }
 
 @Injectable()
@@ -21,10 +28,14 @@ export class FritzboxService {
     private readonly influx: InfluxService
   ) {}
 
+  latestLogEntry(): Observable<LogItem> {
+    return this.influx.findOne(`select * from log order by time desc limit 1`);
+  }
+
   login(): Observable<string> {
     return this.http.get(`http://${process.env.FRITZ_BOX_IP}/login_sid.lua`).pipe(
       map(response => response.data.match('<Challenge>(.*?)</Challenge>')[1]),
-      tap(challenge => console.log(`Retrieved challenge ${challenge}`)),
+      tap(challenge => Logger.log(`Retrieved challenge ${challenge}`)),
       filter(challenge => !!challenge),
       switchMap(challenge => {
         const buffer = Buffer.from(`${challenge}-${process.env.FRITZ_BOX_PASSWORD}`, 'utf16le');
@@ -32,23 +43,28 @@ export class FritzboxService {
         return this.http.get(`http://${process.env.FRITZ_BOX_IP}/login_sid.lua?username=${process.env.FRITZ_BOX_USER}&response=${challengeAnswer}`);
       }),
       map(response => response.data.match('<SID>(.*?)</SID>')[1]),
-      tap(sid => console.log(`Retrieved SID ${sid}`))
+      tap(sid => Logger.log(`Retrieved SID ${sid}`))
     );
   }
 
   // @Timeout(10) // testing
-  @Cron('0 55 23 * * *')
+  @Cron('0 55 23 * * *') // every day at 23:55:00
   getSystemLog(): void {
     this.login().pipe(
-      tap(() => console.log(`starting cron getSystemLog...`)),
+      tap(() => Logger.log(`starting cron getSystemLog...`)),
       switchMap(sid => this.http.post(`http://${process.env.FRITZ_BOX_IP}/data.lua`, this.createParams(sid, 'log'), FritzboxService.POST_CONFIG)),
       map(response => response.data?.data?.log),
       map(rawEntries => rawEntries.map(e => ({ date: new Date(`${this.parseDate(e[0])} ${e[1]}`), description: e[2] }))),
-      map((logItems: LogItem[]) => logItems.filter(item => isToday(item.date))), // TODO: replace by isAfter(latestTimestampFromDatabase)
+      withLatestFrom(this.latestLogEntry()),
+      map(([logItems, latestItem]: [FritzboxLogItem[], LogItem]) => {
+        const filteredItems = logItems.filter(item => isAfter(item.date, latestItem.time));
+        Logger.log(`Found ${filteredItems.length} item(s) after ${latestItem.time}`);
+        return filteredItems;
+      }),
       mergeAll(),
-      mergeMap((logItem: LogItem) => {
+      mergeMap((logItem: FritzboxLogItem) => {
         let device = '';
-        if (logItem.description.match('IP 192.168.178.[0-9+]{1,3}, MAC ([0-9A-Z]{2}:?){6}.$')) {
+        if (logItem.description.match('IP 192.168.178.[0-9+]{1,3}, MAC ([0-9A-Z]{2}:?){6}')) {
           const parts = logItem.description.split(',');
           device = parts.slice(-3)[0].trim();
         }
@@ -66,7 +82,7 @@ export class FritzboxService {
       map(response => response.data?.data?.net.devices as { type: string; name: string; classes: string; }[]), // { classes: 'led_green', type: 'WLAN - 2,4 GHz', name: 'ESP-C57040', url: '', realtimeprio: false }
       map(devices => devices.map(d => ({ type: d.type, name: d.name, status: d.classes.match('^led_green|globe_online$') ? 'ONLINE' : 'UNKNOWN' }))),
       tap(console.log)
-    ).subscribe(() => console.log('done'));
+    ).subscribe(() => Logger.log('done'));
   }
 
   private parseDate(raw: string): string {
