@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxsModule } from '@ngxs/store';
+import { TankerkoenigModule } from '../external-systems/tankerkoenig/tankerkoenig.module';
 import { MaterialModule } from '../material/material.module';
 import { PlaygroundRoutingModule } from './playground-routing.module';
 import { PlaygroundComponent } from './playground.component';
@@ -17,6 +18,7 @@ import { PlaygroundState } from './state/playground.state';
     ReactiveFormsModule,
     PlaygroundRoutingModule,
     MaterialModule,
+    TankerkoenigModule,
     NgxsModule.forFeature([PlaygroundState])
   ]
 })

@@ -1,0 +1,13 @@
+<mat-form-field *ngIf="places$ | async as places">
+  <mat-label>Ort</mat-label>
+  <mat-select [formControl]="place">
+    <mat-option value="all">ALLE</mat-option>
+    <mat-option *ngFor="let place of places" [value]="place">{{ place }}</mat-option>
+  </mat-select>
+</mat-form-field>
+<div *ngIf="prices$ | async as prices">
+  Stand: {{ prices.datetime | date:'dd.MM.yyyy HH:mm:ss' }}
+  <li *ngFor="let item of prices.prices">
+    {{ item.station.brand }} ({{ item.station.place }}): {{ item.price }}
+  </li>
+</div>

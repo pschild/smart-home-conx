@@ -36,5 +36,6 @@ export class TimeAgoPipe implements PipeTransform, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy$.next();
+    this.destroy$.complete();
   }
 }

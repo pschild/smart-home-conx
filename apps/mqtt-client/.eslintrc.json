@@ -27,7 +27,8 @@
             "prefix": "smart-home-conx",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "@typescript-eslint/no-namespace": "off"
       }
     },
     {

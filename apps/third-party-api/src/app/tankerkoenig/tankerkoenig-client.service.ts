@@ -5,6 +5,7 @@ import { forkJoin, from, Observable, of } from 'rxjs';
 import { map, mergeAll, mergeMap } from 'rxjs/operators';
 import { TankerkoenigStationService } from './station/station.service';
 import { Cache } from 'cache-manager';
+import { PricesAtDate, StationPrices } from '@smart-home-conx/api/shared/data-access/models';
 
 interface Station {
   id: string;
@@ -32,18 +33,7 @@ interface FuelPrices {
   diesel: number;
 }
 
-interface FuelPriceDetail {
-  status: 'open' | 'closed' | 'no prices';
-  e5: boolean | number;
-  e10: boolean | number;
-  diesel: boolean | number;
-}
-
 type StationDetailType = Station & OpeningTimes & FuelPrices;
-
-interface StationPrices {
-  [id: string]: FuelPriceDetail;
-}
 
 interface PricesResponse {
   prices: StationPrices;
@@ -105,7 +95,7 @@ export class TankerkoenigClient {
     );
   }
 
-  getPricesChunked(stationIds: string[]): Observable<{ datetime: Date; prices: StationPrices }> {
+  getPricesChunked(stationIds: string[]): Observable<PricesAtDate> {
     const chunk = (arr, size) => arr.reduce((acc, e, i) => (i % size ? acc[acc.length - 1].push(e) : acc.push([e]), acc), []);
 
     const chunks: string[][] = chunk(stationIds, this.MAX_CHUNK_SIZE);
@@ -121,7 +111,7 @@ export class TankerkoenigClient {
     );
 
     const cacheKey = 'prices';
-    return from(this.cacheManager.get<{ datetime: Date; prices: StationPrices }>(cacheKey)).pipe(
+    return from(this.cacheManager.get<PricesAtDate>(cacheKey)).pipe(
       mergeMap(cached => cached ? of(cached) : serverRequest$)
     );
   }

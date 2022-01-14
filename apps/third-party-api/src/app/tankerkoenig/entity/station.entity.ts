@@ -1,7 +1,8 @@
+import { StationDetailModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Column, Entity, ObjectID, ObjectIdColumn } from 'typeorm';
 
 @Entity()
-export class StationDetail {
+export class StationDetail implements StationDetailModel {
 
   @ObjectIdColumn()
   _id: ObjectID;
