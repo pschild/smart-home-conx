@@ -1,11 +1,15 @@
 import { HttpService } from '@nestjs/axios';
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression, Timeout } from '@nestjs/schedule';
-import { forkJoin, from, Observable, of } from 'rxjs';
-import { map, mergeAll, mergeMap } from 'rxjs/operators';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, Timeout } from '@nestjs/schedule';
+import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
+import { catchError, map, mergeAll, mergeMap, tap } from 'rxjs/operators';
 import { TankerkoenigStationService } from './station/station.service';
-import { Cache } from 'cache-manager';
 import { PricesAtDate, StationPrices } from '@smart-home-conx/api/shared/data-access/models';
+import { differenceInSeconds } from 'date-fns';
+import { environment } from '../../environments/environment';
+import { Client, ClientProxy, Transport } from '@nestjs/microservices';
+import { isDocker } from '@smart-home-conx/utils';
+import { AxiosResponse } from 'axios';
 
 interface Station {
   id: string;
@@ -33,17 +37,41 @@ interface FuelPrices {
   diesel: number;
 }
 
-type StationDetailType = Station & OpeningTimes & FuelPrices;
+type StationDetail = Station & OpeningTimes & FuelPrices;
 
-interface PricesResponse {
+interface TankerkoenigErrorResponse {
+  status: 'error';
+  ok: false;
+  message: string;
+}
+
+interface TankerkoenigSuccessResponse {
+  ok: true;
+  license: string;
+  data: string;
+}
+
+interface DetailResponse extends TankerkoenigSuccessResponse {
+  station: StationDetail;
+}
+
+interface ListResponse extends TankerkoenigSuccessResponse {
+  stations: Station[];
+}
+
+interface PricesResponse extends TankerkoenigSuccessResponse {
   prices: StationPrices;
 }
 
 @Injectable()
 export class TankerkoenigClient {
 
+  @Client({ transport: Transport.MQTT, options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883` } })
+  mqttClient: ClientProxy;
+
   private CACHE_TTL_SECONDS = 60 * 5;
   private MAX_CHUNK_SIZE = 10;
+  private CACHE: PricesAtDate = null;
 
   private static BASE_URL = 'https://creativecommons.tankerkoenig.de/json';
 
@@ -69,19 +97,24 @@ export class TankerkoenigClient {
 
   constructor(
     private http: HttpService,
-    private stationService: TankerkoenigStationService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
+    private stationService: TankerkoenigStationService
   ) { }
 
-  getDetail(stationId: string): Observable<StationDetailType> {
-    return this.http.get<{ station: StationDetailType }>(`${TankerkoenigClient.BASE_URL}/detail.php?id=${stationId}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
-      map(response => response.data.station)
+  getCache(): Observable<PricesAtDate> {
+    return of(this.CACHE);
+  }
+
+  getDetail(stationId: string): Observable<StationDetail> {
+    return this.http.get<DetailResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/detail.php?id=${stationId}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
+      map(response => this.handleApiError<DetailResponse>(response)),
+      map((response: DetailResponse) => response.station)
     );
   }
 
   getList(lat: number, lng: number, rad: number, fuelType: string): Observable<Station[]> {
-    return this.http.get<{ stations: Station[] }>(`${TankerkoenigClient.BASE_URL}/list.php?lat=${lat}&lng=${lng}&rad=${rad}&sort=price&type=${fuelType}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
-      map(response => response.data.stations)
+    return this.http.get<ListResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/list.php?lat=${lat}&lng=${lng}&rad=${rad}&sort=price&type=${fuelType}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
+      map(response => this.handleApiError<ListResponse>(response)),
+      map((response: ListResponse) => response.stations)
     );
   }
 
@@ -90,8 +123,26 @@ export class TankerkoenigClient {
       Logger.warn(`Tankerkoenig-API supports only up to 10 IDs at a time, given ${stationIds.length}!`);
     }
 
-    return this.http.get<PricesResponse>(`${TankerkoenigClient.BASE_URL}/prices.php?ids=${stationIds.join(',')}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
-      map(response => response.data.prices)
+    if (!environment.production) {
+      return of({
+        'abc': {
+          status: 'open',
+          e5: 1.42,
+          e10: 1.42,
+          diesel: 1.42
+        },
+        'def': {
+          status: 'open',
+          e5: 1.43,
+          e10: 1.43,
+          diesel: 1.43
+        }
+      });
+    }
+
+    return this.http.get<PricesResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/prices.php?ids=${stationIds.join(',')}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
+      map(response => this.handleApiError<PricesResponse>(response)),
+      map((response: PricesResponse) => response.prices)
     );
   }
 
@@ -107,22 +158,38 @@ export class TankerkoenigClient {
         return all;
       }),
       map((prices: StationPrices) => ({ datetime: new Date(), prices })),
-      mergeMap(result => this.cacheManager.set(cacheKey, result, { ttl: this.CACHE_TTL_SECONDS }))
+      tap(result => this.CACHE = result),
+      // tap(result => this.mqttClient.emit('third-party-api/tankerkoenig/prices/update', result))
     );
 
-    const cacheKey = 'prices';
-    return from(this.cacheManager.get<PricesAtDate>(cacheKey)).pipe(
-      mergeMap(cached => cached ? of(cached) : serverRequest$)
+    return this.CACHE && differenceInSeconds(new Date(), this.CACHE.datetime) < this.CACHE_TTL_SECONDS ? of(this.CACHE) : serverRequest$;
+  }
+
+  updatePrices(): Observable<PricesAtDate> {
+    return from(this.stationService.findAllStationIds()).pipe(
+      mergeMap((stationIds: string[]) => this.getPricesChunked(stationIds))
     );
   }
 
-  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT)
+  @Cron('0 */10 5-23 * * *') // every 10 minutes between 5:00 and 23:50
+  cron(): void {
+    Logger.log(`Running cronjob for updating prices...`);
+    this.updatePrices().pipe(
+      catchError(err => {
+        Logger.error(`Cronjob for updating prices failed: ${err}`);
+        this.mqttClient.emit('log', {source: 'third-party-api', message: `Cronjob for updating prices failed: ${err}`});
+        return EMPTY;
+      })
+    ).subscribe();
+  }
+
+  @Cron('0 3 1 * *') // every 1st day of month at 3am
   updateStations(): void {
-    Logger.log(`Running monthly update of stations...`);
+    Logger.log(`Running cronjob for updating stations...`);
     const requests$ = TankerkoenigClient.STATION_IDS_WHITELIST.map(id => this.getDetail(id));
     forkJoin(requests$).pipe(
       mergeAll(),
-      mergeMap((station: StationDetailType) => from(this.stationService.findOne(station.id)).pipe(
+      mergeMap((station: StationDetail) => from(this.stationService.findOne(station.id)).pipe(
         mergeMap(loadedStation => {
           const entity = {
             updatedAt: new Date(),
@@ -146,6 +213,22 @@ export class TankerkoenigClient {
           }
         })
       ))
-    ).subscribe();
+    ).pipe(
+      catchError(err => {
+        Logger.error(`Cronjob for updating stations failed: ${err}`);
+        this.mqttClient.emit('log', {source: 'third-party-api', message: `Cronjob for updating stations failed: ${err}`});
+        return EMPTY;
+      })
+    ).subscribe(() => {
+      this.mqttClient.emit('telegram/message', `Cronjob for updating stations executed successfully.`);
+      this.mqttClient.emit('log', {source: 'third-party-api', message: `Cronjob for updating stations executed successfully.`});
+    });
+  }
+
+  private handleApiError<R extends TankerkoenigSuccessResponse>(response: AxiosResponse<R | TankerkoenigErrorResponse>): R {
+    if (response.data.ok) {
+      return response.data as R;
+    }
+    throw new Error((response.data as TankerkoenigErrorResponse).message);
   }
 }

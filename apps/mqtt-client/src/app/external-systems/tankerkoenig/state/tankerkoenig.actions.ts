@@ -11,6 +11,7 @@ export class LoadStations {
 
 export class LoadPrices {
   static readonly type = '[Tankerkoenig] load prices';
+  constructor(public force: boolean = false) {}
 }
 
 export class SetFilter {

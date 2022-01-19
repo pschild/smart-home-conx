@@ -1,6 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
-import { from, map, mergeMap } from 'rxjs';
-import { StationDetail } from './entity/station.entity';
+import { Controller, Get, ParseBoolPipe, Query } from '@nestjs/common';
 import { TankerkoenigStationService } from './station/station.service';
 import { TankerkoenigClient } from './tankerkoenig-client.service';
 
@@ -19,10 +17,7 @@ export class TankerkoenigController {
   }
 
   @Get('prices')
-  getPrices() {
-    return from(this.stationService.findAll()).pipe(
-      map((stations: StationDetail[]) => stations.map(s => s.id)),
-      mergeMap((stationIds: string[]) => this.tankerkoenigClient.getPricesChunked(stationIds))
-    );
+  getPrice(@Query('force', ParseBoolPipe) force: boolean) {
+    return force ? this.tankerkoenigClient.updatePrices() : this.tankerkoenigClient.getCache();
   }
 }

@@ -5,6 +5,9 @@
     <mat-option *ngFor="let place of places" [value]="place">{{ place }}</mat-option>
   </mat-select>
 </mat-form-field>
+<button mat-icon-button (click)="forceUpdate()">
+  <mat-icon>refresh</mat-icon>
+</button>
 <div *ngIf="prices$ | async as prices">
   Stand: {{ prices.datetime | date:'dd.MM.yyyy HH:mm:ss' }}
   <li *ngFor="let item of prices.prices">

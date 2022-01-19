@@ -14,8 +14,8 @@ export class TankerkoenigHttpService {
     return this.httpClient.get<StationDetailModel[]>(`third-party-api/tankerkoenig/stations`);
   }
 
-  loadPrices(): Observable<PricesAtDate> {
-    return this.httpClient.get<PricesAtDate>(`third-party-api/tankerkoenig/prices`);
+  loadPrices(force: boolean = false): Observable<PricesAtDate> {
+    return this.httpClient.get<PricesAtDate>(`third-party-api/tankerkoenig/prices?force=${force}`);
   }
 
 }

@@ -70,8 +70,8 @@ export class TankerkoenigState implements NgxsOnInit {
   }
 
   @Action(TankerkoenigActions.LoadPrices)
-  loadPrices(ctx: StateContext<TankerkoenigStateModel>) {
-    return this.tankerkoenigHttpService.loadPrices().pipe(
+  loadPrices(ctx: StateContext<TankerkoenigStateModel>, action: TankerkoenigActions.LoadPrices) {
+    return this.tankerkoenigHttpService.loadPrices(action.force).pipe(
       tap(prices => ctx.patchState({ prices }))
     );
   }

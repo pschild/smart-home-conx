@@ -36,6 +36,10 @@ export class PricesComponent implements OnInit, OnDestroy {
     ).subscribe(place => this.store.dispatch(new TankerkoenigActions.SetFilter({ place })));
   }
 
+  forceUpdate(): void {
+    this.store.dispatch(new TankerkoenigActions.LoadPrices(true));
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();

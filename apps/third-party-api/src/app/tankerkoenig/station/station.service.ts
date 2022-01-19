@@ -20,6 +20,10 @@ export class TankerkoenigStationService {
     return this.repository.find();
   }
 
+  findAllStationIds(): Promise<string[]> {
+    return this.findAll().then((stations: StationDetail[]) => stations.map(station => station.id));
+  }
+
   findOne(stationId: string): Promise<StationDetail> {
     return this.repository.findOne({ id: stationId });
   }
