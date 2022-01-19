@@ -11,6 +11,7 @@ export interface DeviceModel {
   chipId: number;
   place: string;
   batteryPowered: boolean;
+  expectedPingInterval: number;
   connectionStatus: ConnectionStatus;
   connectionStatusChangedAt: Date;
   lastPing: Date;

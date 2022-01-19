@@ -16,6 +16,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatMenuModule } from '@angular/material/menu';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const materialModules = [
   MatButtonModule,
@@ -33,7 +34,8 @@ const materialModules = [
   MatNativeDateModule,
   MatTabsModule,
   MatSlideToggleModule,
-  MatMenuModule
+  MatMenuModule,
+  MatTooltipModule
 ];
 
 const cdkModules = [

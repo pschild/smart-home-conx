@@ -30,4 +30,9 @@ export class CreateDeviceDto {
   @IsBoolean()
   readonly batteryPowered: boolean;
 
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  readonly expectedPingInterval: number;
+
 }

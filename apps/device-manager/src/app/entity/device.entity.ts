@@ -31,6 +31,9 @@ export class Device implements DeviceModel {
   @Column()
   batteryPowered: boolean;
 
+  @Column()
+  expectedPingInterval: number;
+
   @Column({ type: 'enum', enum: ConnectionStatus })
   connectionStatus: ConnectionStatus;
 

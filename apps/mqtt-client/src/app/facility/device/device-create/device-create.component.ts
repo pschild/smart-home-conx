@@ -37,6 +37,7 @@ export class DeviceCreateComponent implements OnInit {
       pioEnv: ['', Validators.required],
       chipId: ['', Validators.required],
       batteryPowered: false,
+      expectedPingInterval: 0,
       createdAt: { value: '', disabled: true }
     });
 

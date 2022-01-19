@@ -40,6 +40,14 @@
       <mat-label>Chip-ID</mat-label>
       <input matInput type="number" placeholder="Chip-ID" formControlName="chipId" required>
     </mat-form-field>
+    <mat-form-field>
+      <mat-label>Ping-Interval</mat-label>
+      <input matInput type="number" placeholder="1" formControlName="expectedPingInterval">
+      <span matSuffix>
+        Minuten
+        <mat-icon matTooltip="Ein Überschreiten des Intervals führt zu Warnungen" matTooltipPosition="left">info</mat-icon>
+      </span>
+    </mat-form-field>
     <mat-checkbox formControlName="batteryPowered">Batteriebetrieb</mat-checkbox>
   </form>
 </div>
