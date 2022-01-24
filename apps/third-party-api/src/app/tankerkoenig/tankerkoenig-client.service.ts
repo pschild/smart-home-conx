@@ -1,77 +1,20 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger } from '@nestjs/common';
-import { Cron, Timeout } from '@nestjs/schedule';
-import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, map, mergeAll, mergeMap, tap } from 'rxjs/operators';
-import { TankerkoenigStationService } from './station/station.service';
+import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { PricesAtDate, StationPrices } from '@smart-home-conx/api/shared/data-access/models';
-import { differenceInSeconds } from 'date-fns';
-import { environment } from '../../environments/environment';
-import { Client, ClientProxy, Transport } from '@nestjs/microservices';
-import { isDocker } from '@smart-home-conx/utils';
 import { AxiosResponse } from 'axios';
-
-interface Station {
-  id: string;
-  name: string;
-  brand: string;
-  street: string;
-  houseNumber: string;
-  postCode: number;
-  place: string;
-  lat: number;
-  lng: number;
-  dist: number;
-  price: number;
-  isOpen: true;
-}
-
-interface OpeningTimes {
-  openingTimes: { text: string; start: string; end: string; }[];
-  wholeDay: boolean;
-}
-
-interface FuelPrices {
-  e5: number;
-  e10: number;
-  diesel: number;
-}
-
-type StationDetail = Station & OpeningTimes & FuelPrices;
-
-interface TankerkoenigErrorResponse {
-  status: 'error';
-  ok: false;
-  message: string;
-}
-
-interface TankerkoenigSuccessResponse {
-  ok: true;
-  license: string;
-  data: string;
-}
-
-interface DetailResponse extends TankerkoenigSuccessResponse {
-  station: StationDetail;
-}
-
-interface ListResponse extends TankerkoenigSuccessResponse {
-  stations: Station[];
-}
-
-interface PricesResponse extends TankerkoenigSuccessResponse {
-  prices: StationPrices;
-}
+import { Cache } from 'cache-manager';
+import { forkJoin, from, Observable, of } from 'rxjs';
+import { map, mergeAll, mergeMap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { DetailResponse, ListResponse, PricesResponse, Station, StationDetail, TankerkoenigErrorResponse, TankerkoenigSuccessResponse } from './model/tankerkoenig-response.model';
+import { TankerkoenigStationService } from './station/station.service';
 
 @Injectable()
 export class TankerkoenigClient {
 
-  @Client({ transport: Transport.MQTT, options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883` } })
-  mqttClient: ClientProxy;
-
+  private CACHE_KEY = 'TankerkoenigClient.getPrices';
   private CACHE_TTL_SECONDS = 60 * 5;
   private MAX_CHUNK_SIZE = 10;
-  private CACHE: PricesAtDate = null;
 
   private static BASE_URL = 'https://creativecommons.tankerkoenig.de/json';
 
@@ -97,97 +40,13 @@ export class TankerkoenigClient {
 
   constructor(
     private http: HttpService,
-    private stationService: TankerkoenigStationService
+    private stationService: TankerkoenigStationService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) { }
 
-  getCache(): Observable<PricesAtDate> {
-    return of(this.CACHE);
-  }
-
-  getDetail(stationId: string): Observable<StationDetail> {
-    return this.http.get<DetailResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/detail.php?id=${stationId}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
-      map(response => this.handleApiError<DetailResponse>(response)),
-      map((response: DetailResponse) => response.station)
-    );
-  }
-
-  getList(lat: number, lng: number, rad: number, fuelType: string): Observable<Station[]> {
-    return this.http.get<ListResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/list.php?lat=${lat}&lng=${lng}&rad=${rad}&sort=price&type=${fuelType}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
-      map(response => this.handleApiError<ListResponse>(response)),
-      map((response: ListResponse) => response.stations)
-    );
-  }
-
-  getPrices(stationIds: string[]): Observable<StationPrices> {
-    if (stationIds.length > 10) {
-      Logger.warn(`Tankerkoenig-API supports only up to 10 IDs at a time, given ${stationIds.length}!`);
-    }
-
-    if (!environment.production) {
-      return of({
-        'abc': {
-          status: 'open',
-          e5: 1.42,
-          e10: 1.42,
-          diesel: 1.42
-        },
-        'def': {
-          status: 'open',
-          e5: 1.43,
-          e10: 1.43,
-          diesel: 1.43
-        }
-      });
-    }
-
-    return this.http.get<PricesResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/prices.php?ids=${stationIds.join(',')}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
-      map(response => this.handleApiError<PricesResponse>(response)),
-      map((response: PricesResponse) => response.prices)
-    );
-  }
-
-  getPricesChunked(stationIds: string[]): Observable<PricesAtDate> {
-    const chunk = (arr, size) => arr.reduce((acc, e, i) => (i % size ? acc[acc.length - 1].push(e) : acc.push([e]), acc), []);
-
-    const chunks: string[][] = chunk(stationIds, this.MAX_CHUNK_SIZE);
-    const requests$ = chunks.map((stationIds: string[]) => this.getPrices(stationIds));
-    const serverRequest$ = forkJoin(requests$).pipe(
-      map((responses: StationPrices[]) => {
-        const all = {};
-        responses.forEach(res => Object.keys(res).forEach(key => all[key] = res[key]));
-        return all;
-      }),
-      map((prices: StationPrices) => ({ datetime: new Date(), prices })),
-      tap(result => this.CACHE = result),
-      // tap(result => this.mqttClient.emit('third-party-api/tankerkoenig/prices/update', result))
-    );
-
-    return this.CACHE && differenceInSeconds(new Date(), this.CACHE.datetime) < this.CACHE_TTL_SECONDS ? of(this.CACHE) : serverRequest$;
-  }
-
-  updatePrices(): Observable<PricesAtDate> {
-    return from(this.stationService.findAllStationIds()).pipe(
-      mergeMap((stationIds: string[]) => this.getPricesChunked(stationIds))
-    );
-  }
-
-  @Cron('0 */10 5-23 * * *') // every 10 minutes between 5:00 and 23:50
-  cron(): void {
-    Logger.log(`Running cronjob for updating prices...`);
-    this.updatePrices().pipe(
-      catchError(err => {
-        Logger.error(`Cronjob for updating prices failed: ${err}`);
-        this.mqttClient.emit('log', {source: 'third-party-api', message: `Cronjob for updating prices failed: ${err}`});
-        return EMPTY;
-      })
-    ).subscribe();
-  }
-
-  @Cron('0 3 1 * *') // every 1st day of month at 3am
-  updateStations(): void {
-    Logger.log(`Running cronjob for updating stations...`);
+  updateStations(): Observable<any> {
     const requests$ = TankerkoenigClient.STATION_IDS_WHITELIST.map(id => this.getDetail(id));
-    forkJoin(requests$).pipe(
+    return forkJoin(requests$).pipe(
       mergeAll(),
       mergeMap((station: StationDetail) => from(this.stationService.findOne(station.id)).pipe(
         mergeMap(loadedStation => {
@@ -213,16 +72,73 @@ export class TankerkoenigClient {
           }
         })
       ))
-    ).pipe(
-      catchError(err => {
-        Logger.error(`Cronjob for updating stations failed: ${err}`);
-        this.mqttClient.emit('log', {source: 'third-party-api', message: `Cronjob for updating stations failed: ${err}`});
-        return EMPTY;
-      })
-    ).subscribe(() => {
-      this.mqttClient.emit('telegram/message', `Cronjob for updating stations executed successfully.`);
-      this.mqttClient.emit('log', {source: 'third-party-api', message: `Cronjob for updating stations executed successfully.`});
-    });
+    );
+  }
+
+  getPricesCached(): Observable<PricesAtDate> {
+    return from(this.cacheManager.get<PricesAtDate>(this.CACHE_KEY)).pipe(
+      mergeMap(response => response ? of(response) : this.getPricesChunked())
+    );
+  }
+
+  private getPricesChunked(): Observable<PricesAtDate> {
+    const chunk = (arr, size) => arr.reduce((acc, e, i) => (i % size ? acc[acc.length - 1].push(e) : acc.push([e]), acc), []);
+
+    return from(this.stationService.findAllStationIds()).pipe(
+      mergeMap((stationIds: string[]) => {
+        const chunks: string[][] = chunk(stationIds, this.MAX_CHUNK_SIZE);
+        return forkJoin(chunks.map((stationIds: string[]) => this.getPrices(stationIds)));
+      }),
+      map((responses: StationPrices[]) => {
+        const all = {};
+        responses.forEach(res => Object.keys(res).forEach(key => all[key] = res[key]));
+        return all;
+      }),
+      map((prices: StationPrices) => ({ datetime: new Date(), prices })),
+      mergeMap((response: PricesAtDate) => this.cacheManager.set(this.CACHE_KEY, response, { ttl: this.CACHE_TTL_SECONDS }))
+    );
+  }
+
+  private getDetail(stationId: string): Observable<StationDetail> {
+    return this.http.get<DetailResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/detail.php?id=${stationId}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
+      map(response => this.handleApiError<DetailResponse>(response)),
+      map((response: DetailResponse) => response.station)
+    );
+  }
+
+  private getList(lat: number, lng: number, rad: number, fuelType: string): Observable<Station[]> {
+    return this.http.get<ListResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/list.php?lat=${lat}&lng=${lng}&rad=${rad}&sort=price&type=${fuelType}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
+      map(response => this.handleApiError<ListResponse>(response)),
+      map((response: ListResponse) => response.stations)
+    );
+  }
+
+  private getPrices(stationIds: string[]): Observable<StationPrices> {
+    if (stationIds.length > 10) {
+      Logger.warn(`Tankerkoenig-API supports only up to 10 IDs at a time, given ${stationIds.length}!`);
+    }
+
+    if (!environment.production) {
+      return of({
+        'abc': {
+          status: 'open',
+          e5: 1.42,
+          e10: 1.42,
+          diesel: 1.42
+        },
+        'def': {
+          status: 'open',
+          e5: 1.43,
+          e10: 1.43,
+          diesel: 1.43
+        }
+      });
+    }
+
+    return this.http.get<PricesResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/prices.php?ids=${stationIds.join(',')}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(
+      map(response => this.handleApiError<PricesResponse>(response)),
+      map((response: PricesResponse) => response.prices)
+    );
   }
 
   private handleApiError<R extends TankerkoenigSuccessResponse>(response: AxiosResponse<R | TankerkoenigErrorResponse>): R {

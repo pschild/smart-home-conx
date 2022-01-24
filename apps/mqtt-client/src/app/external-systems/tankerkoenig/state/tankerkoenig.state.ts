@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { PricesAtDate, StationDetailModel } from '@smart-home-conx/api/shared/data-access/models';
 import { tap } from 'rxjs/operators';
+import { EventMqttService } from '../../../event-mqtt.service';
 import { TankerkoenigHttpService } from './tankerkoenig-http.service';
 import * as TankerkoenigActions from './tankerkoenig.actions';
 
@@ -54,12 +55,15 @@ export class TankerkoenigState implements NgxsOnInit {
   }
 
   constructor(
-    private tankerkoenigHttpService: TankerkoenigHttpService
+    private tankerkoenigHttpService: TankerkoenigHttpService,
+    private eventMqttService: EventMqttService
   ) {}
 
   ngxsOnInit(ctx?: StateContext<any>): void {
     console.log('ngxsOnInit tankerkoenig.state');
     ctx.dispatch(new TankerkoenigActions.LoadStations());
+
+    this.eventMqttService.observe(`third-party-api/tankerkoenig`).subscribe(payload => console.log(`fuel prices were updated`, payload.toString()));
   }
 
   @Action(TankerkoenigActions.LoadStations)
@@ -70,8 +74,8 @@ export class TankerkoenigState implements NgxsOnInit {
   }
 
   @Action(TankerkoenigActions.LoadPrices)
-  loadPrices(ctx: StateContext<TankerkoenigStateModel>, action: TankerkoenigActions.LoadPrices) {
-    return this.tankerkoenigHttpService.loadPrices(action.force).pipe(
+  loadPrices(ctx: StateContext<TankerkoenigStateModel>) {
+    return this.tankerkoenigHttpService.loadPrices().pipe(
       tap(prices => ctx.patchState({ prices }))
     );
   }

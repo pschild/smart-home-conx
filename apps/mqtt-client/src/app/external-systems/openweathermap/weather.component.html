@@ -1,0 +1,48 @@
+<button mat-icon-button (click)="refresh()" [disabled]="(refreshable$ | async) === false">
+  <mat-icon>refresh</mat-icon>
+</button>
+<div *ngIf="weather$ | async as weather">
+  Stand: {{weather.current.datetime | date:'dd.MM.yyyy HH:mm:ss'}} ({{weather.current.datetime | timeAgo:'vor' | async}})
+  <h2>{{weather.current.weather.description}} ({{weather.current.temp}}°C, {{weather.current.humidity}}%)</h2>
+
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Die nächste Stunde</mat-panel-title>
+      </mat-expansion-panel-header>
+      <ul>
+        <ng-container *ngFor="let minute of weather.forecast.minutely">
+          <li *ngIf="minute.precipitationProbability > 0">
+            <strong>{{minute.datetime | date:'HH:mm'}}</strong>
+            &nbsp;
+            <span>{{minute.precipitationProbability | percent}}</span>
+          </li>
+        </ng-container>
+      </ul>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Die nächsten 48 Stunden</mat-panel-title>
+      </mat-expansion-panel-header>
+      <ul>
+        <li *ngFor="let hour of weather.forecast.hourly">
+          <strong>{{hour.datetime | date:'dd.MM. HH:mm'}}</strong>
+          &nbsp;
+          <span>{{hour.weather.description}} ({{hour.temp}}°C, {{hour.humidity}}%<span *ngIf="hour.precipitationProbability > 0">, Niederschlagswahrscheinlichkeit {{hour.precipitationProbability | percent}}</span>)</span>
+        </li>
+      </ul>
+    </mat-expansion-panel>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>Die nächsten 7 Tage</mat-panel-title>
+      </mat-expansion-panel-header>
+      <ul>
+        <li *ngFor="let day of weather.forecast.daily">
+          <strong>{{day.datetime | date:'EEE'}}</strong>
+          &nbsp;
+          <span>{{day.weather.description}} ({{day.temp.day}}°C, {{day.humidity}}%<span *ngIf="day.precipitationProbability > 0">, Niederschlagswahrscheinlichkeit {{day.precipitationProbability | percent}}</span>)</span>
+        </li>
+      </ul>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

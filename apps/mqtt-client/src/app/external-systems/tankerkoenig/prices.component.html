@@ -5,11 +5,11 @@
     <mat-option *ngFor="let place of places" [value]="place">{{ place }}</mat-option>
   </mat-select>
 </mat-form-field>
-<button mat-icon-button (click)="forceUpdate()">
+<button mat-icon-button (click)="refresh()" [disabled]="(refreshable$ | async) === false">
   <mat-icon>refresh</mat-icon>
 </button>
 <div *ngIf="prices$ | async as prices">
-  Stand: {{ prices.datetime | date:'dd.MM.yyyy HH:mm:ss' }}
+  Stand: {{prices.datetime | date:'dd.MM.yyyy HH:mm:ss'}} ({{prices.datetime | timeAgo:'vor' | async}})
   <li *ngFor="let item of prices.prices">
     {{ item.station.brand }} ({{ item.station.place }}): {{ item.price }}
   </li>
