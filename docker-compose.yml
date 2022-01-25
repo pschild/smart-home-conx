@@ -92,6 +92,15 @@ services:
       - 9102:9102
     restart: always
 
+  notification-manager:
+    image: localhost:5000/notification-manager:latest
+    container_name: notification-manager
+    depends_on:
+      - mongodb
+    ports:
+      - 9112:9112
+    restart: always
+
   mqtt-client:
     image: localhost:5000/mqtt-client:latest
     container_name: mqtt-client

@@ -126,6 +126,18 @@ services:
       - 9102:9102
     restart: always
 
+  notification-manager:
+    image: notification-manager
+    build:
+      context: .
+      dockerfile: apps/notification-manager/Dockerfile
+    container_name: notification-manager
+    depends_on:
+      - mongodb
+    ports:
+      - 9112:9112
+    restart: always
+
   mqtt-client:
     image: mqtt-client
     build:

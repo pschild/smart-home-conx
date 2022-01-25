@@ -554,6 +554,58 @@
       },
       "tags": []
     },
+    "notification-manager": {
+      "root": "apps/notification-manager",
+      "sourceRoot": "apps/notification-manager/src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/notification-manager",
+            "main": "apps/notification-manager/src/main.ts",
+            "tsConfig": "apps/notification-manager/tsconfig.app.json",
+            "assets": ["apps/notification-manager/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/notification-manager/src/environments/environment.ts",
+                  "with": "apps/notification-manager/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "notification-manager:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/notification-manager/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/notification-manager"],
+          "options": {
+            "jestConfig": "apps/notification-manager/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "ota-server": {
       "root": "apps/ota-server",
       "sourceRoot": "apps/ota-server/src",
