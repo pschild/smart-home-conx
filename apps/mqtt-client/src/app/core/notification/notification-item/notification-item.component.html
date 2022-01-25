@@ -1,0 +1,21 @@
+<mat-card (click)="$event.stopPropagation();" [ngClass]="{
+  'priority-high': notification.priority === Priority.HIGH,
+  'priority-medium': notification.priority === Priority.MEDIUM,
+  'priority-low': notification.priority === Priority.LOW
+}">
+  <mat-card-title>{{notification.title}}</mat-card-title>
+  <mat-card-subtitle>
+    <div>Erstellt: {{notification.createdAt | date:'dd.MM.yyyy HH:mm'}} Uhr</div>
+    <div *ngIf="notification.autoRemoveAfter">
+      <mat-icon inline="true">auto_delete</mat-icon> {{notification.autoRemoveAfter | date:'dd.MM.yyyy HH:mm'}} Uhr
+    </div>
+  </mat-card-subtitle>
+  <mat-card-content>
+    <p>{{notification.message}}</p>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <button mat-icon-button color="accent" (click)="done(notification._id)">
+      <mat-icon>done</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

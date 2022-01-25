@@ -33,7 +33,7 @@ export class OpenWeatherMapState implements NgxsOnInit {
 
   ngxsOnInit(ctx?: StateContext<any>): void {
     console.log('ngxsOnInit openweathermap.state');
-    this.eventMqttService.observe(`third-party-api/openweathermap`).subscribe(payload => console.log(`weather was updated`, payload.toString()));
+    this.eventMqttService.observe(`third-party-api/openweathermap`).subscribe(res => console.log(`weather was updated`, JSON.parse(res.payload.toString()).data));
   }
 
   @Action(OpenWeatherMapActions.OneCall)

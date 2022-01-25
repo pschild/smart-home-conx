@@ -1,8 +1,9 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { Client, ClientProxy, Transport } from '@nestjs/microservices';
 import { Cron } from '@nestjs/schedule';
-import { OneCallResponse } from '@smart-home-conx/api/shared/data-access/models';
+import { OneCallResponse, NotificationModelUtil, NotificationContext } from '@smart-home-conx/api/shared/data-access/models';
 import { isDocker } from '@smart-home-conx/utils';
+import { addMinutes } from 'date-fns';
 import { EMPTY, from, Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { OpenWeatherMapClient } from './open-weather-map-client.service';
@@ -31,7 +32,13 @@ export class OpenWeatherMapController {
   cron(): void {
     Logger.log(`Running cronjob for updating weather...`);
     this.openWeatherMapClient.oneCallCached().pipe(
-      tap(response => this.mqttClient.emit('third-party-api/openweathermap', response)),
+      tap(response => {
+        this.mqttClient.emit('third-party-api/openweathermap', response);
+        this.mqttClient.emit(
+          'notification-manager/notification/create',
+          NotificationModelUtil.createLowPriority(NotificationContext.WEATHER, 'Neues Wetter', response.current.weather[0].description)
+        );
+      }),
       catchError(err => {
         Logger.error(`Cronjob for updating weather failed: ${err}`);
         this.mqttClient.emit('log', {source: 'third-party-api', message: `Cronjob for updating weather failed: ${err}`});

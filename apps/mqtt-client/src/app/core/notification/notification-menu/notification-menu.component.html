@@ -1,0 +1,11 @@
+<ng-container *ngIf="notifications$ | async as notifications">
+  <button mat-icon-button [matMenuTriggerFor]="notificationMenu">
+    <mat-icon *ngIf="notifications.length > 0" [matBadge]="notifications.length" matBadgeColor="warn">notifications</mat-icon>
+    <mat-icon *ngIf="notifications.length === 0">notifications</mat-icon>
+  </button>
+  <mat-menu #notificationMenu="matMenu">
+    <h2>Benachrichtigungen</h2>
+    <smart-home-conx-notification-list *ngIf="notifications.length > 0"></smart-home-conx-notification-list>
+    <p *ngIf="notifications.length === 0">Keine Benachrichtigungen</p>
+  </mat-menu>
+</ng-container>

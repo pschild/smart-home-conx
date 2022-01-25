@@ -1,0 +1,15 @@
+mat-card {
+  margin: 10px;
+
+  &.priority-high {
+    border-top: 4px solid rgb(185, 0, 0);
+  }
+
+  &.priority-medium {
+    border-top: 4px solid rgb(255, 208, 0);
+  }
+
+  &.priority-low {
+    border-top: 4px solid rgb(205, 255, 207);
+  }
+}

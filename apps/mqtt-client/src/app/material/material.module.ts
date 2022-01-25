@@ -18,6 +18,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatBadgeModule } from '@angular/material/badge';
 
 const materialModules = [
   MatButtonModule,
@@ -37,7 +38,8 @@ const materialModules = [
   MatSlideToggleModule,
   MatMenuModule,
   MatTooltipModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatBadgeModule
 ];
 
 const cdkModules = [

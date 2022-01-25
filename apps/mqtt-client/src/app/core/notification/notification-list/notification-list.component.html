@@ -1,0 +1,6 @@
+<ng-container *ngIf="notifications$ | async as notifications">
+  <button mat-icon-button color="accent" (click)="$event.stopPropagation(); doneAll();">
+    <mat-icon>done_all</mat-icon>
+  </button>
+  <smart-home-conx-notification-item *ngFor="let notification of notifications" [notification]="notification"></smart-home-conx-notification-item>
+</ng-container>

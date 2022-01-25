@@ -5,6 +5,7 @@ import { bufferTime, filter, mergeMap, tap, throttleTime } from 'rxjs/operators'
 import { MotionSensorService } from './motion-sensor.service';
 import { isDocker, log } from '@smart-home-conx/utils';
 import { InfluxService } from '@smart-home-conx/influx';
+import { NotificationContext, NotificationModelUtil } from '@smart-home-conx/api/shared/data-access/models';
 
 @Controller('movement')
 export class MotionSensorController {
@@ -23,6 +24,10 @@ export class MotionSensorController {
       filter(events => events.length >= 10), // send warning if trigger count is greater than 10 within checked period
     ).subscribe(events => {
       this.mqttClient.emit('telegram/message', `Bewegungsmelder zu oft ausgelöst (${events.length}x)!`);
+      this.mqttClient.emit(
+        'notification-manager/notification/create',
+        NotificationModelUtil.createHighPriority(NotificationContext.SENSOR, 'Bewegungsmelder', `Bewegungsmelder zu oft ausgelöst (${events.length}x)!`)
+      );
 
       log(`PIR sensor triggered ${events.length}x within 1 min`);
       this.mqttClient.emit('log', {source: 'sensor-connector', message: `[ESP_7888034] PIR sensor triggered ${events.length}x within 1 min`});

@@ -63,7 +63,7 @@ export class TankerkoenigState implements NgxsOnInit {
     console.log('ngxsOnInit tankerkoenig.state');
     ctx.dispatch(new TankerkoenigActions.LoadStations());
 
-    this.eventMqttService.observe(`third-party-api/tankerkoenig`).subscribe(payload => console.log(`fuel prices were updated`, payload.toString()));
+    this.eventMqttService.observe(`third-party-api/tankerkoenig`).subscribe(res => console.log(`fuel prices were updated`, JSON.parse(res.payload.toString()).data));
   }
 
   @Action(TankerkoenigActions.LoadStations)

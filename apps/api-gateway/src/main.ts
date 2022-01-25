@@ -53,6 +53,10 @@ const routes = [
   {
     route: `/third-party-api`,
     address: isDocker() ? `http://third-party-api:9102` : `http://localhost:9102`
+  },
+  {
+    route: `/notification-manager`,
+    address: isDocker() ? `http://notification-manager:9112` : `http://localhost:9112`
   }
 ];
 

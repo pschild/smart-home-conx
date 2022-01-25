@@ -16,6 +16,7 @@ import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { GatewayInterceptor } from './gateway.interceptor';
 import { AuthState } from './auth/state/auth.state';
+import { NotificationModule } from './core/notification/notification.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -41,6 +42,7 @@ import { AuthState } from './auth/state/auth.state';
     }),
     NgxsLoggerPluginModule.forRoot({disabled: true}),
     NgxsReduxDevtoolsPluginModule.forRoot({disabled: /* environment.production */false}),
+    NotificationModule
   ],
   providers: [
     {
