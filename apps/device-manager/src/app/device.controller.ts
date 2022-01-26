@@ -79,7 +79,13 @@ export class DeviceController {
   async onPing(@Payload() payload: string, @Ctx() context: MqttContext) {
     const chipId = this.parseChipId(context.getTopic());
     const device = await this.deviceService.findByChipId(chipId);
-    this.updateDevice(device, { lastPing: new Date() });
+
+    let dto: Partial<UpdateDeviceDto> = { lastPing: new Date() };
+    if (device.connectionStatus === ConnectionStatus.OFFLINE) {
+      this.mqttClient.emit('log', {source: 'device-manager', message: `ESP_${chipId}: Automatically changed connection status to ONLINE because of receiving ping`});
+      dto = { ...dto, connectionStatus: ConnectionStatus.ONLINE };
+    }
+    this.updateDevice(device, dto);
   }
 
   private updateDevice(device: Device, dto: Partial<UpdateDeviceDto>): void {

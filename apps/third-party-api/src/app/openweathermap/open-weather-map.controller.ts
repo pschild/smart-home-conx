@@ -3,7 +3,6 @@ import { Client, ClientProxy, Transport } from '@nestjs/microservices';
 import { Cron } from '@nestjs/schedule';
 import { OneCallResponse, NotificationModelUtil, NotificationContext } from '@smart-home-conx/api/shared/data-access/models';
 import { isDocker } from '@smart-home-conx/utils';
-import { addMinutes } from 'date-fns';
 import { EMPTY, from, Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { OpenWeatherMapClient } from './open-weather-map-client.service';

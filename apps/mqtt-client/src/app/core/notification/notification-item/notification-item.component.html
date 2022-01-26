@@ -14,7 +14,7 @@
     <p>{{notification.message}}</p>
   </mat-card-content>
   <mat-card-actions align="end">
-    <button mat-icon-button color="accent" (click)="done(notification._id)">
+    <button mat-icon-button color="accent" (click)="done(notification._id.toString())">
       <mat-icon>done</mat-icon>
     </button>
   </mat-card-actions>
