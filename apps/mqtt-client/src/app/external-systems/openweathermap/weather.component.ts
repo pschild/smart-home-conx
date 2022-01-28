@@ -10,7 +10,7 @@ import { OpenWeatherMapState } from './state/openweathermap.state';
 @Component({
   selector: 'smart-home-conx-openweathermap-weather',
   templateUrl: './weather.component.html',
-  styles: []
+  styleUrls: ['./weather.component.scss']
 })
 export class WeatherComponent implements OnInit, OnDestroy {
 
@@ -20,6 +20,9 @@ export class WeatherComponent implements OnInit, OnDestroy {
 
   @Select(OpenWeatherMapState.weather)
   weather$: Observable<OneCallResponse>;
+
+  @Select(OpenWeatherMapState.precipitationWithinNextHour)
+  precipitationWithinNextHour$: Observable<boolean>;
 
   constructor(
     private store: Store

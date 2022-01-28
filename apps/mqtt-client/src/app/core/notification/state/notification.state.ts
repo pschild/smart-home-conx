@@ -5,6 +5,7 @@ import { NotificationModel } from '@smart-home-conx/api/shared/data-access/model
 import { tap } from 'rxjs/operators';
 import { EventMqttService } from '../../../event-mqtt.service';
 import { NotificationHttpService } from './notification-http.service';
+import { NotificationStateUtil } from './notification-state.util';
 import * as NotificationActions from './notification.actions';
 
 export const NOTIFICATION_STATE_NAME = new StateToken<NotificationStateModel>('notification');
@@ -24,7 +25,7 @@ export class NotificationState implements NgxsOnInit {
 
   @Selector()
   static notifications(state: NotificationStateModel) {
-    return state.notifications;
+    return state.notifications.sort(NotificationStateUtil.sortByPriorityAndCreatedAt);
   }
 
   constructor(

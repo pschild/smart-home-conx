@@ -9,6 +9,9 @@ import { environment } from '../../environments/environment';
 import { DetailResponse, ListResponse, PricesResponse, Station, StationDetail, TankerkoenigErrorResponse, TankerkoenigSuccessResponse } from './model/tankerkoenig-response.model';
 import { TankerkoenigStationService } from './station/station.service';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const getPricesMockData = require('./mock/getPrices.json');
+
 @Injectable()
 export class TankerkoenigClient {
 
@@ -119,20 +122,7 @@ export class TankerkoenigClient {
     }
 
     if (!environment.production) {
-      return of({
-        'abc': {
-          status: 'open',
-          e5: 1.42,
-          e10: 1.42,
-          diesel: 1.42
-        },
-        'def': {
-          status: 'open',
-          e5: 1.43,
-          e10: 1.43,
-          diesel: 1.43
-        }
-      });
+      return of(getPricesMockData as StationPrices);
     }
 
     return this.http.get<PricesResponse | TankerkoenigErrorResponse>(`${TankerkoenigClient.BASE_URL}/prices.php?ids=${stationIds.join(',')}&apikey=${process.env.TANKERKOENIG_API_KEY}`).pipe(

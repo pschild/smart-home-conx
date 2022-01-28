@@ -4,7 +4,11 @@ import { AxiosResponse } from 'axios';
 import { Cache } from 'cache-manager';
 import { from, Observable, of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { OpenWeatherMapOneCallResponse } from './model/open-weather-map-response.model';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const oneCallMockData = require('./mock/oneCall.json');
 
 /**
  * One Call API: https://openweathermap.org/api/one-call-api#parameter
@@ -29,6 +33,10 @@ export class OpenWeatherMapClient {
   }
 
   private oneCall(): Observable<OpenWeatherMapOneCallResponse> {
+    if (!environment.production) {
+      return of(oneCallMockData);
+    }
+
     return this.http.get<OpenWeatherMapOneCallResponse>(`${OpenWeatherMapClient.BASE_URL}/onecall?lat=${process.env.HOME_POSITION_LAT}&lon=${process.env.HOME_POSITION_LON}&appid=${process.env.OPEN_WEATHER_MAP_APP_ID}&units=metric&lang=de`).pipe(
       map((response: AxiosResponse<OpenWeatherMapOneCallResponse>) => response.data),
       mergeMap((response: OpenWeatherMapOneCallResponse) => this.cacheManager.set(this.CACHE_KEY, response, { ttl: this.CACHE_TTL_SECONDS }))

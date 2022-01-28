@@ -26,6 +26,11 @@ export class OpenWeatherMapState implements NgxsOnInit {
     return state.weather;
   }
 
+  @Selector()
+  static precipitationWithinNextHour(state: OpenWeatherMapStateModel): boolean {
+    return state.weather.forecast.minutely?.some(entry => !!entry.precipitation);
+  }
+
   constructor(
     private openWeatherMapHttpService: OpenWeatherMapHttpService,
     private eventMqttService: EventMqttService

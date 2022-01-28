@@ -23,6 +23,11 @@ export class NotificationService {
     return this.repository.findOne(notificationId);
   }
 
+  findByCriteria(criteria: Partial<Notification>): Promise<Notification> {
+    const { context, title, message, priority } = criteria;
+    return this.repository.findOne({ where: { context, title, message, priority } });
+  }
+
   update(notificationId: string, updateNotificationDto: UpdateNotificationDto): Promise<UpdateResult> {
     return this.repository.update(notificationId, updateNotificationDto);
   }

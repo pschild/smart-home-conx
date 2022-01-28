@@ -1,0 +1,19 @@
+.horizontal-wrapper {
+  display: flex;
+
+  .weather-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 250px;
+    padding: 10px;
+
+    .date-with-time-container {
+      display: flex;
+      align-items: baseline;
+
+      h2 {
+        margin-left: 5px;
+      }
+    }
+  }
+}

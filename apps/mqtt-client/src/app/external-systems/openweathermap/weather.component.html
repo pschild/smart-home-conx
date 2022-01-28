@@ -3,46 +3,46 @@
 </button>
 <div *ngIf="weather$ | async as weather">
   Stand: {{weather.current.datetime | date:'dd.MM.yyyy HH:mm:ss'}} ({{weather.current.datetime | timeAgo:'vor' | async}})
-  <h2>{{weather.current.weather.description}} ({{weather.current.temp}}°C, {{weather.current.humidity}}%)</h2>
+  <h2>{{weather.current.weather.description}}</h2>
+  <div>{{weather.current.temp}}°C, {{weather.current.humidity}}%</div>
 
-  <mat-accordion>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Die nächste Stunde</mat-panel-title>
-      </mat-expansion-panel-header>
-      <ul>
+  <mat-tab-group>
+    <mat-tab>
+      <ng-template mat-tab-label>1h</ng-template>
+      <div class="horizontal-wrapper" *ngIf="(precipitationWithinNextHour$ | async) === true; else noPrecipitation">
         <ng-container *ngFor="let minute of weather.forecast.minutely">
-          <li *ngIf="minute.precipitationProbability > 0">
-            <strong>{{minute.datetime | date:'HH:mm'}}</strong>
-            &nbsp;
-            <span>{{minute.precipitationProbability | percent}}</span>
-          </li>
+          <div class="weather-item" *ngIf="minute.precipitation > 0">
+            <h2>{{minute.datetime | date:'HH:mm'}} Uhr</h2>
+            <div>{{minute.precipitation}}mm</div>
+          </div>
         </ng-container>
-      </ul>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Die nächsten 48 Stunden</mat-panel-title>
-      </mat-expansion-panel-header>
-      <ul>
-        <li *ngFor="let hour of weather.forecast.hourly">
-          <strong>{{hour.datetime | date:'dd.MM. HH:mm'}}</strong>
-          &nbsp;
-          <span>{{hour.weather.description}} ({{hour.temp}}°C, {{hour.humidity}}%<span *ngIf="hour.precipitationProbability > 0">, Niederschlagswahrscheinlichkeit {{hour.precipitationProbability | percent}}</span>)</span>
-        </li>
-      </ul>
-    </mat-expansion-panel>
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>Die nächsten 7 Tage</mat-panel-title>
-      </mat-expansion-panel-header>
-      <ul>
-        <li *ngFor="let day of weather.forecast.daily">
-          <strong>{{day.datetime | date:'EEE'}}</strong>
-          &nbsp;
-          <span>{{day.weather.description}} ({{day.temp.day}}°C, {{day.humidity}}%<span *ngIf="day.precipitationProbability > 0">, Niederschlagswahrscheinlichkeit {{day.precipitationProbability | percent}}</span>)</span>
-        </li>
-      </ul>
-    </mat-expansion-panel>
-  </mat-accordion>
+      </div>
+      <ng-template #noPrecipitation>Kein Niederschlag erwartet.</ng-template>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>48h</ng-template>
+      <div class="horizontal-wrapper">
+        <div class="weather-item" *ngFor="let hour of weather.forecast.hourly">
+          <div class="date-with-time-container">
+            <div>{{hour.datetime | date:'dd.MM.'}}</div>
+            <h2>{{hour.datetime | date:'HH:mm'}} Uhr</h2>
+          </div>
+          <div>{{hour.weather.description}}</div>
+          <div>{{hour.temp}}°C, {{hour.humidity}}%</div>
+          <div *ngIf="hour.precipitationProbability > 0">{{hour.precipitationProbability | percent}} Niederschlagswahrscheinlichkeit</div>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>1w</ng-template>
+      <div class="horizontal-wrapper">
+        <div class="weather-item" *ngFor="let day of weather.forecast.daily">
+          <h2>{{day.datetime | date:'EEE'}}</h2>
+          <h3>{{day.weather.description}}</h3>
+          <div>{{day.temp.day}}°C, {{day.humidity}}%</div>
+          <div *ngIf="day.precipitationProbability > 0">{{day.precipitationProbability | percent}} Niederschlagswahrscheinlichkeit</div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

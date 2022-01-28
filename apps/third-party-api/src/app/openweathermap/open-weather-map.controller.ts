@@ -1,8 +1,9 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 import { Client, ClientProxy, Transport } from '@nestjs/microservices';
-import { Cron } from '@nestjs/schedule';
+import { Cron, Timeout } from '@nestjs/schedule';
 import { OneCallResponse, NotificationModelUtil, NotificationContext } from '@smart-home-conx/api/shared/data-access/models';
 import { isDocker } from '@smart-home-conx/utils';
+import { format } from 'date-fns';
 import { EMPTY, from, Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { OpenWeatherMapClient } from './open-weather-map-client.service';
@@ -37,6 +38,20 @@ export class OpenWeatherMapController {
           'notification-manager/notification/create',
           NotificationModelUtil.createLowPriority(NotificationContext.WEATHER, 'Neues Wetter', response.current.weather[0].description)
         );
+
+        if (response.alerts) {
+          response.alerts.forEach(alert => {
+            this.mqttClient.emit(
+              'notification-manager/notification/create',
+              NotificationModelUtil.createHighPriority(
+                NotificationContext.WEATHER,
+                `Wetter-Warnung: ${alert.sender_name}`,
+                `${alert.description} (${format(new Date(alert.start * 1000), 'dd.MM. HH:mm')} bis ${format(new Date(alert.end * 1000), 'dd.MM. HH:mm')})`,
+                new Date(alert.end * 1000)
+              )
+            );
+          });
+        }
       }),
       catchError(err => {
         Logger.error(`Cronjob for updating weather failed: ${err}`);
