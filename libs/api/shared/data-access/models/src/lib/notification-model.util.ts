@@ -11,8 +11,8 @@ const DEFAULT_SHORT_EXPIRATION = 5;
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace NotificationModelUtil {
 
-  export function create(context: string, title: string, message: string, priority?: Priority, autoRemoveAfter?: Date): Partial<NotificationModel> {
-    return { context, title, message, priority: priority || Priority.HIGH, autoRemoveAfter };
+  export function create(context: string, reference: string, title: string, message: string, priority?: Priority, autoRemoveAfter?: Date): Partial<NotificationModel> {
+    return { context, reference, title, message, priority: priority || Priority.HIGH, autoRemoveAfter };
   }
 
   export function createSticky(context: string, title: string, message: string, priority?: Priority): Partial<NotificationModel> {

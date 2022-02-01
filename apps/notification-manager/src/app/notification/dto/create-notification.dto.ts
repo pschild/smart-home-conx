@@ -7,6 +7,10 @@ export class CreateNotificationDto {
   @IsString()
   readonly context: string;
 
+  @IsOptional()
+  @IsString()
+  readonly reference?: string;
+
   @IsNotEmpty()
   @IsString()
   readonly title: string;

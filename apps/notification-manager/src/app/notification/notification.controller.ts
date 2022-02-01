@@ -48,12 +48,13 @@ export class NotificationController {
   }
 
   @MessagePattern('notification-manager/notification/create')
-  createNotification(@Payload() payload: { context: string; title: string; message: string, priority?: Priority, autoRemoveAfter?: Date }) {
+  createNotification(@Payload() payload: { context: string; reference: string; title: string; message: string, priority?: Priority, autoRemoveAfter?: Date }) {
     return from(this.notificationService.findByCriteria(payload)).pipe(
       tap(found => found && Logger.warn(`Found notification with id ${found._id} attributes: ${JSON.stringify(payload)}. Skipping creation.`)),
       filter(found => !found),
       mergeMap(() => from(this.notificationService.create({
         context: payload.context,
+        reference: payload.reference,
         title: payload.title,
         message: payload.message,
         priority: payload.priority || Priority.LOW,
@@ -65,10 +66,22 @@ export class NotificationController {
 
   // @Timeout(100)
   // test(): void {
-  //   this.mqttClient.emit('notification-manager/notification/create', NotificationModelUtil.create('test', `title Test-${(new Date()).toISOString()}`, `message Test-${(new Date()).toISOString()}`, Priority.LOW, addHours(new Date(), 1)));
-  //   setTimeout(() => this.mqttClient.emit('notification-manager/notification/create', NotificationModelUtil.create('test', `title Test-${(new Date()).toISOString()}`, `message Test-${(new Date()).toISOString()}`, Priority.LOW, addHours(new Date(), 1))), 2000);
-  //   setTimeout(() => this.mqttClient.emit('notification-manager/notification/create', NotificationModelUtil.create('test', `title Test-${(new Date()).toISOString()}`, `message Test-${(new Date()).toISOString()}`, Priority.MEDIUM, addHours(new Date(), 1))), 4000);
-  //   setTimeout(() => this.mqttClient.emit('notification-manager/notification/create', NotificationModelUtil.create('test', `title Test-${(new Date()).toISOString()}`, `message Test-${(new Date()).toISOString()}`, Priority.HIGH, addHours(new Date(), 3))), 6000);
+    // this.mqttClient.emit('notification-manager/notification/create', NotificationModelUtil.create('test', `title Test-${(new Date()).toISOString()}`, `message Test-${(new Date()).toISOString()}`, Priority.LOW, addHours(new Date(), 1)));
+    // setTimeout(() => this.mqttClient.emit('notification-manager/notification/create', NotificationModelUtil.create('test', `title Test-${(new Date()).toISOString()}`, `message Test-${(new Date()).toISOString()}`, Priority.LOW, addHours(new Date(), 1))), 2000);
+    // setTimeout(() => this.mqttClient.emit('notification-manager/notification/create', NotificationModelUtil.create('test', `title Test-${(new Date()).toISOString()}`, `message Test-${(new Date()).toISOString()}`, Priority.MEDIUM, addHours(new Date(), 1))), 4000);
+    // setTimeout(() => this.mqttClient.emit('notification-manager/notification/create', NotificationModelUtil.create('test', `title Test-${(new Date()).toISOString()}`, `message Test-${(new Date()).toISOString()}`, Priority.HIGH, addHours(new Date(), 3))), 6000);
+    
+    // this.mqttClient.emit(
+    //   'notification-manager/notification/create',
+    //   NotificationModelUtil.create(
+    //     'test',
+    //     'scdkjn45cdkjer33cn',
+    //     `title Test-${(new Date()).toISOString()}`,
+    //     `message Test-${(new Date()).toISOString()}`,
+    //     Priority.LOW,
+    //     addHours(new Date(), 1)
+    //   )
+    // );
   // }
 
   // @Interval(10000)

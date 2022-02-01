@@ -14,6 +14,9 @@ export class Notification implements NotificationModel {
   context: string;
 
   @Column()
+  reference: string;
+
+  @Column()
   title: string;
 
   @Column()
