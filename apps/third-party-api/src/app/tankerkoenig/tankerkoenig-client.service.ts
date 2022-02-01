@@ -4,9 +4,11 @@ import { PricesAtDate, StationPrices } from '@smart-home-conx/api/shared/data-ac
 import { AxiosResponse } from 'axios';
 import { Cache } from 'cache-manager';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { map, mergeAll, mergeMap } from 'rxjs/operators';
+import { map, mergeAll, mergeMap, toArray } from 'rxjs/operators';
+import { UpdateResult } from 'typeorm';
 import { environment } from '../../environments/environment';
 import { DetailResponse, ListResponse, PricesResponse, Station, StationDetail, TankerkoenigErrorResponse, TankerkoenigSuccessResponse } from './model/tankerkoenig-response.model';
+import { StationDetail as StationDetailEntity } from './entity/station.entity';
 import { TankerkoenigStationService } from './station/station.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -47,7 +49,7 @@ export class TankerkoenigClient {
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) { }
 
-  updateStations(): Observable<any> {
+  updateStations(): Observable<(StationDetailEntity | UpdateResult)[]> {
     const requests$ = TankerkoenigClient.STATION_IDS_WHITELIST.map(id => this.getDetail(id));
     return forkJoin(requests$).pipe(
       mergeAll(),
@@ -74,7 +76,8 @@ export class TankerkoenigClient {
             return from(this.stationService.update(loadedStation._id, entity));
           }
         })
-      ))
+      )),
+      toArray()
     );
   }
 
@@ -85,6 +88,7 @@ export class TankerkoenigClient {
   }
 
   private getPricesChunked(): Observable<PricesAtDate> {
+    // TODO: Umbau auf bufferCount(10) statt chunk
     const chunk = (arr, size) => arr.reduce((acc, e, i) => (i % size ? acc[acc.length - 1].push(e) : acc.push([e]), acc), []);
 
     return from(this.stationService.findAllStationIds()).pipe(
