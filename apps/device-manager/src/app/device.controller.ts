@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices';
-import { ConnectionStatus } from '@smart-home-conx/api/shared/data-access/models';
+import { ConnectionStatus, NotificationContext, NotificationModelUtil } from '@smart-home-conx/api/shared/data-access/models';
 import { isDocker } from '@smart-home-conx/utils';
+import { differenceInMinutes } from 'date-fns';
 import { DeviceService } from './device.service';
 import { CreateDeviceDto, UpdateDeviceDto } from './dto';
 import { Device } from './entity/device.entity';
@@ -79,6 +80,18 @@ export class DeviceController {
   async onPing(@Payload() payload: string, @Ctx() context: MqttContext) {
     const chipId = this.parseChipId(context.getTopic());
     const device = await this.deviceService.findByChipId(chipId);
+
+    if (
+      device.expectedPingInterval
+      && device.lastPing
+      && differenceInMinutes(new Date(), new Date(device.lastPing)) > device.expectedPingInterval
+    ) {
+      this.mqttClient.emit('log', {source: 'device-manager', message: `ESP_${chipId}: Received ping later than expected (expected interval: ${device.expectedPingInterval}min)`});
+      this.mqttClient.emit(
+        'notification-manager/notification/create',
+        NotificationModelUtil.createHighPriority(NotificationContext.DEVICE, 'Ping-Interval', `ESP_${chipId}: Ping zu spät erhalten. Ist: ${differenceInMinutes(new Date(), new Date(device.lastPing))}min, Soll: ${device.expectedPingInterval}min`)
+      );
+    }
 
     let dto: Partial<UpdateDeviceDto> = { lastPing: new Date() };
     if (device.connectionStatus === ConnectionStatus.OFFLINE) {
