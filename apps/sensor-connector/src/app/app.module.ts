@@ -7,6 +7,7 @@ import { FieldType } from 'influx';
 import { InfluxModule } from '@smart-home-conx/influx';
 import { isDocker } from '@smart-home-conx/utils';
 import { VoltageController } from './voltage/voltage.controller';
+import { VentilationController } from './ventilation.controller';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { VoltageController } from './voltage/voltage.controller';
       ]
     })
   ],
-  controllers: [MotionSensorController, TemperatureSensorController, HumiditySensorController, VoltageController],
+  controllers: [MotionSensorController, TemperatureSensorController, HumiditySensorController, VoltageController, VentilationController],
   providers: [MotionSensorService],
 })
 export class AppModule {}

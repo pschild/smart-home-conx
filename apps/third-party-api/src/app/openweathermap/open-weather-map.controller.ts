@@ -1,7 +1,7 @@
 import { Controller, Get, Logger } from '@nestjs/common';
-import { Client, ClientProxy, Transport } from '@nestjs/microservices';
+import { Client, ClientProxy, MessagePattern, Transport } from '@nestjs/microservices';
 import { Cron, Timeout } from '@nestjs/schedule';
-import { OneCallResponse, NotificationModelUtil, NotificationContext } from '@smart-home-conx/api/shared/data-access/models';
+import { OneCallResponse, NotificationModelUtil, NotificationContext, WeatherDataResponse } from '@smart-home-conx/api/shared/data-access/models';
 import { isDocker } from '@smart-home-conx/utils';
 import { format } from 'date-fns';
 import { EMPTY, from, Observable } from 'rxjs';
@@ -25,6 +25,13 @@ export class OpenWeatherMapController {
   getOneCall(): Observable<OneCallResponse> {
     return from(this.openWeatherMapClient.oneCallCached()).pipe(
       map(response => this.mapper.mapToResponse(response))
+    );
+  }
+
+  @MessagePattern('currentWeather')
+  getCurrentWeather(): Observable<WeatherDataResponse> {
+    return this.getOneCall().pipe(
+      map(response => response.current)
     );
   }
 

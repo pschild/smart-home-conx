@@ -12,6 +12,10 @@ async function bootstrap() {
   const port = 9102;
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice({
+    transport: Transport.TCP,
+    options: { host: isDocker() ? 'third-party-api' : 'localhost', retryAttempts: 5, retryDelay: 3000 } // do not specify the port because that leads to EADDRINUSE error when running in docker container
+  });
+  app.connectMicroservice({
     transport: Transport.MQTT,
     options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883`, clientId: 'third-party-api' }
   });
