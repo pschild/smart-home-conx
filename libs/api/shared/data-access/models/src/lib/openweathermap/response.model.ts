@@ -13,7 +13,7 @@ export interface WeatherDataResponse {
   temp: number | { min: number; max: number; day: number; night: number };
   humidity: number;
   clouds: number;
-  weather: { id: number; description: string; };
+  weather: { id: number; description: string; icon: string; };
 }
 
 interface AlertResponse {

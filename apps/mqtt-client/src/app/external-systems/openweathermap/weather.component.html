@@ -2,19 +2,32 @@
   <mat-icon>refresh</mat-icon>
 </button>
 <div *ngIf="weather$ | async as weather">
-  Stand: {{weather.current.datetime | date:'dd.MM.yyyy HH:mm:ss'}} ({{weather.current.datetime | timeAgo:'vor' | async}})
-  <h2>{{weather.current.weather.description}}</h2>
-  <div>{{weather.current.temp}}°C, {{weather.current.humidity}}%</div>
+  <div>Stand: {{weather.current.datetime | date:'dd.MM.yyyy HH:mm:ss'}}</div>
+  <mat-card>
+    <mat-card-title>{{weather.current.datetime | timeAgo:'vor' | async}}</mat-card-title>
+    <mat-card-content>
+      <div class="description-row">
+        <img [src]="'https://openweathermap.org/img/wn/' + weather.current.weather.icon + '.png'" />
+        <div>{{weather.current.weather.description}}</div>
+      </div>
+      <div class="temperature-humidity-container">
+        <div><mat-icon svgIcon="temperature"></mat-icon>{{weather.current.temp}}°C</div>
+        <div><mat-icon svgIcon="humidity"></mat-icon>{{weather.current.humidity}}%</div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
   <mat-tab-group>
     <mat-tab>
       <ng-template mat-tab-label>1h</ng-template>
       <div class="horizontal-wrapper" *ngIf="(precipitationWithinNextHour$ | async) === true; else noPrecipitation">
         <ng-container *ngFor="let minute of weather.forecast.minutely">
-          <div class="weather-item" *ngIf="minute.precipitation > 0">
-            <h2>{{minute.datetime | date:'HH:mm'}} Uhr</h2>
-            <div>{{minute.precipitation}}mm</div>
-          </div>
+          <mat-card class="weather-item" *ngIf="minute.precipitation > 0">
+            <mat-card-title>{{minute.datetime | date:'HH:mm'}} Uhr</mat-card-title>
+            <mat-card-content>
+              <div>{{minute.precipitation}}mm</div>
+            </mat-card-content>
+          </mat-card>
         </ng-container>
       </div>
       <ng-template #noPrecipitation>Kein Niederschlag erwartet.</ng-template>
@@ -22,26 +35,44 @@
     <mat-tab>
       <ng-template mat-tab-label>48h</ng-template>
       <div class="horizontal-wrapper">
-        <div class="weather-item" *ngFor="let hour of weather.forecast.hourly">
-          <div class="date-with-time-container">
-            <div>{{hour.datetime | date:'dd.MM.'}}</div>
-            <h2>{{hour.datetime | date:'HH:mm'}} Uhr</h2>
-          </div>
-          <div>{{hour.weather.description}}</div>
-          <div>{{hour.temp}}°C, {{hour.humidity}}%</div>
-          <div *ngIf="hour.precipitationProbability > 0">{{hour.precipitationProbability | percent}} Niederschlagswahrscheinlichkeit</div>
-        </div>
+        <mat-card class="weather-item" *ngFor="let hour of weather.forecast.hourly">
+          <mat-card-title>
+            <div class="date-with-time-container">
+              <small>{{hour.datetime | date:'dd.MM.'}}</small>
+              <div>{{hour.datetime | date:'HH:mm'}} Uhr</div>
+            </div>
+          </mat-card-title>
+          <mat-card-content>
+            <div class="description-row">
+              <img [src]="'https://openweathermap.org/img/wn/' + hour.weather.icon + '.png'" />
+              <div>{{hour.weather.description}}</div>
+            </div>
+            <div class="temperature-humidity-container">
+              <div><mat-icon svgIcon="temperature"></mat-icon>{{hour.temp}}°C</div>
+              <div><mat-icon svgIcon="humidity"></mat-icon>{{hour.humidity}}%</div>
+              <div *ngIf="hour.precipitationProbability > 0"><mat-icon svgIcon="precipitation_probability"></mat-icon>{{hour.precipitationProbability | percent}}</div>
+            </div>
+          </mat-card-content>
+        </mat-card>
       </div>
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>1w</ng-template>
       <div class="horizontal-wrapper">
-        <div class="weather-item" *ngFor="let day of weather.forecast.daily">
-          <h2>{{day.datetime | date:'EEE'}}</h2>
-          <h3>{{day.weather.description}}</h3>
-          <div>{{day.temp.day}}°C, {{day.humidity}}%</div>
-          <div *ngIf="day.precipitationProbability > 0">{{day.precipitationProbability | percent}} Niederschlagswahrscheinlichkeit</div>
-        </div>
+        <mat-card class="weather-item" *ngFor="let day of weather.forecast.daily">
+          <mat-card-title>{{day.datetime | date:'EEEE'}}</mat-card-title>
+          <mat-card-content>
+            <div class="description-row">
+              <img [src]="'https://openweathermap.org/img/wn/' + day.weather.icon + '.png'" />
+              <div>{{day.weather.description}}</div>
+            </div>
+            <div class="temperature-humidity-container">
+              <div><mat-icon svgIcon="temperature"></mat-icon>{{day.temp.day}}°C</div>
+              <div><mat-icon svgIcon="humidity"></mat-icon>{{day.humidity}}%</div>
+              <div *ngIf="day.precipitationProbability > 0"><mat-icon svgIcon="precipitation_probability"></mat-icon>{{day.precipitationProbability | percent}}</div>
+            </div>
+          </mat-card-content>
+        </mat-card>
       </div>
     </mat-tab>
   </mat-tab-group>

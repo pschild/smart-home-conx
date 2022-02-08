@@ -6,6 +6,7 @@
     flex-direction: column;
     min-width: 250px;
     padding: 10px;
+    margin: 10px;
 
     .date-with-time-container {
       display: flex;
@@ -14,6 +15,25 @@
       h2 {
         margin-left: 5px;
       }
+    }
+  }
+}
+
+mat-card {
+  display: inline-block;
+
+  .description-row {
+    display: flex;
+    align-items: center;
+  }
+  
+  .temperature-humidity-container {
+    display: flex;
+  
+    & > div {
+      display: flex;
+      align-items: flex-end;
+      margin-right: 10px;
     }
   }
 }

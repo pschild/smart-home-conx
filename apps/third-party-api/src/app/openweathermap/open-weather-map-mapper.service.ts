@@ -25,7 +25,8 @@ export class OpenWeatherMapMapper {
       clouds: weatherData.clouds,
       weather: {
         id: weatherData.weather[0]?.id,
-        description: weatherData.weather[0]?.description
+        description: weatherData.weather[0]?.description,
+        icon: weatherData.weather[0]?.icon
       },
     };
   }
