@@ -67,15 +67,31 @@ export class VentilationController {
     ).subscribe(data => {
       const wassergehaltLuftInnen = this.wassergehaltLuft(data.inside.temp.value, data.inside.hum.value);
       const wassergehaltLuftAussen = this.wassergehaltLuft(data.outside.temp, data.outside.hum);
-      if (wassergehaltLuftInnen > wassergehaltLuftAussen) {
+
+      /**
+       * Empfehlungen
+       * ------------
+       * Badezimmer 20-23°C 50-70%
+       * Kinderzimmer 20-23°C 40-60%
+       * Wohnzimmer 20-23°C 40-60%
+       * Arbeitszimmer 20-23°C 40-60%
+       * Kueche 18-20°C 50-60%
+       * Schlafzimmer 17-20°C 40-60%
+       * Flur 15-18°C 40-60%
+       * Keller 10-15°C 50-65%
+       */
+
+      if (data.inside.hum.value > 60) {
+        this.mqttClient.emit(
+          'notification-manager/notification/create',
+          NotificationModelUtil.createHighPriority(NotificationContext.WEATHER, `Zu hohe Luftfeuchtigkeit`, `Die Luftfeuchtigkeit ist zu hoch: ${data.inside.hum.value}`)
+        );
+      }
+
+      if (wassergehaltLuftInnen / wassergehaltLuftAussen >= 1.3) {
         this.mqttClient.emit(
           'notification-manager/notification/create',
           NotificationModelUtil.createMediumPriority(NotificationContext.WEATHER, `Lüften!`, `Lüften lohnt sich!\nInnen: ${data.inside.temp.value}°C/${data.inside.hum.value}% => ${wassergehaltLuftInnen}g/m³\nAußen: ${data.outside.temp}°C/${data.outside.hum}% => ${wassergehaltLuftAussen}g/m³`)
-        );
-      } else {
-        this.mqttClient.emit(
-          'notification-manager/notification/create',
-          NotificationModelUtil.createMediumPriority(NotificationContext.WEATHER, `Nicht lüften!`, `Lüften lohnt sich NICHT!\nInnen: ${data.inside.temp.value}°C/${data.inside.hum.value}% => ${wassergehaltLuftInnen}g/m³\nAußen: ${data.outside.temp}°C/${data.outside.hum}% => ${wassergehaltLuftAussen}g/m³`)
         );
       }
     });

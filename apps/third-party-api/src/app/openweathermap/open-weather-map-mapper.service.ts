@@ -9,9 +9,9 @@ export class OpenWeatherMapMapper {
     return {
       current: this.mapWeather(response.current),
       forecast: {
-        minutely: response.minutely.map(e => ({ datetime: new Date(e.dt * 1000), precipitation: e.precipitation })),
-        hourly: response.hourly.map(e => ({ ...this.mapWeather(e), precipitationProbability: e.pop, rain: this.getValueForLastHour(e.rain), snow: this.getValueForLastHour(e.snow) })),
-        daily: response.daily.map(e => ({ ...this.mapWeather(e), precipitationProbability: e.pop, rain: e.rain, snow: e.snow })),
+        minutely: response.minutely?.map(e => ({ datetime: new Date(e.dt * 1000), precipitation: e.precipitation })),
+        hourly: response.hourly?.map(e => ({ ...this.mapWeather(e), precipitationProbability: e.pop, rain: this.getValueForLastHour(e.rain), snow: this.getValueForLastHour(e.snow) })),
+        daily: response.daily?.map(e => ({ ...this.mapWeather(e), precipitationProbability: e.pop, rain: e.rain, snow: e.snow })),
       },
       alerts: response.alerts
     };

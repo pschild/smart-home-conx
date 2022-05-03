@@ -57,8 +57,8 @@ export class FritzboxService {
       map(rawEntries => rawEntries.map(e => ({ date: new Date(`${this.parseDate(e[0])} ${e[1]}`), description: e[2] }))),
       withLatestFrom(this.latestLogEntry()),
       map(([logItems, latestItem]: [FritzboxLogItem[], LogItem]) => {
-        const filteredItems = logItems.filter(item => isAfter(item.date, latestItem.time));
-        Logger.log(`Found ${filteredItems.length} item(s) after ${latestItem.time}`);
+        const filteredItems = logItems.filter(item => !latestItem || isAfter(item.date, latestItem.time));
+        Logger.log(`Found ${filteredItems.length} item(s) after ${latestItem?.time}`);
         return filteredItems;
       }),
       mergeAll(),
