@@ -6,6 +6,7 @@ import { Controls, NgxSubFormComponent, subformComponentProviders } from 'ngx-su
 @Component({
   selector: 'smart-home-conx-movement-detail-create',
   templateUrl: 'movement-detail-create.component.html',
+  styleUrls: ['movement-detail-create.component.scss'],
   providers: subformComponentProviders(MovementDetailCreateComponent),
 })
 export class MovementDetailCreateComponent extends NgxSubFormComponent<MovementSensorDetailModel> {
@@ -13,6 +14,23 @@ export class MovementDetailCreateComponent extends NgxSubFormComponent<MovementS
   protected getFormControls(): Controls<MovementSensorDetailModel> {
     return {
       lockTime: new FormControl(null),
+      warningEnabled: new FormControl(null),
+    };
+  }
+
+  protected transformToFormGroup(obj: MovementSensorDetailModel, defaultValues: Partial<MovementSensorDetailModel>): MovementSensorDetailModel {
+    if (!obj) {
+      return null;
+    }
+    return {
+      lockTime: obj.lockTime || null,
+      warningEnabled: obj.warningEnabled || null,
+    };
+  }
+
+  protected getDefaultValues(): Partial<MovementSensorDetailModel> | null {
+    return {
+      warningEnabled: false
     };
   }
 

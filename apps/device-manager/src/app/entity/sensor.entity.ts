@@ -14,6 +14,9 @@ export class Sensor implements SensorModel {
   type: SensorType;
 
   @Column()
+  name: string;
+
+  @Column()
   chipId: number;
 
   @Column()

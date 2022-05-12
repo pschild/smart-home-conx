@@ -1,16 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { HumiditySensorDetailModel } from '@smart-home-conx/api/shared/data-access/models';
+import { VoltageSensorDetailModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Controls, NgxSubFormComponent, subformComponentProviders } from 'ngx-sub-form';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'smart-home-conx-humidity-detail-create',
-  templateUrl: 'humidity-detail-create.component.html',
-  styleUrls: ['humidity-detail-create.component.scss'],
-  providers: subformComponentProviders(HumidityDetailCreateComponent),
+  selector: 'smart-home-conx-voltage-detail-create',
+  templateUrl: 'voltage-detail-create.component.html',
+  styleUrls: ['voltage-detail-create.component.scss'],
+  providers: subformComponentProviders(VoltageDetailCreateComponent),
 })
-export class HumidityDetailCreateComponent extends NgxSubFormComponent<HumiditySensorDetailModel> implements OnInit, OnDestroy {
+export class VoltageDetailCreateComponent extends NgxSubFormComponent<VoltageSensorDetailModel> implements OnInit, OnDestroy {
 
   destroy$ = new Subject<void>();
 
@@ -25,28 +25,26 @@ export class HumidityDetailCreateComponent extends NgxSubFormComponent<HumidityS
     });
   }
 
-  protected getFormControls(): Controls<HumiditySensorDetailModel> {
+  protected getFormControls(): Controls<VoltageSensorDetailModel> {
     return {
-      aberrance: new FormControl(null),
       warningEnabled: new FormControl(null),
       warningCriteria: new FormControl(null),
       warningLimit: new FormControl(null),
     };
   }
 
-  protected transformToFormGroup(obj: HumiditySensorDetailModel, defaultValues: Partial<HumiditySensorDetailModel>): HumiditySensorDetailModel {
+  protected transformToFormGroup(obj: VoltageSensorDetailModel, defaultValues: Partial<VoltageSensorDetailModel>): VoltageSensorDetailModel {
     if (!obj) {
       return null;
     }
     return {
-      aberrance: obj.aberrance || null,
       warningEnabled: obj.warningEnabled || null,
       warningCriteria: obj.warningCriteria || null,
       warningLimit: obj.warningLimit || null,
     };
   }
 
-  protected getDefaultValues(): Partial<HumiditySensorDetailModel> | null {
+  protected getDefaultValues(): Partial<VoltageSensorDetailModel> | null {
     return {
       warningEnabled: false,
     };

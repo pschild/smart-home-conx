@@ -4,4 +4,5 @@
     <input matInput type="number" placeholder="Sperrzeit" [formControlName]="formControlNames.lockTime">
     <div matSuffix>Sek.</div>
   </mat-form-field>
+  <mat-checkbox [formControlName]="formControlNames.warningEnabled">Warnen bei Bewegung</mat-checkbox>
 </form>

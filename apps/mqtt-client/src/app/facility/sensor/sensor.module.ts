@@ -14,6 +14,8 @@ import { CoreModule } from '../../core/core.module';
 import { TemperatureDetailCreateComponent } from './sensor-create/temperature-detail-create/temperature-detail-create.component';
 import { HumidityDetailCreateComponent } from './sensor-create/humidity-detail-create/humidity-detail-create.component';
 import { MovementDetailCreateComponent } from './sensor-create/movement-detail-create/movement-detail-create.component';
+import { VoltageDetailCreateComponent } from './sensor-create/voltage-detail-create/voltage-detail-create.component';
+import { SwitchDetailCreateComponent } from './sensor-create/switch-detail-create/switch-detail-create.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { MovementDetailCreateComponent } from './sensor-create/movement-detail-c
     TemperatureDetailCreateComponent,
     HumidityDetailCreateComponent,
     MovementDetailCreateComponent,
+    VoltageDetailCreateComponent,
+    SwitchDetailCreateComponent,
     SensorComponent,
     RoomComponent,
     UnassignedSensorsComponent,

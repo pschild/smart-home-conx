@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -30,6 +31,7 @@ const materialModules = [
   MatSelectModule,
   MatToolbarModule,
   MatCheckboxModule,
+  MatRadioModule,
   MatProgressSpinnerModule,
   MatProgressBarModule,
   MatDialogModule,

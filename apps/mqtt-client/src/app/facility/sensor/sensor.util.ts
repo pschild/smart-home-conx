@@ -11,6 +11,25 @@ export namespace SensorUtil {
         return 'battery_charging_full';
       case SensorType.MOVEMENT:
         return 'settings_input_antenna';
+      case SensorType.SWITCH:
+        return 'toggle_on';
+      default:
+        throw new Error(`Unknown sensor type "${type}"!`);
+    }
+  }
+
+  export function getIconCodeByType(type: SensorType): string {
+    switch (type) {
+      case SensorType.TEMPERATURE:
+        return '\uf076';
+      case SensorType.HUMIDITY:
+        return '\uf203';
+      case SensorType.VOLTAGE:
+        return '\ue1a3';
+      case SensorType.MOVEMENT:
+        return '\ue8bf';
+      case SensorType.SWITCH:
+        return '\ue9f6';
       default:
         throw new Error(`Unknown sensor type "${type}"!`);
     }
@@ -26,6 +45,8 @@ export namespace SensorUtil {
         return 'Batterie';
       case SensorType.MOVEMENT:
         return 'Bewegungsmelder';
+      case SensorType.SWITCH:
+        return 'Schalter';
       default:
         throw new Error(`Unknown sensor type "${type}"!`);
     }
@@ -40,6 +61,7 @@ export namespace SensorUtil {
       case SensorType.VOLTAGE:
         return 'V';
       case SensorType.MOVEMENT:
+      case SensorType.SWITCH:
         return null;
       default:
         throw new Error(`Unknown sensor type "${type}"!`);

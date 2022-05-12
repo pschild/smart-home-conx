@@ -41,10 +41,6 @@ export class OpenWeatherMapController {
     this.openWeatherMapClient.oneCallCached().pipe(
       tap(response => {
         this.mqttClient.emit('third-party-api/openweathermap', response);
-        this.mqttClient.emit(
-          'notification-manager/notification/create',
-          NotificationModelUtil.createLowPriority(NotificationContext.WEATHER, 'Neues Wetter', response.current.weather[0].description)
-        );
 
         if (response.alerts) {
           response.alerts.forEach(alert => {

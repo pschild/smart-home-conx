@@ -18,6 +18,10 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput placeholder="Name" [formControlName]="formControlNames.name">
+    </mat-form-field>
+    <mat-form-field>
       <mat-label>Chip-ID</mat-label>
       <mat-select [formControlName]="formControlNames.chipId" required>
         <mat-option *ngFor="let option of espOptions$ | async" [value]="option.chipId">{{option.chipId}} ({{option.model}}, {{option.description}})</mat-option>
@@ -31,6 +35,8 @@
       <smart-home-conx-temperature-detail-create *ngSwitchCase="SensorType.TEMPERATURE" [formControlName]="formControlNames.details"></smart-home-conx-temperature-detail-create>
       <smart-home-conx-humidity-detail-create *ngSwitchCase="SensorType.HUMIDITY" [formControlName]="formControlNames.details"></smart-home-conx-humidity-detail-create>
       <smart-home-conx-movement-detail-create *ngSwitchCase="SensorType.MOVEMENT" [formControlName]="formControlNames.details"></smart-home-conx-movement-detail-create>
+      <smart-home-conx-voltage-detail-create *ngSwitchCase="SensorType.VOLTAGE" [formControlName]="formControlNames.details"></smart-home-conx-voltage-detail-create>
+      <smart-home-conx-switch-detail-create *ngSwitchCase="SensorType.SWITCH" [formControlName]="formControlNames.details"></smart-home-conx-switch-detail-create>
     </div>
   </form>
 </div>

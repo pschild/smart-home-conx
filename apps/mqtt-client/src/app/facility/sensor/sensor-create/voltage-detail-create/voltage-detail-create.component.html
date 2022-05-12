@@ -1,9 +1,4 @@
 <form [formGroup]="formGroup">
-  <mat-form-field>
-    <mat-label>Abweichung</mat-label>
-    <input matInput type="number" placeholder="Abweichung" [formControlName]="formControlNames.aberrance">
-    <div matSuffix>%</div>
-  </mat-form-field>
   <div class="mat-form-field">
     <mat-checkbox [formControlName]="formControlNames.warningEnabled">Warnen wenn</mat-checkbox>
   </div>
@@ -16,6 +11,6 @@
   <mat-form-field>
     <mat-label>Wert</mat-label>
     <input matInput type="number" placeholder="Wert" [formControlName]="formControlNames.warningLimit" [disabled]="!formGroupValues.warningEnabled">
-    <div matSuffix>%</div>
+    <div matSuffix>V</div>
   </mat-form-field>
 </form>

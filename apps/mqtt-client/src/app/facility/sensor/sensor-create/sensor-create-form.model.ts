@@ -2,6 +2,7 @@ import { SensorDetailModel, SensorType } from '@smart-home-conx/api/shared/data-
 
 export interface SensorForm {
   type: SensorType;
+  name: string;
   chipId: number;
   pin: number;
   createdAt: Date;

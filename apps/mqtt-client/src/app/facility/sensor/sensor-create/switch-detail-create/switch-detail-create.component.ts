@@ -1,16 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { HumiditySensorDetailModel } from '@smart-home-conx/api/shared/data-access/models';
+import { SwitchSensorDetailModel } from '@smart-home-conx/api/shared/data-access/models';
 import { Controls, NgxSubFormComponent, subformComponentProviders } from 'ngx-sub-form';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'smart-home-conx-humidity-detail-create',
-  templateUrl: 'humidity-detail-create.component.html',
-  styleUrls: ['humidity-detail-create.component.scss'],
-  providers: subformComponentProviders(HumidityDetailCreateComponent),
+  selector: 'smart-home-conx-switch-detail-create',
+  templateUrl: 'switch-detail-create.component.html',
+  styleUrls: ['switch-detail-create.component.scss'],
+  providers: subformComponentProviders(SwitchDetailCreateComponent),
 })
-export class HumidityDetailCreateComponent extends NgxSubFormComponent<HumiditySensorDetailModel> implements OnInit, OnDestroy {
+export class SwitchDetailCreateComponent extends NgxSubFormComponent<SwitchSensorDetailModel> implements OnInit, OnDestroy {
 
   destroy$ = new Subject<void>();
 
@@ -20,33 +20,28 @@ export class HumidityDetailCreateComponent extends NgxSubFormComponent<HumidityS
     ).subscribe(warningEnabled => {
       if (!warningEnabled) {
         this.formGroupControls.warningCriteria.reset();
-        this.formGroupControls.warningLimit.reset();
       }
     });
   }
 
-  protected getFormControls(): Controls<HumiditySensorDetailModel> {
+  protected getFormControls(): Controls<SwitchSensorDetailModel> {
     return {
-      aberrance: new FormControl(null),
       warningEnabled: new FormControl(null),
       warningCriteria: new FormControl(null),
-      warningLimit: new FormControl(null),
     };
   }
 
-  protected transformToFormGroup(obj: HumiditySensorDetailModel, defaultValues: Partial<HumiditySensorDetailModel>): HumiditySensorDetailModel {
+  protected transformToFormGroup(obj: SwitchSensorDetailModel, defaultValues: Partial<SwitchSensorDetailModel>): SwitchSensorDetailModel {
     if (!obj) {
       return null;
     }
     return {
-      aberrance: obj.aberrance || null,
       warningEnabled: obj.warningEnabled || null,
       warningCriteria: obj.warningCriteria || null,
-      warningLimit: obj.warningLimit || null,
     };
   }
 
-  protected getDefaultValues(): Partial<HumiditySensorDetailModel> | null {
+  protected getDefaultValues(): Partial<SwitchSensorDetailModel> | null {
     return {
       warningEnabled: false,
     };

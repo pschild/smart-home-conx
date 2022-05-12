@@ -94,7 +94,7 @@ export class DeviceController {
     }
 
     let dto: Partial<UpdateDeviceDto> = { lastPing: new Date() };
-    if (device.connectionStatus === ConnectionStatus.OFFLINE) {
+    if (device.connectionStatus === ConnectionStatus.OFFLINE || device.connectionStatus === ConnectionStatus.UNKNOWN) {
       this.mqttClient.emit('log', {source: 'device-manager', message: `ESP_${chipId}: Automatically changed connection status to ONLINE because of receiving ping`});
       dto = { ...dto, connectionStatus: ConnectionStatus.ONLINE };
     }

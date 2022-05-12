@@ -4,4 +4,18 @@
     <input matInput type="number" placeholder="Abweichung" [formControlName]="formControlNames.aberrance">
     <div matSuffix>°C</div>
   </mat-form-field>
+  <div class="mat-form-field">
+    <mat-checkbox [formControlName]="formControlNames.warningEnabled">Warnen wenn</mat-checkbox>
+  </div>
+  <div class="mat-form-field">
+    <mat-radio-group [formControlName]="formControlNames.warningCriteria" [disabled]="!formGroupValues.warningEnabled">
+      <mat-radio-button value="GREATER">größer als</mat-radio-button>
+      <mat-radio-button value="LOWER">kleiner als</mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <mat-form-field>
+    <mat-label>Wert</mat-label>
+    <input matInput type="number" placeholder="Wert" [formControlName]="formControlNames.warningLimit" [disabled]="!formGroupValues.warningEnabled">
+    <div matSuffix>°C</div>
+  </mat-form-field>
 </form>

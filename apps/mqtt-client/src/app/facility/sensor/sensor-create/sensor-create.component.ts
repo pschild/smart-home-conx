@@ -66,6 +66,7 @@ export class SensorCreateComponent extends NgxSubFormRemapComponent<SensorModel,
     return {
       createdAt: new FormControl({ value: '', disabled: true }),
       type: new FormControl(null, Validators.required),
+      name: new FormControl(null),
       chipId: new FormControl(null, Validators.required),
       pin: new FormControl(null),
       details: new FormControl(null),

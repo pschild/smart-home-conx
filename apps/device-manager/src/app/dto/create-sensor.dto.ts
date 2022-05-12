@@ -7,6 +7,10 @@ export class CreateSensorDto {
   @IsEnum(SensorType)
   readonly type: SensorType;
 
+  @IsString()
+  @IsOptional()
+  readonly name: string;
+
   // @IsNotEmpty()
   @IsNumber()
   readonly chipId: number;

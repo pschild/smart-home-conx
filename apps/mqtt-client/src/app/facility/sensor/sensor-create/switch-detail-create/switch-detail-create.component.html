@@ -1,0 +1,11 @@
+<form [formGroup]="formGroup">
+  <div class="mat-form-field">
+    <mat-checkbox [formControlName]="formControlNames.warningEnabled">Warnen wenn</mat-checkbox>
+  </div>
+  <div class="mat-form-field">
+    <mat-radio-group [formControlName]="formControlNames.warningCriteria" [disabled]="!formGroupValues.warningEnabled">
+      <mat-radio-button value="OPENED">geöffnet</mat-radio-button>
+      <mat-radio-button value="CLOSED">geschlossen</mat-radio-button>
+    </mat-radio-group>
+  </div>
+</form>
