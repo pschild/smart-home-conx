@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -17,6 +17,10 @@ import { NgxsLoggerPluginModule } from '@ngxs/logger-plugin';
 import { GatewayInterceptor } from './gateway.interceptor';
 import { AuthState } from './auth/state/auth.state';
 import { NotificationModule } from './core/notification/notification.module';
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
+
+registerLocaleData(localeDe);
 
 @NgModule({
   declarations: [AppComponent],
@@ -45,6 +49,10 @@ import { NotificationModule } from './core/notification/notification.module';
     NotificationModule
   ],
   providers: [
+    {
+      provide: LOCALE_ID,
+      useValue: 'de'
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: GatewayInterceptor,
