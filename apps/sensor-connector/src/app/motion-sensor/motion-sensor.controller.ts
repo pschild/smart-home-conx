@@ -5,7 +5,7 @@ import { bufferTime, filter, mergeMap, tap, throttleTime } from 'rxjs/operators'
 import { MotionSensorService } from './motion-sensor.service';
 import { isDocker, log } from '@smart-home-conx/utils';
 import { InfluxService } from '@smart-home-conx/influx';
-import { NotificationContext, NotificationModelUtil } from '@smart-home-conx/api/shared/data-access/models';
+import { MovementSensorDetailModel, NotificationContext, NotificationModelUtil, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 
 @Controller('movement')
 export class MotionSensorController {
@@ -14,6 +14,9 @@ export class MotionSensorController {
 
   @Client({ transport: Transport.MQTT, options: { url: isDocker() ? `mqtt://mqtt-broker:1883` : `mqtt://localhost:1883` } })
   mqttClient: ClientProxy;
+
+  @Client({ transport: Transport.TCP, options: { host: isDocker() ? 'device-manager' : 'localhost' } })
+  deviceClient: ClientProxy;
 
   constructor(
     private readonly motionSensorService: MotionSensorService,
@@ -52,16 +55,33 @@ export class MotionSensorController {
   }
 
   @MessagePattern('devices/+/movement')
-  create(@Payload() payload: { pin?: number }, @Ctx() context: MqttContext) {
+  async create(@Payload() payload: { pin?: number }, @Ctx() context: MqttContext) {
     const chipIdMatch = context.getTopic().match(/devices\/(\d+)/);
     if (!chipIdMatch) {
       throw new Error(`Could not find a chipId. Topic=${context.getTopic()}`);
     }
-    const chipId = chipIdMatch[1];
+    const chipId = +chipIdMatch[1];
 
-    this.influx.insert({ measurement: 'movements', fields: { pin: payload.pin || -1 }, tags: { chipId } });
+    const sensor = await this.deviceClient.send<SensorModel>('findSensor', { chipId, type: SensorType.MOVEMENT, pin: +payload.pin }).toPromise();
+    const details = sensor.details as MovementSensorDetailModel;
+    const warningEnabled = details?.warningEnabled;
+
+    if (warningEnabled) {
+      const notificationMessage = this.createNotificationMessage(sensor.name);
+      this.mqttClient.emit(
+        'notification-manager/notification/create',
+        NotificationModelUtil.createHighPriority(NotificationContext.SENSOR, `Bewegungsmelder`, notificationMessage)
+      );
+      this.mqttClient.emit('telegram/message', notificationMessage);
+    }
+
+    this.influx.insert({ measurement: 'movements', fields: { pin: +payload.pin || -1 }, tags: { chipId: chipId.toString() } });
 
     this.messageStream$.next(payload);
+  }
+
+  private createNotificationMessage(name: string): string {
+    return `${name} hat Bewegung erkannt`;
   }
 
   @Get(':chipId/history')

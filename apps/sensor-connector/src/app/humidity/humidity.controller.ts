@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices';
-import { HumiditySensorDetailModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { HumiditySensorDetailModel, NotificationContext, NotificationModelUtil, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 import { InfluxService } from '@smart-home-conx/influx';
 import { isDocker } from '@smart-home-conx/utils';
 
@@ -25,12 +25,37 @@ export class HumiditySensorController {
     }
     const chipId = +chipIdMatch[1];
 
-    const sensor = await this.deviceClient.send<SensorModel>('findSensor', { chipId, type: SensorType.HUMIDITY, pin: payload.pin }).toPromise();
-    const aberrance = (sensor.details as HumiditySensorDetailModel)?.aberrance || 0;
-    const correctedValue = payload.value + aberrance;
+    const sensor = await this.deviceClient.send<SensorModel>('findSensor', { chipId, type: SensorType.HUMIDITY, pin: +payload.pin }).toPromise();
+    const details = sensor.details as HumiditySensorDetailModel;
+    const aberrance = details?.aberrance || 0;
+    const warningEnabled = details?.warningEnabled;
+    const warningCriteria = details?.warningCriteria;
+    const warningLimit = details?.warningLimit;
 
+    const correctedValue = payload.value + aberrance;
     this.mqttClient.emit(`sensor-connector/devices/${chipId}/humidity/corrected`, { value: correctedValue });
-    this.influx.insert({ measurement: 'humidity', fields: { value: correctedValue, raw: payload.value, pin: payload.pin || -1 }, tags: { chipId: chipId.toString() } });
+
+    if (warningEnabled) {
+      if (
+        (warningCriteria === 'GREATER' && +payload.value > warningLimit)
+        || (warningCriteria === 'LOWER' && +payload.value < warningLimit)
+      ) {
+        const notificationMessage = this.createNotificationMessage(+payload.value, details, sensor.name);
+        this.mqttClient.emit(
+          'notification-manager/notification/create',
+          NotificationModelUtil.createHighPriority(NotificationContext.SENSOR, `Luftfeuchtigkeit`, notificationMessage)
+        );
+        this.mqttClient.emit('telegram/message', notificationMessage);
+      }
+    }
+
+    this.influx.insert({ measurement: 'humidity', fields: { value: correctedValue, raw: payload.value, pin: +payload.pin || -1 }, tags: { chipId: chipId.toString() } });
+  }
+
+  private createNotificationMessage(value: number, details: HumiditySensorDetailModel, name: string): string {
+    return details.warningCriteria === 'GREATER'
+      ? `Luftfeuchtigkeit zu hoch: ${value}%/${details.warningLimit}% (${name || '-'})`
+      : `Luftfeuchtigkeit zu niedrig: ${value}%/${details.warningLimit}% (${name || '-'})`;
   }
 
   @Get(':chipId/history')

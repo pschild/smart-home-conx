@@ -43,4 +43,10 @@ export interface SwitchSensorDetailModel {
   warningCriteria: 'OPENED' | 'CLOSED';
 }
 
-export type SensorDetailModel = TemperatureSensorDetailModel | HumiditySensorDetailModel | MovementSensorDetailModel;
+export type SensorDetailModel =
+  TemperatureSensorDetailModel
+  | HumiditySensorDetailModel
+  | VoltageSensorDetailModel
+  | MovementSensorDetailModel
+  | SwitchSensorDetailModel
+;

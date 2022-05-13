@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices';
-import { NotificationContext, NotificationModelUtil } from '@smart-home-conx/api/shared/data-access/models';
+import { NotificationContext, NotificationModelUtil, SensorModel, SensorType, SwitchSensorDetailModel } from '@smart-home-conx/api/shared/data-access/models';
 import { InfluxService } from '@smart-home-conx/influx';
 import { isDocker } from '@smart-home-conx/utils';
 
@@ -23,19 +23,40 @@ export class SwitchController {
     if (!chipIdMatch) {
       throw new Error(`Could not find a chipId. Topic=${context.getTopic()}`);
     }
-    const chipId = chipIdMatch[1];
+    const chipId = +chipIdMatch[1];
 
-    // TODO: auslagern in private Methode oder besser Service
-    // TODO: Logik erweitern: Notification nur dann senden wenn vorheriger Status geschlossen und neuer Status offen. Ggf. `triggeredByChange` mit einbeziehen.
-    if (+payload.value === 0) {
-      this.mqttClient.emit(
-        'notification-manager/notification/create',
-        NotificationModelUtil.createHighPriority(NotificationContext.SENSOR, `Garagentor`, `Garagentor "${payload.switchId}" ist offen!`)
-      );
-      this.mqttClient.emit('telegram/message', `Garagentor "${payload.switchId}" ist offen!`);
+    const sensor = await this.deviceClient.send<SensorModel>('findSensor', { chipId, type: SensorType.SWITCH, pin: +payload.pin }).toPromise();
+    const details = sensor.details as SwitchSensorDetailModel;
+    const warningEnabled = details?.warningEnabled;
+    const warningCriteria = details?.warningCriteria;
+
+    if (warningEnabled) {
+      /**
+       * 1 = Schalter ist geschlossen
+       * 0 = Schalter ist geoeffnet
+       * Achtung: Je nach Anwendungsfalls und Positionierung des Schalters kann sich die Logik umdrehen.
+       */
+      // TODO: Logik erweitern: Notification nur dann senden wenn vorheriger Status geschlossen und neuer Status offen. Ggf. `triggeredByChange` mit einbeziehen.
+      if (
+        (+payload.value === 1 && warningCriteria === 'CLOSED')
+        || (+payload.value === 0 && warningCriteria === 'OPENED')
+      ) {
+        const notificationMessage = this.createNotificationMessage(warningCriteria, sensor.name);
+        this.mqttClient.emit(
+          'notification-manager/notification/create',
+          NotificationModelUtil.createHighPriority(NotificationContext.SENSOR, `Schalter`, notificationMessage)
+        );
+        this.mqttClient.emit('telegram/message', notificationMessage);
+      }
     }
 
-    this.influx.insert({ measurement: 'switch', fields: { switchId: payload.switchId, value: +payload.value, pin: payload.pin || -1 }, tags: { chipId } });
+    this.influx.insert({ measurement: 'switch', fields: { switchId: payload.switchId, value: +payload.value, pin: +payload.pin || -1 }, tags: { chipId: chipId.toString() } });
+  }
+
+  private createNotificationMessage(warningCriteria: 'OPENED' | 'CLOSED', name: string): string {
+    return warningCriteria === 'OPENED'
+      ? `${name} ist geöffnet worden`
+      : `${name} ist geschlossen worden`;
   }
 
   @Get(':chipId/history')

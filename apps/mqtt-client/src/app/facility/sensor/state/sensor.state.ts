@@ -101,7 +101,7 @@ export class SensorState {
       new SensorActions.LoadSensors()
     ]);
 
-    const obsList$ = [SensorType.VOLTAGE, SensorType.MOVEMENT]
+    const obsList$ = [SensorType.VOLTAGE, SensorType.MOVEMENT, SensorType.SWITCH]
       .map(type => this.eventMqttService.observe(`devices/+/${type}`).pipe(
         map(res => ({ type, chipId: res.topic.match(/devices\/(\d+)/)[1], payload: this.parsePayload(res.payload.toString()) }))
       ));
@@ -142,7 +142,10 @@ export class SensorState {
   private parsePayload(rawPayload: string): { value?: number; pin?: number } {
     let result;
     try {
-      result = JSON.parse(rawPayload)
+      result = JSON.parse(rawPayload);
+      if (!!result.pin) {
+        result.pin = +result.pin;
+      }
     } catch (error) {
       console.error(`Could not parse JSON payload "${rawPayload}"`);
       result = {};
