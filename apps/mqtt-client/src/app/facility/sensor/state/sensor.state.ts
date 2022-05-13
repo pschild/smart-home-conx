@@ -56,6 +56,10 @@ export class SensorState {
     return createSelector([SensorState], (state: SensorStateModel) => state.sensors.filter(s => s.roomId === roomId));
   }
 
+  static roomOfSensor(sensor: SensorModel) {
+    return createSelector([SensorState], (state: SensorStateModel) => state.rooms.find(room => room._id.toString() === sensor.roomId.toString()));
+  }
+
   @Selector()
   static unassignedSensors(state: SensorStateModel) {
     return state.sensors.filter(s => !s.roomId);
@@ -176,6 +180,26 @@ export class SensorState {
   loadRooms(ctx: StateContext<SensorStateModel>) {
     return this.roomHttpService.loadAll().pipe(
       tap((rooms: RoomModel[]) => ctx.patchState({ rooms }))
+    );
+  }
+
+  @Action(SensorActions.UpdateRoom)
+  updateRoom(ctx: StateContext<SensorStateModel>, action: SensorActions.UpdateRoom) {
+    const room = ctx.getState().rooms.find(r => r._id.toString() === action.id);
+
+    // optimistic update
+    ctx.setState(patch({
+      rooms: updateItem(item => item._id.toString() === action.id, { ...room, ...action.dto })
+    }));
+
+    return this.roomHttpService.update(room._id.toString(), action.dto).pipe(
+      catchError(err => {
+        // reset to old values in case of error
+        ctx.setState(patch({
+          rooms: updateItem(item => item._id.toString() === action.id, { ...room })
+        }));
+        return EMPTY;
+      })
     );
   }
 

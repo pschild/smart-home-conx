@@ -1,5 +1,5 @@
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
-import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { RoomModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 
 export namespace SensorActions {
 
@@ -11,6 +11,12 @@ export namespace SensorActions {
 
   export class LoadRooms {
     static readonly type = '[Sensor] load rooms';
+  }
+
+  export class UpdateRoom {
+    static readonly type = '[Sensor] update room';
+
+    constructor(public id: string, public dto: Partial<RoomModel>) {}
   }
 
   export class LoadSensors {

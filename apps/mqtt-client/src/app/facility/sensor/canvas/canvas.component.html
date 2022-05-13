@@ -1,0 +1,9 @@
+<button (click)="sendFakeTemp()">devices/7888034/temperature</button>
+<button (click)="sendFakeVolt()">devices/7888034/voltage</button>
+
+<canvas id="floor" style="border: 2px solid"></canvas>
+
+<button mat-button [matMenuTriggerFor]="menu" id="menuBtn" style="visibility: hidden; position: absolute">Menu</button>
+<mat-menu #menu="matMenu">
+  <p>{{chosenSensor$ | async | json}}</p>
+</mat-menu>

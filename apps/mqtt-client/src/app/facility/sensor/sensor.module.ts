@@ -16,6 +16,7 @@ import { HumidityDetailCreateComponent } from './sensor-create/humidity-detail-c
 import { MovementDetailCreateComponent } from './sensor-create/movement-detail-create/movement-detail-create.component';
 import { VoltageDetailCreateComponent } from './sensor-create/voltage-detail-create/voltage-detail-create.component';
 import { SwitchDetailCreateComponent } from './sensor-create/switch-detail-create/switch-detail-create.component';
+import { CanvasComponent } from './canvas/canvas.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { SwitchDetailCreateComponent } from './sensor-create/switch-detail-creat
     SensorComponent,
     RoomComponent,
     UnassignedSensorsComponent,
-    FloorComponent
+    FloorComponent,
+    CanvasComponent
   ],
   imports: [
     CommonModule,
