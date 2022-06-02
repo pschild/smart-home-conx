@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { Action, NgxsOnInit, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { isBefore } from 'date-fns';
-import { from } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuthHttpService } from './auth-http.service';
 import { AuthActions } from './auth.actions';
@@ -41,7 +40,8 @@ export class AuthState implements NgxsOnInit {
 
   constructor(
     private authService: AuthHttpService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   ngxsOnInit(ctx?: StateContext<any>): void {
@@ -63,6 +63,7 @@ export class AuthState implements NgxsOnInit {
   @Action(AuthActions.Logout)
   logout(ctx: StateContext<AuthStateModel>, action: AuthActions.Logout) {
     ctx.patchState({ token: null, expiresAt: null });
-    return from(this.router.navigate(['/login'], { queryParams: { returnUrl: action.returnUrl } }));
+    // see https://stackoverflow.com/a/57141327/5276055
+    this.ngZone.run(() => this.router.navigate(['/login'], { queryParams: { returnUrl: action.returnUrl } }));
   }
 }

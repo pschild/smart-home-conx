@@ -1,4 +1,9 @@
-<h1 mat-dialog-title>{{data.accountName}}</h1>
+<div mat-dialog-title>
+  <h1>{{data.accountName}}</h1>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 <div mat-dialog-content>
   <form [formGroup]="form" class="form-container">
     <div>

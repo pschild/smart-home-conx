@@ -6,7 +6,11 @@ import { SensorListComponent } from './sensor-list/sensor-list.component';
 import { SensorCreateComponent } from './sensor-create/sensor-create.component';
 import { NgxsModule } from '@ngxs/store';
 import { SensorState } from './state/sensor.state';
-import { SensorComponent } from './sensor/sensor.component';
+import { SwitchSensorComponent } from './sensors/switch-sensor/switch-sensor.component';
+import { MovementSensorComponent } from './sensors/movement-sensor/movement-sensor.component';
+import { TemperatureSensorComponent } from './sensors/temperature-sensor/temperature-sensor.component';
+import { HumiditySensorComponent } from './sensors/humidity-sensor/humidity-sensor.component';
+import { VoltageSensorComponent } from './sensors/voltage-sensor/voltage-sensor.component';
 import { RoomComponent } from './room/room.component';
 import { UnassignedSensorsComponent } from './unassigned-sensors/unassigned-sensors.component';
 import { FloorComponent } from './floor/floor.component';
@@ -16,6 +20,7 @@ import { HumidityDetailCreateComponent } from './sensor-create/humidity-detail-c
 import { MovementDetailCreateComponent } from './sensor-create/movement-detail-create/movement-detail-create.component';
 import { VoltageDetailCreateComponent } from './sensor-create/voltage-detail-create/voltage-detail-create.component';
 import { SwitchDetailCreateComponent } from './sensor-create/switch-detail-create/switch-detail-create.component';
+import { SensorDirective } from './sensors/sensor.directive';
 
 @NgModule({
   declarations: [
@@ -26,7 +31,12 @@ import { SwitchDetailCreateComponent } from './sensor-create/switch-detail-creat
     MovementDetailCreateComponent,
     VoltageDetailCreateComponent,
     SwitchDetailCreateComponent,
-    SensorComponent,
+    VoltageSensorComponent,
+    SensorDirective,
+    SwitchSensorComponent,
+    MovementSensorComponent,
+    TemperatureSensorComponent,
+    HumiditySensorComponent,
     RoomComponent,
     UnassignedSensorsComponent,
     FloorComponent

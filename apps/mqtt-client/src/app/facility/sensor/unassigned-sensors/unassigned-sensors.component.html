@@ -4,11 +4,13 @@
   cdkDropListSortingDisabled="true"
   (cdkDropListDropped)="drop($event)"
 >
-  <smart-home-conx-sensor
+  <div
     *ngFor="let sensor of sensors$ | async"
-    [sensor]="sensor"
+    smartHomeConxSensor
     [cdkDragData]="sensor"
     cdkDrag
     [cdkDragDisabled]="!enabled"
-  ></smart-home-conx-sensor>
+  >
+    <mat-icon>{{getIconName(sensor.type)}}</mat-icon>
+  </div>
 </mat-card>

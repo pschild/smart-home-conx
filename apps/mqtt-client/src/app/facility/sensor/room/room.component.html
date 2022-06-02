@@ -10,11 +10,13 @@
   (cdkDropListDropped)="drop($event)"
 >
   <span class="room-name">{{room.name}}</span>
-  <smart-home-conx-sensor
-    *ngFor="let sensor of sensors$ | async"
-    [sensor]="sensor"
-    [cdkDragData]="sensor"
-    cdkDrag
-    [cdkDragDisabled]="!enabled"
-  ></smart-home-conx-sensor>
+  <ng-container *ngFor="let sensor of sensors$ | async">
+    <ng-container [ngSwitch]="sensor.type">
+      <smart-home-conx-temperature-sensor *ngSwitchCase="SensorType.TEMPERATURE" [sensor]="sensor" [dragDisabled]="!enabled"></smart-home-conx-temperature-sensor>
+      <smart-home-conx-humidity-sensor *ngSwitchCase="SensorType.HUMIDITY" [sensor]="sensor" [dragDisabled]="!enabled"></smart-home-conx-humidity-sensor>
+      <smart-home-conx-movement-sensor *ngSwitchCase="SensorType.MOVEMENT" [sensor]="sensor" [dragDisabled]="!enabled"></smart-home-conx-movement-sensor>
+      <smart-home-conx-voltage-sensor *ngSwitchCase="SensorType.VOLTAGE" [sensor]="sensor" [dragDisabled]="!enabled"></smart-home-conx-voltage-sensor>
+      <smart-home-conx-switch-sensor *ngSwitchCase="SensorType.SWITCH" [sensor]="sensor" [dragDisabled]="!enabled"></smart-home-conx-switch-sensor>
+    </ng-container>
+  </ng-container>
 </mat-card>

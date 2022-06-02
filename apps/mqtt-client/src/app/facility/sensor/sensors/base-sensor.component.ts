@@ -1,0 +1,44 @@
+import { Directive, Input, OnInit } from '@angular/core';
+import { Store } from '@ngxs/store';
+import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { Observable } from 'rxjs';
+import { SensorActions } from '../state/sensor.actions';
+import { SensorState } from '../state/sensor.state';
+
+@Directive()
+export abstract class BaseSensorComponent implements OnInit {
+
+  @Input() sensor: SensorModel;
+
+  @Input() dragDisabled: boolean;
+
+  history$: Observable<{ time: string; value: number; chipId: string; pin: number; type: SensorType }[]>;
+  latest$: Observable<{ time: string; value: number; chipId: string; pin: number; type: SensorType }>;
+
+  SensorType = SensorType;
+
+  protected store: Store;
+
+  constructor(
+    store: Store
+  ) {
+    this.store = store;
+  }
+
+  ngOnInit(): void {
+    this.history$ = this.store.select(SensorState.history(this.sensor._id.toString(), this.sensor.type));
+    this.latest$ = this.store.select(SensorState.latest(this.sensor._id.toString(), this.sensor.type));
+
+    // TODO: wird zu oft geladen (bspw. wenn Sensor verschoben wird)
+    this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
+  }
+
+  edit(): void {
+    this.store.dispatch(new SensorActions.OpenEditDialog(this.sensor));
+  }
+
+  reloadHistory(): void {
+    this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
+  }
+
+}

@@ -1,5 +1,10 @@
 <ng-container *ngIf="data?.esp">
-  <h1 mat-dialog-title>{{data.esp.model}} (#{{data.esp.chipId}})</h1>
+  <div mat-dialog-title>
+    <h1>{{data.esp.model}} (#{{data.esp.chipId}})</h1>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
   <div class="short-info-container">
     <small *ngIf="data.esp.connectionStatus">
       Status:
@@ -11,7 +16,12 @@
     <small *ngIf="data.esp.firmware">Firmware: {{data.esp.firmware}}</small>
   </div>
 </ng-container>
-<h1 mat-dialog-title *ngIf="!data?.esp">Neuer ESP</h1>
+<div mat-dialog-title *ngIf="!data?.esp">
+  <h1>Neuer ESP</h1>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 <div mat-dialog-content>
   <form [formGroup]="form" class="form-container">
     <mat-form-field>

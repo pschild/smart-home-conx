@@ -1,5 +1,10 @@
-<h1 mat-dialog-title *ngIf="data?.sensor">{{data.sensor.chipId}}</h1>
-<h1 mat-dialog-title *ngIf="!data?.sensor">Neuer Sensor</h1>
+<div mat-dialog-title>
+  <h1 *ngIf="data?.sensor">{{data.sensor.chipId}}</h1>
+  <h1 *ngIf="!data?.sensor">Neuer Sensor</h1>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
 <div mat-dialog-content>
   <form [formGroup]="formGroup" class="form-container">
     <mat-form-field>

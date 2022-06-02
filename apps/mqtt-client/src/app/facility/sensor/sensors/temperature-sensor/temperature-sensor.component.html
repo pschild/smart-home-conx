@@ -1,0 +1,38 @@
+<div
+  smartHomeConxSensor
+  class="sensor"
+  [cdkDragData]="sensor"
+  cdkDrag
+  [cdkDragDisabled]="dragDisabled"
+>
+  <mat-icon [matMenuTriggerFor]="menu">thermostat</mat-icon>
+  <ng-container *ngIf="sensor.roomId">
+    <div class="latest-info-container" *ngIf="latest$ | async as latestItem">
+      <small *ngIf="latestItem.value">{{latestItem.value | number:'1.1-2'}}°C</small>
+      <small>{{latestItem.time | timeAgo:'vor' | async}}</small>
+    </div>
+  </ng-container>
+  <mat-menu #menu="matMenu">
+    <p>{{sensor.chipId}}</p>
+    <div><small>Pin: {{sensor.pin || 'keiner'}}</small></div>
+    <div><small *ngIf="sensor.details">Warnungen: {{sensor.details.warningEnabled}}</small></div>
+    <div><small *ngIf="sensor.details">Abweichung: {{sensor.details.aberrance}}°C</small></div>
+
+    <button mat-menu-item (click)="edit()"><mat-icon>edit</mat-icon> bearbeiten</button>
+    <button mat-menu-item (click)="reloadHistory()"><mat-icon>update</mat-icon> Historie laden</button>
+    <button mat-menu-item (click)="sendMqttMessage()"><mat-icon>send</mat-icon> Fake MQTT</button>
+    <!-- TODO: remove this buttons! -->
+    <button mat-menu-item (click)="heaterOn()"><mat-icon>send</mat-icon> Heater on</button>
+    <button mat-menu-item (click)="heaterOff()"><mat-icon>send</mat-icon> Heater off</button>
+    <button mat-menu-item (click)="readnow()"><mat-icon>send</mat-icon> readnow</button>
+
+    <div *ngIf="history$ | async as historyItems" style="max-height: 200px; overflow-y: auto;">
+      <ul *ngIf="historyItems.length > 0; else noItems">
+        <li *ngFor="let item of historyItems">
+          {{item.time | date:'dd.MM. HH:mm:ss'}} <span *ngIf="item.value">{{item.value | number:'1.1-2'}}°C</span>
+        </li>
+      </ul>
+      <ng-template #noItems>Keine Einträge vorhanden</ng-template>
+    </div>
+  </mat-menu>
+</div>
