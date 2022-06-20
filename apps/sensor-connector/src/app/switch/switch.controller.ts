@@ -37,6 +37,8 @@ export class SwitchController {
        * Achtung: Je nach Anwendungsfalls und Positionierung des Schalters kann sich die Logik umdrehen.
        */
       // TODO: Logik erweitern: Notification nur dann senden wenn vorheriger Status geschlossen und neuer Status offen. Ggf. `triggeredByChange` mit einbeziehen.
+      // this.influx.findOne(`select * from switch where chipId = '${chipId}' AND pin = ${payload.pin || -1} order by time desc limit 1`);
+
       if (
         (+payload.value === 1 && warningCriteria === 'CLOSED')
         || (+payload.value === 0 && warningCriteria === 'OPENED')

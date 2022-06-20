@@ -33,12 +33,8 @@ export abstract class BaseSensorComponent implements OnInit {
     this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
   }
 
-  edit(): void {
-    this.store.dispatch(new SensorActions.OpenEditDialog(this.sensor));
-  }
-
-  reloadHistory(): void {
-    this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
+  openDetails(): void {
+    this.store.dispatch(new SensorActions.OpenDetailDialog(this.sensor));
   }
 
 }

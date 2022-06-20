@@ -1,0 +1,37 @@
+<div mat-dialog-title>
+  <h1 *ngIf="data.sensor">Schalter {{data.sensor.name || ''}}</h1>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div mat-dialog-content>
+
+  <!--
+  <smart-home-conx-sensor-detail
+    [sensor]="data.sensor"
+  >
+    <div>sensor specific data attributes</div>
+  </smart-home-conx-sensor-detail>
+
+  <smart-home-conx-sensor-warning-list></smart-home-conx-sensor-warning-list>
+  -->
+
+  <button mat-icon-button (click)="edit()"><mat-icon>edit</mat-icon></button>
+
+  <div><small>Pin: {{data.sensor.pin || 'keiner'}}</small></div>
+  <div><small *ngIf="data.sensor.details">Warnungen: {{data.sensor.details.warningEnabled}}</small></div>
+
+  <!-- <smart-home-conx-sensor-warning-list></smart-home-conx-sensor-warning-list> -->
+
+  <smart-home-conx-sensor-history
+    [sensor]="data.sensor"
+    [curve]="curve"
+    [yAxisTicks]="[0, 1]"
+    min="0"
+    max="1"
+  ></smart-home-conx-sensor-history>
+
+  <smart-home-conx-sensor-action-buttons
+    [sensor]="data.sensor"
+  ></smart-home-conx-sensor-action-buttons>
+</div>

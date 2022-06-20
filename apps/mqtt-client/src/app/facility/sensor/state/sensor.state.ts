@@ -4,10 +4,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { Action, createSelector, Selector, State, StateContext, StateToken, Store } from '@ngxs/store';
 import { insertItem, patch, removeItem, updateItem } from '@ngxs/store/operators';
 import { RoomModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { format } from 'date-fns';
 import { EMPTY, merge } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { EventMqttService } from '../../../event-mqtt.service';
 import { SensorCreateComponent } from '../sensor-create/sensor-create.component';
+import { HumidityDetailComponent, MovementDetailComponent, SwitchDetailComponent, TemperatureDetailComponent, VoltageDetailComponent } from '../sensor-detail';
 import { RoomHttpService } from './room-http.service';
 import { SensorHttpService } from './sensor-http.service';
 import { SensorActions } from './sensor.actions';
@@ -76,8 +78,30 @@ export class SensorState {
     return createSelector([SensorState], (state: SensorStateModel) =>
       state.history[sensorId]
         .filter(e => e.type === type)
-        .sort((a, b) => a.time.localeCompare(b.time) * - 1)
+        .sort((a, b) => a.time.localeCompare(b.time) * -1)
     );
+  }
+
+  static chartData(sensorId: string) {
+    return createSelector([SensorState], (state: SensorStateModel) => {
+      const series = state.history[sensorId]
+        .sort((a, b) => a.time.localeCompare(b.time))
+        .map(item => ({ name: new Date(item.time), value: item.value }));
+
+      return !!series && series.length > 1 ? [{ name: 'Wert', series }] : [];
+    });
+  }
+
+  static max(sensorId: string, type: SensorType) {
+    return createSelector([SensorState.history(sensorId, type)], (history: { time: string; value: number; chipId: string; pin: number; type: SensorType }[]) => {
+      return !!history && history.length > 0 ? Math.max(...history.map(item => item.value)) : null;
+    });
+  }
+
+  static min(sensorId: string, type: SensorType) {
+    return createSelector([SensorState.history(sensorId, type)], (history: { time: string; value: number; chipId: string; pin: number; type: SensorType }[]) => {
+      return !!history && history.length > 0 ? Math.min(...history.map(item => item.value)) : null;
+    });
   }
 
   static latest(sensorId: string, type: SensorType) {
@@ -234,12 +258,30 @@ export class SensorState {
   @Action(SensorActions.OpenEditDialog)
   openEditDialog(ctx: StateContext<SensorStateModel>, action: SensorActions.OpenEditDialog) {
     // see https://stackoverflow.com/a/57141327/5276055
-    return this.ngZone.run(() => {
-      const dialogRef = this.dialog.open(SensorCreateComponent, { data: action.sensor ? { sensor: action.sensor } : null });
-      dialogRef.afterClosed().subscribe(result => {
-        console.log('The dialog was closed', result);
-      });
-    });
+    return this.ngZone.run(() => this.dialog.open(SensorCreateComponent, { data: action.sensor ? { sensor: action.sensor } : null }));
+  }
+
+  @Action(SensorActions.OpenDetailDialog)
+  openDetailDialog(ctx: StateContext<SensorStateModel>, action: SensorActions.OpenDetailDialog) {
+    // see https://stackoverflow.com/a/57141327/5276055
+    return this.ngZone.run(() => this.dialog.open(this.getDialogComponentByType(action.sensor.type), { data: { sensor: action.sensor } }));
+  }
+
+  private getDialogComponentByType(type: SensorType): any {
+    switch (type) {
+      case SensorType.TEMPERATURE:
+        return TemperatureDetailComponent;
+      case SensorType.HUMIDITY:
+        return HumidityDetailComponent;
+      case SensorType.SWITCH:
+        return SwitchDetailComponent;
+      case SensorType.MOVEMENT:
+        return MovementDetailComponent;
+      case SensorType.VOLTAGE:
+        return VoltageDetailComponent;
+      default:
+        throw new Error(`Cannot retrieve DetailComponent class for type "${type}"`);
+    }
   }
 
   private getNewPosition(event: CdkDragDrop<any>): { x: number; y: number } {

@@ -51,6 +51,7 @@
               <div><mat-icon svgIcon="temperature"></mat-icon>{{hour.temp}}°C</div>
               <div><mat-icon svgIcon="humidity"></mat-icon>{{hour.humidity}}%</div>
               <div *ngIf="hour.precipitationProbability > 0"><mat-icon svgIcon="precipitation_probability"></mat-icon>{{hour.precipitationProbability | percent}}</div>
+              <div *ngIf="hour.rain > 0">{{hour.rain}}mm</div>
             </div>
           </mat-card-content>
         </mat-card>

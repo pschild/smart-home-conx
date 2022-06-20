@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../material/material.module';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { SensorListComponent } from './sensor-list/sensor-list.component';
 import { SensorCreateComponent } from './sensor-create/sensor-create.component';
 import { NgxsModule } from '@ngxs/store';
@@ -21,6 +22,9 @@ import { MovementDetailCreateComponent } from './sensor-create/movement-detail-c
 import { VoltageDetailCreateComponent } from './sensor-create/voltage-detail-create/voltage-detail-create.component';
 import { SwitchDetailCreateComponent } from './sensor-create/switch-detail-create/switch-detail-create.component';
 import { SensorDirective } from './sensors/sensor.directive';
+import { HumidityDetailComponent, MovementDetailComponent, SwitchDetailComponent, TemperatureDetailComponent, VoltageDetailComponent } from './sensor-detail';
+import { SensorHistoryComponent } from './sensor-history/sensor-history.component';
+import { SensorActionButtonsComponent } from './sensor-action-buttons/sensor-action-buttons.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +43,16 @@ import { SensorDirective } from './sensors/sensor.directive';
     HumiditySensorComponent,
     RoomComponent,
     UnassignedSensorsComponent,
-    FloorComponent
+    FloorComponent,
+
+    SensorHistoryComponent,
+    SensorActionButtonsComponent,
+
+    TemperatureDetailComponent,
+    HumidityDetailComponent,
+    SwitchDetailComponent,
+    MovementDetailComponent,
+    VoltageDetailComponent
   ],
   imports: [
     CommonModule,
@@ -47,7 +60,8 @@ import { SensorDirective } from './sensors/sensor.directive';
     ReactiveFormsModule,
     MaterialModule,
     CoreModule,
-    NgxsModule.forFeature([SensorState])
+    NgxsModule.forFeature([SensorState]),
+    NgxChartsModule
   ]
 })
 export class SensorModule {

@@ -1,0 +1,30 @@
+<div mat-dialog-title>
+  <h1 *ngIf="data.sensor">Temperatursensor {{data.sensor.name || ''}}</h1>
+  <button mat-icon-button mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div mat-dialog-content>
+
+  <button mat-icon-button (click)="edit()"><mat-icon>edit</mat-icon></button>
+
+  <div><small>Pin: {{data.sensor.pin || 'keiner'}}</small></div>
+  <div><small *ngIf="data.sensor.details">Warnungen: {{data.sensor.details.warningEnabled}}</small></div>
+  <div><small *ngIf="data.sensor.details">Abweichung: {{data.sensor.details.aberrance}}°C</small></div>
+
+  <!-- <smart-home-conx-sensor-warning-list></smart-home-conx-sensor-warning-list> -->
+
+  <smart-home-conx-sensor-history
+    [sensor]="data.sensor"
+    [formatYAxis]="formatYAxis"
+  ></smart-home-conx-sensor-history>
+
+  <smart-home-conx-sensor-action-buttons
+    [sensor]="data.sensor"
+  >
+    <!-- TODO: remove this buttons! -->
+    <button mat-button (click)="heaterOn()"><mat-icon>send</mat-icon> Heater on</button>
+    <button mat-button (click)="heaterOff()"><mat-icon>send</mat-icon> Heater off</button>
+    <button mat-button (click)="readnow()"><mat-icon>send</mat-icon> readnow</button>
+  </smart-home-conx-sensor-action-buttons>
+</div>

@@ -1,9 +1,9 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { EventMqttService } from '../../../../event-mqtt.service';
 import { differenceInSeconds } from 'date-fns';
 import { interval, Observable } from 'rxjs';
-import { endWith, filter, map, startWith, switchMap, takeWhile, tap, withLatestFrom } from 'rxjs/operators';
+import { endWith, filter, map, switchMap, takeWhile } from 'rxjs/operators';
+import { EventMqttService } from '../../../../event-mqtt.service';
 import { BaseSensorComponent } from '../base-sensor.component';
 import { BASE_SENSOR_TOKEN } from '../base-sensor.token';
 
@@ -40,9 +40,5 @@ export class MovementSensorComponent extends BaseSensorComponent implements OnIn
         endWith(false)
       )),
     );
-  }
-  
-  sendMqttMessage(): void {
-    this.eventMqttService.publish(`devices/${this.sensor.chipId}/${this.sensor.type}`, `{"value":1${!!this.sensor.pin ? ',"pin":' + this.sensor.pin : ''}}`).subscribe();
   }
 }

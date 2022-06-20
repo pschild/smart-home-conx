@@ -1,0 +1,18 @@
+<ng-container *ngIf="history$ | async as history">
+  <ngx-charts-line-chart
+    *ngIf="history && history.length; else noHistory"
+    [view]="[700, 300]"
+    [xAxis]="true"
+    [yAxis]="true"
+    [results]="history"
+    [yScaleMin]="min$ | async"
+    [yScaleMax]="max$ | async"
+    [xAxisTickFormatting]="formatXAxis"
+    [yAxisTickFormatting]="formatYAxis"
+    [curve]="curve"
+    [yAxisTicks]="yAxisTicks"
+    [timeline]="true"
+  ></ngx-charts-line-chart>
+</ng-container>
+<ng-template #noHistory>Keine Einträge vorhanden</ng-template>
+<button mat-icon-button (click)="reloadHistory()"><mat-icon>update</mat-icon></button>
