@@ -149,7 +149,7 @@
     "mongodb": "^3.6.5",
     "ngx-mqtt": "^9.0.5",
     "ngx-observable-lifecycle": "^2.2.0",
-    "ngx-sub-form": "^6.0.0-feat-rewrite.17",
+    "ngx-sub-form": "6.0.0-feat-rewrite.17",
     "node-telegram-bot-api": "^0.51.0",
     "octonode": "^0.10.0",
     "puppeteer": "8.0.0",
