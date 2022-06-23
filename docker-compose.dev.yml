@@ -176,6 +176,9 @@ services:
       - 8086:8086
     volumes:
       - influxdb-storage:/var/lib/influx.db
+    environment:
+      - INFLUXDB_MONITOR_STORE_ENABLED=false
+      - INFLUXDB_REPORTING_DISABLED=true
 
   portainer:
     image: portainer/portainer
