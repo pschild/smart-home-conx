@@ -33,7 +33,7 @@ export class SensorService {
 
   findByCriteria(criteria: Partial<Sensor>): Promise<Sensor> {
     const { chipId, type, pin } = criteria;
-    return this.repository.findOne({ where: { chipId, type, pin: pin || null } });
+    return this.repository.findOne({ where: { chipId, type, pin } });
   }
 
   findByRoomId(roomId: string): Promise<Sensor[]> {

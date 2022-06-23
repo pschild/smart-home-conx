@@ -4,8 +4,10 @@ import { forkJoin, Subject } from 'rxjs';
 import { bufferTime, filter, mergeMap, tap, throttleTime } from 'rxjs/operators';
 import { MotionSensorService } from './motion-sensor.service';
 import { isDocker, log } from '@smart-home-conx/utils';
-import { InfluxService } from '@smart-home-conx/influx';
-import { MovementSensorDetailModel, NotificationContext, NotificationModelUtil, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { DeviceModelUtil, MovementSensorDetailModel, MovementSensorPayload, NotificationContext, NotificationModelUtil, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { EspPayloadPipe } from '../esp-payload.pipe';
+import { format, isAfter, isBefore } from 'date-fns';
+import * as SunCalc from 'suncalc2';
 
 @Controller('movement')
 export class MotionSensorController {
@@ -19,8 +21,7 @@ export class MotionSensorController {
   deviceClient: ClientProxy;
 
   constructor(
-    private readonly motionSensorService: MotionSensorService,
-    private readonly influx: InfluxService
+    private readonly service: MotionSensorService
   ) {
     this.messageStream$.pipe(
       bufferTime(1_000 * 60 * 1), // check period of 1 min
@@ -37,7 +38,7 @@ export class MotionSensorController {
     });
 
     this.messageStream$.pipe(
-      filter(_ => this.motionSensorService.isNight(new Date())),
+      filter(_ => this.isNight(new Date())),
       tap(_ => log('Solar time check: OK')),
       throttleTime(1_000 * 60 * 5), // throttle for 5 min
       tap(_ => log(`Throttle check: OK`)),
@@ -55,14 +56,10 @@ export class MotionSensorController {
   }
 
   @MessagePattern('devices/+/movement')
-  async create(@Payload() payload: { pin?: number }, @Ctx() context: MqttContext) {
-    const chipIdMatch = context.getTopic().match(/devices\/(\d+)/);
-    if (!chipIdMatch) {
-      throw new Error(`Could not find a chipId. Topic=${context.getTopic()}`);
-    }
-    const chipId = +chipIdMatch[1];
+  async create(@Payload(EspPayloadPipe) payload: MovementSensorPayload, @Ctx() context: MqttContext) {
+    const chipId = DeviceModelUtil.parseChipId(context.getTopic());
 
-    const sensor = await this.deviceClient.send<SensorModel>('findSensor', { chipId, type: SensorType.MOVEMENT, pin: +payload.pin }).toPromise();
+    const sensor = await this.deviceClient.send<SensorModel>('findSensor', { chipId, type: SensorType.MOVEMENT, pin: payload.pin }).toPromise();
     const details = sensor.details as MovementSensorDetailModel;
     const warningEnabled = details?.warningEnabled;
 
@@ -74,8 +71,7 @@ export class MotionSensorController {
       );
       this.mqttClient.emit('telegram/message', notificationMessage);
     }
-
-    this.influx.insert({ measurement: 'movements', fields: { pin: +payload.pin || -1 }, tags: { chipId: chipId.toString() } });
+    this.service.create(chipId, payload);
 
     this.messageStream$.next(payload);
   }
@@ -84,12 +80,20 @@ export class MotionSensorController {
     return `${name} hat Bewegung erkannt`;
   }
 
+  /**
+   * Checks whether the time of the given date is between the times for sunset and sunrise.
+   * In other words, it checks, whether it is "night"/"dark".
+   */
+   private isNight(date: Date): boolean {
+    const { dusk, dawn } = SunCalc.getTimes(date, process.env.HOME_POSITION_LAT, process.env.HOME_POSITION_LON);
+    log(`SunCalc times for ${format(date, 'yyyy-MM-dd HH:mm')}: ${JSON.stringify(SunCalc.getTimes(date, process.env.HOME_POSITION_LAT, process.env.HOME_POSITION_LON))}`);
+    log(`isNight=${isAfter(date, new Date(dusk)) || isBefore(date, new Date(dawn))}`);
+    return isAfter(date, new Date(dusk)) || isBefore(date, new Date(dawn));
+  }
+
   @Get(':chipId/history')
   getHistory(@Param('chipId') chipId: string, @Query('pin') pin: number) {
-    if (!pin) {
-      pin = -1;
-    }
-    return this.influx.find(`select * from movements where time > now() - 1d AND chipId = '${chipId}' AND pin = ${pin}`);
+    return this.service.getHistory(chipId, pin);
   }
 
 }

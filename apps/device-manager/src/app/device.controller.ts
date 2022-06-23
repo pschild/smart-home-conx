@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices';
-import { ConnectionStatus, NotificationContext, NotificationModelUtil } from '@smart-home-conx/api/shared/data-access/models';
+import { ConnectionStatus, DeviceModelUtil, NotificationContext, NotificationModelUtil } from '@smart-home-conx/api/shared/data-access/models';
 import { isDocker } from '@smart-home-conx/utils';
 import { differenceInMinutes } from 'date-fns';
 import { DeviceService } from './device.service';
@@ -44,7 +44,7 @@ export class DeviceController {
   @MessagePattern('$SYS/+/new/clients')
   async onMqttClientConnected(@Payload() payload: string, @Ctx() context: MqttContext) {
     if (payload.startsWith('ESP_')) {
-      const chipId = +payload.replace('ESP_', '');
+      const chipId = payload.replace('ESP_', '');
       const device = await this.deviceService.findByChipId(chipId);
       this.updateDevice(device, { connectionStatus: ConnectionStatus.ONLINE, connectionStatusChangedAt: new Date() });
 
@@ -58,7 +58,7 @@ export class DeviceController {
   @MessagePattern('$SYS/+/disconnect/clients')
   async onMqttClientDisconnected(@Payload() payload: string, @Ctx() context: MqttContext) {
     if (payload.startsWith('ESP_')) {
-      const chipId = +payload.replace('ESP_', '');
+      const chipId = payload.replace('ESP_', '');
       const device = await this.deviceService.findByChipId(chipId);
       this.updateDevice(device, { connectionStatus: ConnectionStatus.OFFLINE, connectionStatusChangedAt: new Date() });
 
@@ -71,14 +71,14 @@ export class DeviceController {
 
   @MessagePattern('devices/+/updated')
   async onFirmwareUpdated(@Payload() payload: { oldFirmware: string; newFirmware: string }, @Ctx() context: MqttContext) {
-    const chipId = this.parseChipId(context.getTopic());
+    const chipId = DeviceModelUtil.parseChipId(context.getTopic());
     const device = await this.deviceService.findByChipId(chipId);
     this.updateDevice(device, { firmware: payload.newFirmware });
   }
 
   @MessagePattern('devices/+/ping')
   async onPing(@Payload() payload: string, @Ctx() context: MqttContext) {
-    const chipId = this.parseChipId(context.getTopic());
+    const chipId = DeviceModelUtil.parseChipId(context.getTopic());
     const device = await this.deviceService.findByChipId(chipId);
 
     if (
@@ -103,13 +103,5 @@ export class DeviceController {
 
   private updateDevice(device: Device, dto: Partial<UpdateDeviceDto>): void {
     this.deviceService.update(device._id.toString(), dto);
-  }
-
-  private parseChipId(topic: string): number {
-    const chipIdMatch = topic.match(/devices\/(\d+)/);
-    if (!chipIdMatch) {
-      throw new Error(`Could not find a chipId. Topic=${topic}`);
-    }
-    return +chipIdMatch[1];
   }
 }

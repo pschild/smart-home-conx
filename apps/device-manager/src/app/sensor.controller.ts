@@ -28,8 +28,8 @@ export class SensorController {
 
   @Get()
   @MessagePattern('findSensor')
-  findByCriteria(@Payload() payload: { chipId: number; type: SensorType; pin?: number }) {
-    return this.sensorService.findByCriteria({ chipId: payload.chipId, type: payload.type, pin: payload.pin });
+  findByCriteria(@Payload() payload: { chipId: string; type: SensorType; pin: number }) {
+    return this.sensorService.findByCriteria({ chipId: +payload.chipId, type: payload.type, pin: payload.pin });
   }
 
   @Get('/byDevice/:chipId')

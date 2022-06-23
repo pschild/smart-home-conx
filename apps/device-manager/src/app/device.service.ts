@@ -26,9 +26,9 @@ export class DeviceService {
     return this.repository.findOne(deviceId);
   }
 
-  findByChipId(chipId: number): Promise<Device> {
+  findByChipId(chipId: string): Promise<Device> {
     // TODO: incl. Sensors?
-    return this.repository.findOne({ chipId });
+    return this.repository.findOne({ chipId: +chipId });
   }
 
   update(deviceId: string, updateEspDto: UpdateDeviceDto): Promise<UpdateResult> {

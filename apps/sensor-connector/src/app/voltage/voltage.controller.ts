@@ -1,8 +1,9 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { Client, ClientProxy, Ctx, MessagePattern, MqttContext, Payload, Transport } from '@nestjs/microservices';
-import { NotificationContext, NotificationModelUtil, SensorModel, SensorType, VoltageSensorDetailModel } from '@smart-home-conx/api/shared/data-access/models';
-import { InfluxService } from '@smart-home-conx/influx';
+import { DeviceModelUtil, NotificationContext, NotificationModelUtil, SensorModel, SensorType, VoltageSensorDetailModel, VoltageSensorPayload } from '@smart-home-conx/api/shared/data-access/models';
 import { isDocker } from '@smart-home-conx/utils';
+import { EspPayloadPipe } from '../esp-payload.pipe';
+import { VoltageService } from './voltage.service';
 
 @Controller('voltage')
 export class VoltageController {
@@ -14,16 +15,12 @@ export class VoltageController {
   deviceClient: ClientProxy;
 
   constructor(
-    private readonly influx: InfluxService
+    private readonly service: VoltageService
   ) {}
 
   @MessagePattern('devices/+/voltage')
-  async create(@Payload() payload: { value: number }, @Ctx() context: MqttContext) {
-    const chipIdMatch = context.getTopic().match(/devices\/(\d+)/);
-    if (!chipIdMatch) {
-      throw new Error(`Could not find a chipId. Topic=${context.getTopic()}`);
-    }
-    const chipId = +chipIdMatch[1];
+  async create(@Payload(EspPayloadPipe) payload: VoltageSensorPayload, @Ctx() context: MqttContext) {
+    const chipId = DeviceModelUtil.parseChipId(context.getTopic());
 
     const sensor = await this.deviceClient.send<SensorModel>('findSensor', { chipId, type: SensorType.VOLTAGE }).toPromise();
     const details = sensor.details as VoltageSensorDetailModel;
@@ -33,10 +30,10 @@ export class VoltageController {
 
     if (warningEnabled) {
       if (
-        (warningCriteria === 'GREATER' && +payload.value > warningLimit)
-        || (warningCriteria === 'LOWER' && +payload.value < warningLimit)
+        (warningCriteria === 'GREATER' && payload.value > warningLimit)
+        || (warningCriteria === 'LOWER' && payload.value < warningLimit)
       ) {
-        const notificationMessage = this.createNotificationMessage(+payload.value, details, sensor.name, chipId);
+        const notificationMessage = this.createNotificationMessage(payload.value, details, sensor.name, chipId);
         this.mqttClient.emit(
           'notification-manager/notification/create',
           NotificationModelUtil.createHighPriority(NotificationContext.SENSOR, `Akkustand`, notificationMessage)
@@ -44,11 +41,10 @@ export class VoltageController {
         this.mqttClient.emit('telegram/message', notificationMessage);
       }
     }
-
-    this.influx.insert({ measurement: 'voltage', fields: { value: payload.value }, tags: { chipId: chipId.toString() } });
+    this.service.create(chipId, payload);
   }
 
-  private createNotificationMessage(value: number, details: VoltageSensorDetailModel, name: string, chipId: number): string {
+  private createNotificationMessage(value: number, details: VoltageSensorDetailModel, name: string, chipId: string): string {
     return details.warningCriteria === 'GREATER'
       ? `Spannung zu hoch: ${value}V/${details.warningLimit}V (ESP ${chipId}, ${name || '-'})`
       : `Spannung zu niedrig: ${value}V/${details.warningLimit}V (ESP ${chipId}, ${name || '-'})`;
@@ -56,12 +52,12 @@ export class VoltageController {
 
   @Get(':chipId/history')
   getHistory(@Param('chipId') chipId: string) {
-    return this.influx.find(`select * from voltage where time > now() - 1d AND chipId = '${chipId}'`);
+    return this.service.getHistory(chipId);
   }
 
   @Get(':chipId/latest')
   getLatest(@Param('chipId') chipId: string) {
-    return this.influx.findOne(`select * from voltage where chipId = '${chipId}' order by time desc limit 1`);
+    return this.service.getLatest(chipId);
   }
 
 }

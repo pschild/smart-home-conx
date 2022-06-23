@@ -3,7 +3,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Action, createSelector, Selector, State, StateContext, StateToken, Store } from '@ngxs/store';
 import { insertItem, patch, removeItem, updateItem } from '@ngxs/store/operators';
-import { RoomModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
+import { DeviceModelUtil, RoomModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 import { format } from 'date-fns';
 import { EMPTY, merge } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -127,11 +127,11 @@ export class SensorState {
 
     const obsList$ = [SensorType.VOLTAGE, SensorType.MOVEMENT, SensorType.SWITCH]
       .map(type => this.eventMqttService.observe(`devices/+/${type}`).pipe(
-        map(res => ({ type, chipId: res.topic.match(/devices\/(\d+)/)[1], payload: this.parsePayload(res.payload.toString()) }))
+        map(res => ({ type, chipId: DeviceModelUtil.parseChipId(res.topic), payload: this.parsePayload(res.payload.toString()) }))
       ));
     const obsList2$ = [SensorType.TEMPERATURE, SensorType.HUMIDITY]
       .map(type => this.eventMqttService.observe(`sensor-connector/devices/+/${type}/corrected`).pipe(
-        map(res => ({ type, chipId: res.topic.match(/devices\/(\d+)/)[1], payload: this.parseDataPayload(res.payload.toString()) }))
+        map(res => ({ type, chipId: DeviceModelUtil.parseChipId(res.topic), payload: this.parseDataPayload(res.payload.toString()) }))
       ));
     merge(...obsList$, ...obsList2$).subscribe(result => {
       const sensorId = this.store.selectSnapshot(SensorState.sensorId(result.chipId, result.type as SensorType, result.payload.pin));

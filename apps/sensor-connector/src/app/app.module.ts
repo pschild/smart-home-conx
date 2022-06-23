@@ -9,6 +9,10 @@ import { isDocker } from '@smart-home-conx/utils';
 import { VoltageController } from './voltage/voltage.controller';
 import { SwitchController } from './switch/switch.controller';
 import { VentilationController } from './ventilation.controller';
+import { SwitchService } from './switch/switch.service';
+import { TemperatureService } from './temperature/temperature.service';
+import { HumidityService } from './humidity/humidity.service';
+import { VoltageService } from './voltage/voltage.service';
 
 @Module({
   imports: [
@@ -25,6 +29,6 @@ import { VentilationController } from './ventilation.controller';
     })
   ],
   controllers: [MotionSensorController, TemperatureSensorController, HumiditySensorController, VoltageController, SwitchController, VentilationController],
-  providers: [MotionSensorService],
+  providers: [MotionSensorService, SwitchService, TemperatureService, HumidityService, VoltageService]
 })
 export class AppModule {}

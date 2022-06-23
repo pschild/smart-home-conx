@@ -122,9 +122,18 @@ Start the administration of mongodb by running
 In the admin console, create a new user (adjust name and password):  
 `> db.createUser({ user: "<USERNAME>", pwd: "<PASSWORD>", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ] })`
 
+#### MongoDBCompass
+
+For accessing mongodb with an UI-Tool, you can use MongoDBCompass v1.26.0 (later versions don't support the mongodb version used in the docker image).  
+Download: https://github.com/mongodb-js/compass/releases/tag/v1.26.0
+
 ### InfluxDb
 
 To run an InfluxDb instance on Raspberry Pi 3, the following docker image was used: https://hub.docker.com/r/arm32v7/influxdb/  
+
+#### InfluxDBStudio
+
+Download: https://github.com/CymaticLabs/InfluxDBStudio/releases
 
 #### Query data
 

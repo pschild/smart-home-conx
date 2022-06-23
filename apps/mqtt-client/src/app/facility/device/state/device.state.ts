@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Action, createSelector, NgxsOnInit, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { patch, updateItem, removeItem, insertItem } from '@ngxs/store/operators';
-import { DeviceModel } from '@smart-home-conx/api/shared/data-access/models';
+import { DeviceModel, DeviceModelUtil } from '@smart-home-conx/api/shared/data-access/models';
 import { of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { EventMqttService } from '../../../event-mqtt.service';
@@ -55,7 +55,7 @@ export class DeviceState implements NgxsOnInit {
 
     this.eventMqttService.observe(`devices/+/ping`).pipe(
       map(res => {
-        const chipId = +res.topic.match(/devices\/(\d+)/)[1];
+        const chipId = +DeviceModelUtil.parseChipId(res.topic);
         const firmware = res.payload.toString();
         console.log(`[PING] ESP ${chipId} is using Firmware ${firmware}`);
         ctx.setState(patch({
