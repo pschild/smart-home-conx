@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Client, ClientProxy, Transport } from '@nestjs/microservices';
 import { PreferenceService } from '@smart-home-conx/preference';
 import { isDocker } from '@smart-home-conx/utils';
@@ -20,14 +20,17 @@ export class CommutingController {
     private readonly preferenceService: PreferenceService
   ) {}
 
-  @Get('commuting-state/:state')
-  async updateState(@Param('state') newState: 'START' | 'END' | 'CANCELLED') {
+  @Post('commuting-state')
+  async updateState(@Body() dto: { newState: 'START' | 'END' | 'CANCELLED' }) {
+    const newState = dto.newState;
+
     this.mqttClient.emit('commuting-watcher/commuting/status', newState);
     const alexaEnabled = await this.preferenceService.getValueFor('alexaEnabled');
 
     switch (newState) {
       case 'START':
         this.mqttClient.emit('commuting-watcher/commuting/status/start', format(new Date(), 'HH:mm'));
+        this.mqttClient.emit('telegram/message', `🟢‍💨🚗 Pendeln gestartet!`);
         if (alexaEnabled) {
           this.mqttClient.emit('alexa/in/speak', { message: `Ich fahre jetzt los.` });
           this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'SHCNormalerVerkehr' });
@@ -35,6 +38,7 @@ export class CommutingController {
         break;
       case 'END':
         this.mqttClient.emit('commuting-watcher/commuting/status/end', format(new Date(), 'HH:mm'));
+        this.mqttClient.emit('telegram/message', `‍💨🚗🏁 Ziel erreicht!`);
         if (alexaEnabled) {
           this.mqttClient.emit('alexa/in/speak', { message: `Ich bin angekommen.` });
           this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'SHCReset' });
@@ -42,6 +46,7 @@ export class CommutingController {
         break;
       case 'CANCELLED':
         this.mqttClient.emit('commuting-watcher/commuting/status/cancelled', format(new Date(), 'HH:mm'));
+        this.mqttClient.emit('telegram/message', `❌🚗 Pendeln abgebrochen!`);
         this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: 'SHCReset' });
         break;
       default:
@@ -52,6 +57,11 @@ export class CommutingController {
     this.commutingService.saveState(newState);
 
     return { newState };
+  }
+
+  @Get('commuting-state/latest')
+  async getLatestState() {
+    return this.commutingService.getLatestState();
   }
 
   @Get('from/:startLatLng/to/:destinationLatLng')
@@ -75,6 +85,7 @@ export class CommutingController {
           this.mqttClient.emit('alexa/in/speak', { message: `Ankunft um ${eta}` });
           this.mqttClient.emit('alexa/in/automation', { device: 'Philippes Echo Flex', message: this.getTrafficRoutineName(minResult.delay) });
         }
+        this.mqttClient.emit('telegram/message', `‍💨🚗 Ankunft um ${eta} Uhr.`);
       }),
       switchMap(durations => this.commutingService.saveDurations(startParts, destinationParts, durations).pipe(
         map(_ => ({
@@ -83,6 +94,14 @@ export class CommutingController {
         }))
       ))
     );
+  }
+
+  @Get('coordinates')
+  async getCoordinates() {
+    return [
+      { name: 'HOME', lat: +process.env.HOME_POSITION_LAT, lon: +process.env.HOME_POSITION_LON },
+      { name: 'WORK', lat: +process.env.WORK_POSITION_LAT, lon: +process.env.WORK_POSITION_LON },
+    ];
   }
 
   private getTrafficRoutineName(delayType: TrafficDelay): string {

@@ -58,7 +58,7 @@ export class GoogleMapsCrawler {
         `https://www.google.de/maps/dir/${origin.latitude},${origin.longitude}/${destination.latitude},${destination.longitude}/data=!3m1!4b1!4m2!4m1!3e0`
       );
       log('Check if we need to accept cookies ...');
-      const acceptButton = await page.$x('.//button/span[contains(text(), "Ich stimme zu")]');
+      const acceptButton = await page.$x('.//button/span[contains(text(), "Alle akzeptieren")]');
       if (!!acceptButton && acceptButton.length) {
         log('Accept cookies ...');
         acceptButton[0].click();
@@ -78,35 +78,22 @@ export class GoogleMapsCrawler {
       }
 
       log('Evaluating page ...');
-      const tripInformation: { durationContent: string; distanceContent: string; className: string }[] = await page.evaluate(() => {
+      const trips: {text: string; html: string}[] = await page.evaluate(() => {
         const DURATION_ROW_SELECTOR = `section-directions-trip-`;
-        const DURATION_SELECTOR = `-duration`;
 
-        // loop over all trips and collect raw duration string for each
+        // loop over all trips and collect raw text/html for each
         return Array.from(document.querySelectorAll(`[id^="${DURATION_ROW_SELECTOR}"]`))
           .filter(e => e.id.match(new RegExp(`${DURATION_ROW_SELECTOR}\\d$`)))
-          .map(row => {
-            return Array.from(row.querySelectorAll('div'))
-              .filter(e => e.className.match(DURATION_SELECTOR))
-              .map(durationEl => {
-                const distanceEl = durationEl.nextElementSibling;
-                return {
-                  durationContent: durationEl.textContent,
-                  distanceContent: distanceEl.textContent,
-                  className: durationEl.className
-                };
-              });
-          })
-          .reduce((acc, val) => acc.concat(val), []);
+          .map(row => ({ text: (row as HTMLElement).innerText, html: row.innerHTML }))
       });
-      tripInformation.map(item => log(`duration=${item.durationContent}, distance=${item.distanceContent}, delay=${this.parseDelayClass(item.className)}`));
-      log(`parsed durations: ${tripInformation.map(item => this.parseDuration(item.durationContent))}`);
-      log(`parsed distances: ${tripInformation.map(item => this.parseDistance(item.distanceContent))}`);
-      return tripInformation.map(item => ({
-        minutes: this.parseDuration(item.durationContent),
-        distance: this.parseDistance(item.distanceContent),
-        delay: this.parseDelayClass(item.className)
-      }));
+
+      return trips.map(trip => {
+        const minutes = this.parseDuration(trip.text);
+        const distance = this.parseDistance(trip.text);
+        const delay = this.parseDelayClass(trip.html);
+        log(`duration=${minutes}, distance=${distance}, delay=${delay}`);
+        return { minutes, distance, delay };
+      });
 
     } catch(error) {
       console.error(error);
@@ -118,23 +105,23 @@ export class GoogleMapsCrawler {
     }
   }
 
-  private parseDelayClass(className: string): TrafficDelay {
-    if (className.includes('delay-light')) {
+  private parseDelayClass(html: string): TrafficDelay {
+    if (html.includes('delay-light')) {
       return TrafficDelay.LIGHT;
-    } else if (className.includes('delay-medium')) {
+    } else if (html.includes('delay-medium')) {
       return TrafficDelay.MEDIUM;
-    } else if (className.includes('delay-heavy')) {
+    } else if (html.includes('delay-heavy')) {
       return TrafficDelay.HEAVY;
     } else {
       return TrafficDelay.DEFAULT;
     }
   }
 
-  private parseDuration(rawDuration: string): number {
+  private parseDuration(text: string): number {
     // Attention! "(?= (Std.|h))" does not work as lookahead pattern, as we cannot be sure if a normal space or a "different kind" of space (?) is in front of "Std." or "h".
     // So we need to match for a single character with . instead... => "(?=.(Std.|h))". Same applies for parsing the minutes.
-    const hours = rawDuration.match(/\d+(?=.(Std.|h))/g);
-    const mins = rawDuration.match(/\d+(?=.(Min.|min))/g);
+    const hours = text.match(/\d+(?=.(Std.|h))/g);
+    const mins = text.match(/\d+(?=.(Min.|min))/g);
 
     let duration = 0;
     if (hours) {
@@ -146,10 +133,16 @@ export class GoogleMapsCrawler {
     return duration;
   }
 
-  private parseDistance(rawDistance: string): number {
-    const distancePart = rawDistance.match(/\d+,\d+(?=.(km))/g);
-    if (Array.isArray(distancePart) && distancePart.length) {
-      return +distancePart[0].replace(',', '.')
+  private parseDistance(text: string): number {
+    const distancePartKm = text.match(/\d+,?\d+(?=.(km))/g); // match "1,0 km", "63,7 km", "163 km"
+    if (Array.isArray(distancePartKm) && distancePartKm.length) {
+      return +distancePartKm[0].replace(',', '.');
+    }
+
+    // no km found, check for meters
+    const distancePartM = text.match(/\d+(?=.(m\n))/g); // match "450 m"
+    if (Array.isArray(distancePartM) && distancePartM.length) {
+      return +distancePartM[0] / 1_000;
     }
   }
 

@@ -88,6 +88,8 @@ export class VentilationController {
         );
       }
 
+      // TODO: ggf. ergaenzen, dass die Temperatur außen <= Temperatur innen sein muss, denn in folgender Situation wäre Lüften sicherlich nicht sinnvoll:
+      // "Lüften lohnt sich! Innen: 28.02587°C/42.41426% => 11.545158086279475g/m³ Außen: 36.95°C/18% => 7.870508429015221g/m³"
       if (wassergehaltLuftInnen / wassergehaltLuftAussen >= 1.3) {
         this.mqttClient.emit(
           'notification-manager/notification/create',

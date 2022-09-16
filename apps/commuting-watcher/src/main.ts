@@ -4,6 +4,9 @@ import { Transport } from '@nestjs/microservices';
 import { isDocker } from '@smart-home-conx/utils';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 async function bootstrap() {
   const port = 9062;

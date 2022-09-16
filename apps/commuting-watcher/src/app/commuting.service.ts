@@ -13,6 +13,10 @@ export class CommutingService {
     return this.influx.insert({ measurement: 'states', fields: { state }});
   }
 
+  getLatestState(): Observable<{ time: Date; state: 'START' | 'END' | 'CANCELLED'; }> {
+    return this.influx.findOne(`select * from states order by time desc limit 1`);
+  }
+
   saveDurations(start: string[], destination: string[], durations: CrawlResultItem[]): Observable<void> {
     return this.influx.insert({ measurement: 'durations', fields: {
       startLat: +start[0],
@@ -23,7 +27,7 @@ export class CommutingService {
     }});
   }
 
-  findAll(): Observable<IResults<any[]>> {
+  findAllDurations(): Observable<IResults<any[]>> {
     return this.influx.find<any[]>(`select * from durations`);
   }
 
