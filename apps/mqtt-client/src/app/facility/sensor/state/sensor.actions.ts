@@ -47,10 +47,4 @@ export namespace SensorActions {
     constructor(public sensor?: SensorModel) {}
   }
 
-  export class OpenDetailDialog {
-    static readonly type = '[Sensor] open detail dialog';
-
-    constructor(public sensor: SensorModel) {}
-  }
-
 }

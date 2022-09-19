@@ -1,7 +1,9 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SwitchDetailComponent } from '../../sensor-detail';
 import { BaseSensorComponent } from '../base-sensor.component';
 import { BASE_SENSOR_TOKEN } from '../base-sensor.token';
 
@@ -21,9 +23,10 @@ export class SwitchSensorComponent extends BaseSensorComponent implements OnInit
   iconName$: Observable<string>;
 
   constructor(
-    store: Store
+    store: Store,
+    dialog: MatDialog
   ) {
-    super(store);
+    super(store, dialog);
   }
 
   ngOnInit(): void {
@@ -32,6 +35,10 @@ export class SwitchSensorComponent extends BaseSensorComponent implements OnInit
     this.iconName$ = this.latest$.pipe(
       map(latest => !!latest?.value ? 'toggle_on' : 'toggle_off')
     );
+  }
+
+  openDetails(): void {
+    this.dialog.open(SwitchDetailComponent, { autoFocus: false, data: { sensor: this.sensor } });
   }
 
 }

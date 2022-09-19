@@ -1,9 +1,10 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { differenceInSeconds } from 'date-fns';
 import { interval, Observable } from 'rxjs';
 import { endWith, filter, map, switchMap, takeWhile } from 'rxjs/operators';
-import { EventMqttService } from '../../../../event-mqtt.service';
+import { MovementDetailComponent } from '../../sensor-detail';
 import { BaseSensorComponent } from '../base-sensor.component';
 import { BASE_SENSOR_TOKEN } from '../base-sensor.token';
 
@@ -24,9 +25,9 @@ export class MovementSensorComponent extends BaseSensorComponent implements OnIn
 
   constructor(
     store: Store,
-    private eventMqttService: EventMqttService,
+    dialog: MatDialog,
   ) {
-    super(store);
+    super(store, dialog);
   }
 
   ngOnInit(): void {
@@ -40,5 +41,9 @@ export class MovementSensorComponent extends BaseSensorComponent implements OnIn
         endWith(false)
       )),
     );
+  }
+
+  openDetails(): void {
+    this.dialog.open(MovementDetailComponent, { autoFocus: false, data: { sensor: this.sensor } });
   }
 }

@@ -1,9 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Store } from '@ngxs/store';
 import { SensorModel } from '@smart-home-conx/api/shared/data-access/models';
 import { EventMqttService } from '../../../../event-mqtt.service';
-import { SensorActions } from '../../state/sensor.actions';
 
 @Component({
   selector: 'smart-home-conx-humidity-detail',
@@ -12,8 +10,7 @@ import { SensorActions } from '../../state/sensor.actions';
 export class HumidityDetailComponent implements OnInit {
 
   constructor(
-    private dialogRef: MatDialogRef<HumidityDetailComponent>,
-    private store: Store,
+    public dialogRef: MatDialogRef<HumidityDetailComponent>,
     private eventMqttService: EventMqttService,
     @Inject(MAT_DIALOG_DATA) public data: { sensor: SensorModel }
   ) {
@@ -24,11 +21,6 @@ export class HumidityDetailComponent implements OnInit {
 
   formatYAxis(value: number): string {
     return `${value} %`;
-  }
-
-  edit(): void {
-    this.dialogRef.close();
-    this.store.dispatch(new SensorActions.OpenEditDialog(this.data.sensor));
   }
 
   // TODO: remove this method!

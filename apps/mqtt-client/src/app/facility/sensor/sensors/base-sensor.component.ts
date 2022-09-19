@@ -1,4 +1,5 @@
 import { Directive, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 import { Observable } from 'rxjs';
@@ -18,11 +19,14 @@ export abstract class BaseSensorComponent implements OnInit {
   SensorType = SensorType;
 
   protected store: Store;
+  protected dialog: MatDialog;
 
   constructor(
-    store: Store
+    store: Store,
+    dialog: MatDialog
   ) {
     this.store = store;
+    this.dialog = dialog;
   }
 
   ngOnInit(): void {
@@ -31,10 +35,6 @@ export abstract class BaseSensorComponent implements OnInit {
 
     // TODO: wird zu oft geladen (bspw. wenn Sensor verschoben wird)
     this.store.dispatch(new SensorActions.LoadHistory(this.sensor._id.toString(), this.sensor.chipId, this.sensor.type, this.sensor.pin));
-  }
-
-  openDetails(): void {
-    this.store.dispatch(new SensorActions.OpenDetailDialog(this.sensor));
   }
 
 }

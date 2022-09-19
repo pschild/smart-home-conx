@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
 import { SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
 import { EventMqttService } from '../../../event-mqtt.service';
+import { SensorActions } from '../state/sensor.actions';
 
 @Component({
   selector: 'smart-home-conx-sensor-action-buttons',
@@ -11,6 +13,8 @@ export class SensorActionButtonsComponent implements OnInit {
 
   @Input() sensor: SensorModel;
 
+  @Input() dialogRef: MatDialogRef<unknown>;
+
   constructor(
     private store: Store,
     private eventMqttService: EventMqttService,
@@ -18,6 +22,11 @@ export class SensorActionButtonsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  edit(): void {
+    this.dialogRef.close();
+    this.store.dispatch(new SensorActions.OpenEditDialog(this.sensor));
   }
 
   sendMqttMessage(): void {

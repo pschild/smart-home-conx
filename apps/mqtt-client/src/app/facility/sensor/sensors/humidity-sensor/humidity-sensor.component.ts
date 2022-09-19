@@ -1,5 +1,7 @@
 import { Component, forwardRef, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngxs/store';
+import { HumidityDetailComponent } from '../../sensor-detail';
 import { BaseSensorComponent } from '../base-sensor.component';
 import { BASE_SENSOR_TOKEN } from '../base-sensor.token';
 
@@ -17,13 +19,18 @@ import { BASE_SENSOR_TOKEN } from '../base-sensor.token';
 export class HumiditySensorComponent extends BaseSensorComponent implements OnInit {
 
   constructor(
-    store: Store
+    store: Store,
+    dialog: MatDialog
   ) {
-    super(store);
+    super(store, dialog);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
+  }
+
+  openDetails(): void {
+    this.dialog.open(HumidityDetailComponent, { autoFocus: false, data: { sensor: this.sensor } });
   }
 
 }

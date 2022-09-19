@@ -261,29 +261,6 @@ export class SensorState {
     return this.ngZone.run(() => this.dialog.open(SensorCreateComponent, { data: action.sensor ? { sensor: action.sensor } : null }));
   }
 
-  @Action(SensorActions.OpenDetailDialog)
-  openDetailDialog(ctx: StateContext<SensorStateModel>, action: SensorActions.OpenDetailDialog) {
-    // see https://stackoverflow.com/a/57141327/5276055
-    return this.ngZone.run(() => this.dialog.open(this.getDialogComponentByType(action.sensor.type), { data: { sensor: action.sensor } }));
-  }
-
-  private getDialogComponentByType(type: SensorType): any {
-    switch (type) {
-      case SensorType.TEMPERATURE:
-        return TemperatureDetailComponent;
-      case SensorType.HUMIDITY:
-        return HumidityDetailComponent;
-      case SensorType.SWITCH:
-        return SwitchDetailComponent;
-      case SensorType.MOVEMENT:
-        return MovementDetailComponent;
-      case SensorType.VOLTAGE:
-        return VoltageDetailComponent;
-      default:
-        throw new Error(`Cannot retrieve DetailComponent class for type "${type}"`);
-    }
-  }
-
   private getNewPosition(event: CdkDragDrop<any>): { x: number; y: number } {
     if (event.container.id === event.previousContainer.id) {
       return {

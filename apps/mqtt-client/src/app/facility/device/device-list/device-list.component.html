@@ -6,11 +6,11 @@
     </ng-template>
     <ng-container *ngIf="espList$ | async as espList">
       <div *ngFor="let esp of espList">
-        <smart-home-conx-connection-status-indicator [status]="esp.connectionStatus"></smart-home-conx-connection-status-indicator>
-        {{esp.model}} - {{esp.description}} - {{esp.chipId}}
         <button mat-icon-button (click)="editDevice(esp)">
           <mat-icon>edit</mat-icon>
         </button>
+        <smart-home-conx-connection-status-indicator [status]="esp.connectionStatus"></smart-home-conx-connection-status-indicator>
+        {{esp.model}} - {{esp.description}} - {{esp.chipId}}
         <button mat-icon-button *ngIf="esp.connectionStatus === ConnectionStatus.ONLINE" (click)="startOtaUpdate(esp.chipId)">
           <mat-icon>system_update</mat-icon>
         </button>
@@ -33,10 +33,10 @@
     </ng-template>
     <ng-container *ngIf="alexaDevices$ | async as alexaDeviceList">
       <div *ngFor="let alexaDevice of alexaDeviceList">
-        {{alexaDevice.accountName}}
         <button mat-icon-button (click)="showAlexaDetails(alexaDevice)">
           <mat-icon>more_vert</mat-icon>
         </button>
+        {{alexaDevice.accountName}}
       </div>
     </ng-container>
   </mat-tab>
