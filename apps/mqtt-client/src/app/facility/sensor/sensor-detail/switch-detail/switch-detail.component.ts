@@ -20,4 +20,8 @@ export class SwitchDetailComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  formatYAxis(value: number): string {
+    return value === 1 ? `geschl.` : `offen`;
+  }
+
 }

@@ -12,7 +12,19 @@
     [curve]="curve"
     [yAxisTicks]="yAxisTicks"
     [timeline]="true"
-  ></ngx-charts-line-chart>
+  >
+    <ng-template #tooltipTemplate let-model="model">
+      <div>{{model.name | date:'dd.MM. HH:mm'}} Uhr</div>
+      <div>{{model.value | number:'1.1-1'}}{{this.suffix}}</div>
+    </ng-template>
+
+    <ng-template #seriesTooltipTemplate let-model="model">
+      <ng-container *ngIf="model[0] as item">
+        <div>{{item.name | date:'dd.MM. HH:mm'}} Uhr</div>
+        <div>{{item.value | number:'1.1-1'}}{{this.suffix}}</div>
+      </ng-container>
+    </ng-template>
+  </ngx-charts-line-chart>
 </ng-container>
 <ng-template #noHistory>Keine Einträge vorhanden</ng-template>
 

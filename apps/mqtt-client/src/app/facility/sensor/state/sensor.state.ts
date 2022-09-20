@@ -4,17 +4,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { Action, createSelector, Selector, State, StateContext, StateToken, Store } from '@ngxs/store';
 import { insertItem, patch, removeItem, updateItem } from '@ngxs/store/operators';
 import { DeviceModelUtil, RoomModel, SensorModel, SensorType } from '@smart-home-conx/api/shared/data-access/models';
-import { format } from 'date-fns';
 import { EMPTY, merge } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { EventMqttService } from '../../../event-mqtt.service';
 import { SensorCreateComponent } from '../sensor-create/sensor-create.component';
-import { HumidityDetailComponent, MovementDetailComponent, SwitchDetailComponent, TemperatureDetailComponent, VoltageDetailComponent } from '../sensor-detail';
 import { RoomHttpService } from './room-http.service';
 import { SensorHttpService } from './sensor-http.service';
 import { SensorActions } from './sensor.actions';
 
-export const DEVICE_STATE_NAME = new StateToken<SensorStateModel>('sensor');
+export const SENSOR_STATE_NAME = new StateToken<SensorStateModel>('sensor');
 
 export interface SensorStateModel {
   history: { [sensorId: string]: { time: string; value: number; chipId: string; pin: number; type: SensorType }[] };
@@ -24,7 +22,7 @@ export interface SensorStateModel {
 }
 
 @State<SensorStateModel>({
-  name: DEVICE_STATE_NAME,
+  name: SENSOR_STATE_NAME,
   defaults: {
     history: {},
     loadingStates: [],
@@ -80,28 +78,6 @@ export class SensorState {
         .filter(e => e.type === type)
         .sort((a, b) => a.time.localeCompare(b.time) * -1)
     );
-  }
-
-  static chartData(sensorId: string) {
-    return createSelector([SensorState], (state: SensorStateModel) => {
-      const series = state.history[sensorId]
-        .sort((a, b) => a.time.localeCompare(b.time))
-        .map(item => ({ name: new Date(item.time), value: item.value }));
-
-      return !!series && series.length > 1 ? [{ name: 'Wert', series }] : [];
-    });
-  }
-
-  static max(sensorId: string, type: SensorType) {
-    return createSelector([SensorState.history(sensorId, type)], (history: { time: string; value: number; chipId: string; pin: number; type: SensorType }[]) => {
-      return !!history && history.length > 0 ? Math.max(...history.map(item => item.value)) : null;
-    });
-  }
-
-  static min(sensorId: string, type: SensorType) {
-    return createSelector([SensorState.history(sensorId, type)], (history: { time: string; value: number; chipId: string; pin: number; type: SensorType }[]) => {
-      return !!history && history.length > 0 ? Math.min(...history.map(item => item.value)) : null;
-    });
   }
 
   static latest(sensorId: string, type: SensorType) {

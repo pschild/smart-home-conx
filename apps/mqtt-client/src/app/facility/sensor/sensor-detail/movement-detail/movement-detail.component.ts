@@ -20,4 +20,8 @@ export class MovementDetailComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  formatYAxis(value: number): string {
+    return value === 1 ? `Bewegung` : ``;
+  }
+
 }

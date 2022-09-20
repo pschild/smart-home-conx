@@ -25,6 +25,7 @@ import { SensorDirective } from './sensors/sensor.directive';
 import { HumidityDetailComponent, MovementDetailComponent, SwitchDetailComponent, TemperatureDetailComponent, VoltageDetailComponent } from './sensor-detail';
 import { SensorHistoryComponent } from './sensor-history/sensor-history.component';
 import { SensorActionButtonsComponent } from './sensor-action-buttons/sensor-action-buttons.component';
+import { SensorChartState } from './sensor-history/state/sensor-chart.state';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,7 @@ import { SensorActionButtonsComponent } from './sensor-action-buttons/sensor-act
     ReactiveFormsModule,
     MaterialModule,
     CoreModule,
-    NgxsModule.forFeature([SensorState]),
+    NgxsModule.forFeature([SensorState, SensorChartState]),
     NgxChartsModule
   ]
 })
