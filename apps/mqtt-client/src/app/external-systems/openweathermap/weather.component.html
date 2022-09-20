@@ -21,16 +21,32 @@
     <mat-tab>
       <ng-template mat-tab-label>1h</ng-template>
       <div class="horizontal-wrapper" *ngIf="(precipitationWithinNextHour$ | async) === true; else noPrecipitation">
-        <ng-container *ngFor="let minute of weather.forecast.minutely">
-          <mat-card class="weather-item" *ngIf="minute.precipitation > 0">
-            <mat-card-title>{{minute.datetime | date:'HH:mm'}} Uhr</mat-card-title>
-            <mat-card-content>
-              <div>{{minute.precipitation}}mm</div>
-            </mat-card-content>
-          </mat-card>
-        </ng-container>
+        <ngx-charts-area-chart
+          *ngIf="precipitationChartData$ | async as precipitationChartData"
+          [view]="[1000, 150]"
+          [scheme]="colorScheme"
+          [curve]="curve"
+          [results]="precipitationChartData"
+          [xAxis]="true"
+          [yAxis]="true"
+          [yScaleMin]="0"
+          [xAxisTickFormatting]="formatXAxis"
+          [yAxisTickFormatting]="formatYAxis"
+        >
+          <ng-template #tooltipTemplate let-model="model">
+            <div>{{model.name | date:'HH:mm'}} Uhr</div>
+            <div>{{model.value | number:'1.1-2'}}mm</div>
+          </ng-template>
+
+          <ng-template #seriesTooltipTemplate let-model="model">
+            <ng-container *ngIf="model[0] as item">
+              <div>{{item.name | date:'HH:mm'}} Uhr</div>
+              <div>{{item.value | number:'1.1-2'}}mm</div>
+            </ng-container>
+          </ng-template>
+        </ngx-charts-area-chart>
       </div>
-      <ng-template #noPrecipitation>Kein Niederschlag erwartet.</ng-template>
+      <ng-template #noPrecipitation>Kein Niederschlag zu erwarten.</ng-template>
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>48h</ng-template>

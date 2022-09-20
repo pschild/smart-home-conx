@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext, StateToken } from '@ngxs/store';
 import { OneCallResponse } from '@smart-home-conx/api/shared/data-access/models';
-import { map, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { EventMqttService } from '../../../event-mqtt.service';
 import { OpenWeatherMapHttpService } from './openweathermap-http.service';
 import * as OpenWeatherMapActions from './openweathermap.actions';
@@ -31,6 +31,12 @@ export class OpenWeatherMapState implements NgxsOnInit {
     return state.weather.forecast.minutely?.some(entry => !!entry.precipitation);
   }
 
+  @Selector()
+  static precipitationChartData(state: OpenWeatherMapStateModel) {
+    const series = state.weather.forecast.minutely.map(entry => ({ name: new Date(entry.datetime), value: entry.precipitation }));
+    return [{ name: 'Niederschlag', series }];
+  }
+
   constructor(
     private openWeatherMapHttpService: OpenWeatherMapHttpService,
     private eventMqttService: EventMqttService
@@ -42,7 +48,7 @@ export class OpenWeatherMapState implements NgxsOnInit {
   }
 
   @Action(OpenWeatherMapActions.OneCall)
-  loadPrices(ctx: StateContext<OpenWeatherMapStateModel>) {
+  loadWeather(ctx: StateContext<OpenWeatherMapStateModel>) {
     return this.openWeatherMapHttpService.oneCall().pipe(
       tap(weather => ctx.patchState({ weather }))
     );
