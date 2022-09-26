@@ -4,6 +4,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { InfluxModule } from '@smart-home-conx/influx';
 import { isDocker } from '@smart-home-conx/utils';
 import { FieldType } from 'influx';
+import { BuienradarModule } from './buienradar/app.module';
 import { FritzboxService } from './fritzbox/fritzbox.service';
 import { OpenWeatherMapModule } from './openweathermap/app.module';
 import { TankerkoenigModule } from './tankerkoenig/app.module';
@@ -20,7 +21,8 @@ import { TankerkoenigModule } from './tankerkoenig/app.module';
       ]
     }),
     TankerkoenigModule,
-    OpenWeatherMapModule
+    OpenWeatherMapModule,
+    BuienradarModule
   ],
   controllers: [],
   providers: [FritzboxService] // TODO: in FritzboxModule verschieben

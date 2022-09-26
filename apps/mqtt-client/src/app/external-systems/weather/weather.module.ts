@@ -5,12 +5,14 @@ import { NgxsModule } from '@ngxs/store';
 import { CoreModule } from '../../core/core.module';
 import { MaterialModule } from '../../material/material.module';
 import { WeatherComponent } from './weather.component';
-import { OpenWeatherMapState } from './state/openweathermap.state';
+import { WeatherState } from './state/weather.state';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { WeatherForecastMinutelyComponent } from './weather-forecast-minutely/weather-forecast-minutely.component';
 
 @NgModule({
   declarations: [
-    WeatherComponent
+    WeatherComponent,
+    WeatherForecastMinutelyComponent,
   ],
   exports: [
     WeatherComponent
@@ -21,9 +23,9 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
     ReactiveFormsModule,
     MaterialModule,
     CoreModule,
-    NgxsModule.forFeature([OpenWeatherMapState]),
+    NgxsModule.forFeature([WeatherState]),
     NgxChartsModule
   ]
 })
-export class OpenWeatherMapModule {
+export class WeatherModule {
 }

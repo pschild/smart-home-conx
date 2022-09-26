@@ -1,0 +1,31 @@
+<ng-container *ngIf="(precipitationWithinNextHour$ | async) === true; else noPrecipitation">
+  <ngx-charts-area-chart
+    *ngIf="precipitationChartData$ | async as precipitationChartData"
+    [view]="[750, 250]"
+    [legend]="true"
+    [scheme]="colorScheme"
+    [curve]="curve"
+    [results]="precipitationChartData"
+    [xAxis]="true"
+    [yAxis]="true"
+    [yScaleMin]="0"
+    [xAxisTickFormatting]="formatXAxis"
+    [yAxisTickFormatting]="formatYAxis"
+    [yAxisTicks]="[0, 1, 2, 5, 10]"
+    [yScaleMin]="0"
+    [yScaleMax]="10"
+  >
+    <ng-template #tooltipTemplate let-model="model">
+      <div>{{model.name | date:'HH:mm'}} Uhr</div>
+      <div>{{model.series}}: {{model.value | number:'1.1-2'}}mm</div>
+    </ng-template>
+
+    <ng-template #seriesTooltipTemplate let-model="model">
+      <div>{{model[0]?.name | date:'HH:mm'}} Uhr</div>
+      <ng-container *ngFor="let item of model">
+        <div>{{item.series}}: {{item.value | number:'1.1-2'}}mm</div>
+      </ng-container>
+    </ng-template>
+  </ngx-charts-area-chart>
+</ng-container>
+<ng-template #noPrecipitation>Kein Niederschlag zu erwarten.</ng-template>

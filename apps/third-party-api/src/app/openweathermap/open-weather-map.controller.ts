@@ -37,7 +37,7 @@ export class OpenWeatherMapController {
 
   @Cron('0 */10 5-23 * * *') // every 10 minutes between 5:00 and 23:50
   cron(): void {
-    Logger.log(`Running cronjob for updating weather...`);
+    Logger.log(`Running cronjob for updating weather (openweathermap)...`);
     this.openWeatherMapClient.oneCallCached().pipe(
       tap(response => {
         this.mqttClient.emit('third-party-api/openweathermap', response);
@@ -57,8 +57,8 @@ export class OpenWeatherMapController {
         }
       }),
       catchError(err => {
-        Logger.error(`Cronjob for updating weather failed: ${err}`);
-        this.mqttClient.emit('log', {source: 'third-party-api', message: `Cronjob for updating weather failed: ${err}`});
+        Logger.error(`Cronjob for updating weather (openweathermap) failed: ${err}`);
+        this.mqttClient.emit('log', {source: 'third-party-api', message: `Cronjob for updating weather (openweathermap) failed: ${err}`});
         return EMPTY;
       })
     ).subscribe(() => Logger.log('Success.'));

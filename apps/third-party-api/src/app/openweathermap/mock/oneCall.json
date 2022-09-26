@@ -30,15 +30,15 @@
   "minutely": [
     {
       "dt": 1643355000,
-      "precipitation": 10
+      "precipitation": 0.5
     },
     {
       "dt": 1643355060,
-      "precipitation": 0
+      "precipitation": 0.75123
     },
     {
       "dt": 1643355120,
-      "precipitation": 0
+      "precipitation": 1.2
     },
     {
       "dt": 1643355180,
@@ -50,11 +50,11 @@
     },
     {
       "dt": 1643355300,
-      "precipitation": 0
+      "precipitation": 0.3
     },
     {
       "dt": 1643355360,
-      "precipitation": 0
+      "precipitation": 0.5
     },
     {
       "dt": 1643355420,
